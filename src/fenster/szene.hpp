@@ -26,6 +26,9 @@ private:
 
     std::unique_ptr<OgreBites::ImGuiInputListener> mImguiListener;
 
+    Ogre::RTShader::ShaderGenerator* shadergen = nullptr;
+    Ogre::SceneManager* scnMgr = nullptr;
+    Ogre::SceneNode* camNode   = nullptr;
     Ogre::SceneNode* lightNode = nullptr;
 
 };

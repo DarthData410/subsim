@@ -17,19 +17,6 @@ endif()
 #find_package(SDL2 REQUIRED)
 #find_package(SDL2_image REQUIRED)
 
-set(UNZIP_CMD "unzip")
-
-# ReactPhysics3D einrichten
-if (EXISTS "${CMAKE_CURRENT_LIST_DIR}/reactphysics3d/CMakeLists.txt")
-    message(STATUS "ReactPhysics3d gefunden")
-else()
-    message(STATUS "ReactPhysics3D wird entpackt...")
-    execute_process(
-            COMMAND ${UNZIP_CMD} reactphysics3d-0.8.0.zip
-            WORKING_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}")
-endif()
-add_subdirectory(reactphysics3d reactphysics3d)
-
 # Ogre3D einrichten
 set(OGRE_VER "1.12.10")
 set(OGRE_BUILD_COMPONENT_OVERLAY TRUE)
@@ -72,13 +59,11 @@ target_include_directories(libs SYSTEM PUBLIC
         ${PROJECT_BINARY_DIR}/libs/ogre3d/imgui-1.79
         ${PROJECT_BINARY_DIR}/libs/ogre3d/include
         ${CMAKE_CURRENT_LIST_DIR}/ogre-${OGRE_VER}/OgreMain/include
-        ${CMAKE_CURRENT_LIST_DIR}/reactphysics3d/include
         #${CMAKE_CURRENT_LIST_DIR}/${IMGUI_VER}
         )
 
 target_link_libraries(libs
         ${MSYS2_LIBS}
-        reactphysics3d
         OgreBites
         OgreRTShaderSystem
         #${SDL2_LIBRARIES}

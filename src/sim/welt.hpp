@@ -1,6 +1,6 @@
-#include "physik.hpp"
+#include <OgreTimer.h>
 
-class Welt final : public Physik {
+class Welt final  {
 
 public:
 
@@ -10,10 +10,10 @@ public:
 
     void tick();
 
-    rp3d::RigidBody* body = nullptr;
-
 private:
 
-    uint32_t last_ticks;
+    float timelapse = 1.0f;
+
+    Ogre::Timer timer;
 
 };
