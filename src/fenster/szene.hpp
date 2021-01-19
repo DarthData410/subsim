@@ -1,5 +1,7 @@
 #pragma once
 
+#include "spielszene.hpp"
+
 #include <OgreApplicationContext.h>
 #include <OgreRenderTargetListener.h>
 #include <OgreImGuiInputListener.h>
@@ -24,11 +26,10 @@ public:
 
 private:
 
-    std::unique_ptr<OgreBites::ImGuiInputListener> mImguiListener;
+    Spielszene spielszene;
 
+    std::unique_ptr<OgreBites::ImGuiInputListener> mImguiListener;
     Ogre::RTShader::ShaderGenerator* shadergen = nullptr;
     Ogre::SceneManager* scnMgr = nullptr;
-    Ogre::SceneNode* camNode   = nullptr;
-    Ogre::SceneNode* lightNode = nullptr;
 
 };

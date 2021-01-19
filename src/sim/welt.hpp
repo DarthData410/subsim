@@ -1,12 +1,14 @@
 #include <OgreTimer.h>
 
-class Welt final  {
+class Welt final {
+
+    friend class Spielszene;
 
 public:
 
     Welt();
 
-    virtual ~Welt();
+    ~Welt();
 
     void tick();
 
