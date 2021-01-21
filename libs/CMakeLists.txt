@@ -58,7 +58,7 @@ target_include_directories(libs SYSTEM PUBLIC
         ${PROJECT_BINARY_DIR}/libs/implot
         ${PROJECT_BINARY_DIR}/libs/ogre3d/imgui-1.79
         ${PROJECT_BINARY_DIR}/libs/ogre3d/include
-        ${CMAKE_CURRENT_LIST_DIR}/ogre-${OGRE_VER}/OgreMain/include
+        ${CMAKE_CURRENT_LIST_DIR}/ogre-${OGRE_VER}/OgreMain/include }
         #${CMAKE_CURRENT_LIST_DIR}/${IMGUI_VER}
         )
 

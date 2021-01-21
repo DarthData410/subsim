@@ -16,9 +16,16 @@ else () # Debug build
     add_subdirectory(libs)
     set(NADA_CXX_FLAGS -g -Werror -Wall -Wextra)
 endif ()
+add_subdirectory(libs/libnada)
 
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/build/)
 file(GLOB_RECURSE QUELLTEXT src/*.hpp src/*cpp)
 add_executable(nada_sub ${QUELLTEXT})
-target_link_libraries(nada_sub libs)
+target_include_directories(nada_sub PRIVATE
+        ${LIBNADA_INCLUDE_DIRS}
+        )
+target_link_libraries(nada_sub
+        nada
+        libs
+        )
 target_compile_options(nada_sub PRIVATE ${NADA_CXX_FLAGS})

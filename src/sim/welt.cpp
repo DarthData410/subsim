@@ -9,10 +9,9 @@ Welt::~Welt() {
 }
 
 void Welt::tick() {
+    // Timing
     const float s = timer.getMilliseconds() / 1000.f; // Sekunden vergangen
     timer.reset();
-
-    // Timing
     /*
     if (s > 0) {
         last_ticks = jetzt;

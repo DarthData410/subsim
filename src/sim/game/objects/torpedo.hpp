@@ -1,8 +1,13 @@
 #pragma once
 
-class Torpedo final {
+#include "objekt_steuerbar.hpp"
+
+class Torpedo final : public Objekt_Steuerbar {
+
+public:
 
 
+private:
 
 
 };
