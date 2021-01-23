@@ -74,6 +74,7 @@ namespace Etc {
     /**
      * Liefert alle Dateipfade (relativ) aus gegebenem Ordner (relativ) mit gegebener Dateiendung (Case-Sensitiv).
      * @param endung z.B. "png", "jpg", "dat" usw. (ohne '.' davor)
+     * @note Dateiendung Case-sensitiv.
      */
     std::vector<std::string> alle_dateien(const std::string& ordner, std::string endung);
 

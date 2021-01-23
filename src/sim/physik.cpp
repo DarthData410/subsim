@@ -3,6 +3,7 @@
 #include <Ogre.h>
 
 void Physik::set_pitch(Ogre::Quaternion& q, float target_pitch) {
+    assert(false && "Physik::set_pitch Muss repariert werden."); // TODO kaputt
     const auto pitch_now = q.getPitch().valueDegrees();
     const auto pitch = target_pitch - pitch_now;
     if (std::abs(pitch) < 0.001f) return;
@@ -14,11 +15,11 @@ void Physik::set_pitch(Ogre::Quaternion& q, float target_pitch) {
 }
 
 void Physik::rotate(Ogre::Quaternion& q, float degree) {
-    if (degree < 0.001f) return;
-    q = q * Ogre::Quaternion(Ogre::Degree(degree), Ogre::Vector3::NEGATIVE_UNIT_Z);
+    if (std::abs(degree) < 0.001f) return;
+    q = q * Ogre::Quaternion(Ogre::Degree(degree), Ogre::Vector3::UNIT_Y);
     q.normalise();
 }
 
 void Physik::move_ahead(Ogre::Vector3& pos, const Ogre::Quaternion& q, float amount) {
-    pos += q * (Ogre::Vector3::UNIT_Y * amount);
+    pos += q * Ogre::Vector3(0, 0, amount);
 }

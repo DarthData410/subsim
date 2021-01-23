@@ -6,3 +6,7 @@ Sub::Sub(const Ogre::Vector3& pos,
 {
     //
 }
+
+void Sub::tick(Welt* welt, float s) {
+    Objekt_Steuerbar::tick(welt, s);
+}

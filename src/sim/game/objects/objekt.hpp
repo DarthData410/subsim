@@ -1,15 +1,24 @@
 #include <Ogre.h>
 
+class Welt;
+
 /// Elternklasse für alle von der Physiksimulation betroffenen Objekte.
 class Objekt {
 
 public:
 
+    enum class Typ {
+        OBJEKT, OBJEKT_STEUERBAR, SUB, TORPEDO
+    };
+
     Objekt() = default;
 
     explicit Objekt(const Ogre::Vector3& pos, const Ogre::Quaternion& orientation =
-            Ogre::Quaternion(Ogre::Degree(270), Ogre::Vector3::UNIT_X));
-            //Ogre::Quaternion(Ogre::Degree(180), Ogre::Vector3::UNIT_Y));
+                    Ogre::Quaternion::IDENTITY); //Ogre::Quaternion(Ogre::Degree(180), Ogre::Vector3::UNIT_Y));
+
+    virtual Typ get_typ() const = 0;
+
+    virtual void tick(Welt* welt, float s) = 0;
 
     uint32_t get_id() const { return id; }
 
@@ -20,6 +29,8 @@ public:
     float get_bearing() const;
 
     float get_pitch() const;
+
+    virtual ~Objekt();
 
 protected:
 

@@ -84,7 +84,6 @@ namespace Zufall {
      */
     template <typename T>
     typename T::value_type wahl_erase(T& liste) {
-        if (liste.empty()) Log::err() << "Leere Liste in Zufall::wahlerase(...)\n";
         std::size_t n = get<std::size_t>(0, liste.size() - 1);
         auto iter = std::begin(liste);
         std::advance(iter, n);

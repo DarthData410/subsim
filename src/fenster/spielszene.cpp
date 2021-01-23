@@ -1,4 +1,5 @@
 #include "spielszene.hpp"
+#include "../sim/welt.hpp"
 
 #include <imgui.h>
 #include <OgreNode.h>
@@ -43,7 +44,7 @@ Spielszene::Spielszene(Ogre::RenderWindow* window, Ogre::SceneManager* scene_man
     //scene_manager->setFog(Ogre::FOG_LINEAR, fadeColour, 0, 0, 250);
 
     // finally something to render
-    Ogre::Entity* ent = scene_manager->createEntity("sub1.mesh");
+    Ogre::Entity* ent = scene_manager->createEntity("Sinbad.mesh"); //sub1.mesh
     subNode = scene_manager->getRootSceneNode()->createChildSceneNode();
     //ent->getWorldBoundingBox().intersects(ent->getWorldBoundingBox());
     ent->setCastShadows(true);
@@ -51,7 +52,8 @@ Spielszene::Spielszene(Ogre::RenderWindow* window, Ogre::SceneManager* scene_man
 
     //camNode->setAutoTracking(true, subNode, Ogre::Vector3::NEGATIVE_UNIT_Z, Ogre::Vector3(0, 0, 150));
 
-    // Ground
+    // Ozean
+    // TODO Schöneres Wasser: https://github.com/OGRECave/ogre/tree/master/Samples/OceanDemo
     Ogre::MeshManager::getSingleton().createPlane("water", Ogre::RGN_DEFAULT,
                                                   {Ogre::Vector3::UNIT_Y, 0},
                                                   1500, 1500,
@@ -61,10 +63,10 @@ Spielszene::Spielszene(Ogre::RenderWindow* window, Ogre::SceneManager* scene_man
                                                   Ogre::Vector3::UNIT_Z);
     Ogre::Entity* ground = scene_manager->createEntity("water");
     ground->setCastShadows(false);
-    ground->setMaterialName("Examples/Water4"); // 4 is ok
+    ground->setMaterialName("Examples/Rockwall"); // 4 is ok //Examples/Water4
     Ogre::SceneNode* node_ground = scene_manager->getRootSceneNode()->createChildSceneNode();
     node_ground->attachObject(ground);
-    node_ground->setPosition(0,0,0); // TODO move
+    node_ground->setPosition(0,0,0); // TODO move?
 }
 
 void Spielszene::render() {
@@ -76,6 +78,11 @@ void Spielszene::render() {
     ImGui::Text("Sub: %.1f %.1f %.1f", player_sub.get_pos().x, player_sub.get_pos().y, player_sub.get_pos().z);
     ImGui::Text("Pitch: %.1f", player_sub.get_pitch());
     ImGui::Text("Bearing: %.1f", player_sub.get_bearing());
+
+    static float target_bearing = 0;
+    ImGui::SliderFloat("target_bearing", &target_bearing, 0, 359);
+    if (ImGui::SameLine(); ImGui::Button("Set")) player_sub.set_target_bearing(target_bearing);
+
     if (ImGui::Button("vorwärts")) player_sub.set_target_v(100);
     if (ImGui::Button("stop")) player_sub.stop();
     if (ImGui::Button("rückwärts")) player_sub.set_target_v(-100);
@@ -86,8 +93,9 @@ void Spielszene::render() {
     ImGui::End();
 
     static Ogre::Timer timer;
+    static Welt welt;
     if (timer.getMilliseconds() > 50) {
-        player_sub.tick((float)timer.getMilliseconds() / 100.f);
+        player_sub.tick(&welt, (float)timer.getMilliseconds() / 100.f);
         timer.reset();
     }
 }
