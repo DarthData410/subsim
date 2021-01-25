@@ -6,9 +6,9 @@ class Torpedo final : public Objekt_Steuerbar {
 
 public:
 
-    Objekt::Typ get_typ() const override { return Typ::TORPEDO; }
+    Objekt::Typ get_typ() const override final { return Typ::TORPEDO; }
 
-    virtual void tick(Welt* welt, float s) final;
+    void tick(Welt* welt, float s) override final;
 
 private:
 

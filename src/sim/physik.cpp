@@ -54,3 +54,10 @@ float Physik::distanz(const Ogre::Vector3& pos, const Ogre::Vector3& target_pos)
 float Physik::bremsweg(float v, float a) {
     return (v * v) / (2.0f * a);
 }
+
+std::array<float,2> Physik::get_punkt(float x, float y, float bearing, float entfernung) {
+    const float winkel_rad = (static_cast<float>(M_PI) * (bearing + 90.f)) / 180.f;
+    const float px = x + entfernung * std::cos(winkel_rad);
+    const float py = y + entfernung * std::sin(winkel_rad);
+    return {px,py};
+}

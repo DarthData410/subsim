@@ -1,6 +1,6 @@
 #pragma once
 
-class Contact final {
+class Kontact final {
 
 public:
 

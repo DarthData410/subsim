@@ -15,10 +15,10 @@ public:
                      const Motor& motor_tauch);
 
     /// Liefert den genauen Typen zur Identifikation nach Vererbung.
-    virtual Typ get_typ() const override { return Typ::OBJEKT_STEUERBAR; }
+    Typ get_typ() const override { return Typ::OBJEKT_STEUERBAR; }
 
     /// Simulationstick in Sekunden.
-    virtual void tick(Welt* welt, float s) override;
+    void tick(Welt* welt, float s) override;
 
     /// Startet den Bremsvorgang, leitet kompletten Stilltstand ein.
     void stop();
@@ -41,6 +41,9 @@ public:
 
     /// Liefert die relative x/z-Geschwindigkeit zur Höchstgeschwindigkeit (negativ, wenn Rückwärts).
     float get_speed_relativ() const { return motor_linear.v / motor_linear.v_max; }
+
+    /// Liefert einen Wert zwischen 0 und 1, wie gut sichtbar das fremden Objekt ist.
+    //float get_sichtbarkeit(const Objekt_Steuerbar* objekt);//TODO
 
 protected:
 
