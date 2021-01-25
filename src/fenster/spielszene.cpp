@@ -1,5 +1,6 @@
 #include "spielszene.hpp"
 #include "../sim/welt.hpp"
+#include "../sim/physik.hpp"
 
 #include <imgui.h>
 #include <OgreNode.h>
@@ -8,11 +9,12 @@
 #include <OgreMeshManager.h>
 #include <OgreViewport.h>
 #include <SDL2/SDL_keycode.h>
+#include <iostream>
 
 Spielszene::Spielszene(Ogre::RenderWindow* window, Ogre::SceneManager* scene_manager)
     : player_sub(Ogre::Vector3(0, 2, 0),
                  Motor(5, 0.2),
-                 Motor(2, 0.1),
+                 Motor(5, 1),
                  Motor(20, 0.1))
 {
     Spielszene::scene_manager = scene_manager;
@@ -74,14 +76,26 @@ void Spielszene::render() {
     subNode->setOrientation(player_sub.get_orientation());
     camNode->setPosition(subNode->getPosition() + Ogre::Vector3(10, 1, 10));
 
+    ImGui::SetNextWindowSize({300,0});
     ImGui::Begin("debugWindow");
     ImGui::Text("Sub: %.1f %.1f %.1f", player_sub.get_pos().x, player_sub.get_pos().y, player_sub.get_pos().z);
     ImGui::Text("Pitch: %.1f", player_sub.get_pitch());
     ImGui::Text("Bearing: %.1f", player_sub.get_bearing());
 
+    static float target_x = 0, target_z = 0;
+    ImGui::InputFloat("Target_x", &target_x);
+    ImGui::InputFloat("Target_z", &target_z);
+    if (ImGui::Button("Set##set_target_pos")) player_sub.set_target_pos(target_x, target_z);
+
     static float target_bearing = 0;
-    ImGui::SliderFloat("target_bearing", &target_bearing, 0, 359);
-    if (ImGui::SameLine(); ImGui::Button("Set")) player_sub.set_target_bearing(target_bearing);
+    ImGui::SliderFloat("target_bearing", &target_bearing, 0, 360.f);
+    if (ImGui::Button("Set##set_bearing")) player_sub.set_target_bearing(target_bearing);
+    ImGui::Separator();
+
+    static float target_speed = 0;
+    ImGui::SliderFloat("target_speed", &target_speed, -1.0f, 1.0f);
+    if (ImGui::Button("Set##set_speed")) player_sub.set_target_v(target_speed);
+    ImGui::Separator();
 
     if (ImGui::Button("vorwärts")) player_sub.set_target_v(100);
     if (ImGui::Button("stop")) player_sub.stop();
@@ -90,12 +104,20 @@ void Spielszene::render() {
     if (ImGui::Button("links")) player_sub.set_target_rudder(-100);
     if (ImGui::Button("auf")) player_sub.set_target_pitch(100);
     if (ImGui::Button("ab")) player_sub.set_target_pitch(-100);
+
+    ImGui::Separator();
+
+    if (ImGui::Button("bearing")) {
+        std::cout << Physik::bearing(
+                player_sub.get_pos().x, player_sub.get_pos().z, target_x, target_z) << '\n';
+    }
+
     ImGui::End();
 
     static Ogre::Timer timer;
     static Welt welt;
     if (timer.getMilliseconds() > 50) {
-        player_sub.tick(&welt, (float)timer.getMilliseconds() / 100.f);
+        player_sub.tick(&welt, (float)timer.getMilliseconds() / 1000.f);
         timer.reset();
     }
 }

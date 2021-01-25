@@ -17,7 +17,7 @@ Objekt::~Objekt() {
 }
 
 float Objekt::get_bearing() const {
-    return orientation.getYaw(true).valueDegrees() + 180.f;
+    return 180.f - orientation.getYaw(true).valueDegrees();
 }
 
 float Objekt::get_pitch() const {

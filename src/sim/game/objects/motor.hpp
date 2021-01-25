@@ -9,6 +9,9 @@ struct Motor final {
     /// Tick mit Zeit in Sekunden.
     void tick(float s);
 
+    /// Liefert den Bremsweg bei aktueller Geschwindigkeit.
+    float get_bremsweg() const;
+
     /// Höchstgeschwindigkeit
     float v_max;
 

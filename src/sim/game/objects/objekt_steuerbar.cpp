@@ -1,3 +1,4 @@
+#include <log.hpp>
 #include "objekt_steuerbar.hpp"
 #include "../../physik.hpp"
 
@@ -22,7 +23,10 @@ void Objekt_Steuerbar::stop() {
 }
 
 void Objekt_Steuerbar::tick(Welt* welt, float s) {
-    static constexpr float eps = 0.001f;
+    static constexpr float eps = 0.0001f;
+
+    // Automatisches Pfadfinden
+    if (std::get<bool>(target_pos)) auto_path();
 
     // Automatische ausrichtung Links/Rechts
     if (std::get<bool>(target_bearing)) auto_rudder();
@@ -37,6 +41,9 @@ void Objekt_Steuerbar::tick(Welt* welt, float s) {
     pos.y += motor_tauch.v; // TODO workaround für Quaternion pitch
 
     // Links/Rechts in Grad bewegen
+    // + Max. Rotation ist Geschwindigkeitsabhängig
+    const float max_rot = std::sqrt(std::abs(get_speed_relativ()));
+    if (std::abs(motor_rot.v) > motor_rot.v_max * max_rot) motor_rot.v = motor_rot.v * max_rot;
     if (std::abs(motor_rot.v) > eps) Physik::rotate(orientation, motor_rot.v * s);
 
     // Vorwärts/Rückwärts in m bewegen
@@ -55,12 +62,28 @@ void Objekt_Steuerbar::set_target_pos(float x, float z) {
 }
 
 void Objekt_Steuerbar::auto_rudder() {
-    float rotate_to = std::get<float>(target_bearing) - get_bearing();
-    if (rotate_to > 180.f) rotate_to = std::get<float>(target_bearing) - 360 + get_bearing();
-    if (std::abs(rotate_to) <= (motor_rot.v * motor_rot.v) / (2.0f * motor_rot.a)) { // Erledigt -> Bremsen
+    const float rotate_to = Physik::rotation(get_bearing(), std::get<float>(target_bearing));
+    if (std::abs(rotate_to) <= motor_rot.get_bremsweg()) { // Erledigt -> Bremsen
         motor_rot.v_target = 0;
         std::get<bool>(target_bearing) = false;
     }
     else if (rotate_to < 0) motor_rot.v_target = -motor_rot.v_max;
     else if (rotate_to > 0) motor_rot.v_target =  motor_rot.v_max;
+}
+
+void Objekt_Steuerbar::auto_path() {
+    // Richtung
+    const float target_x = std::get<1>(target_pos);
+    const float target_y = std::get<2>(target_pos);
+    const float bearing = Physik::bearing(pos.x, pos.z, target_x, target_y);
+    if (std::abs(get_bearing() - bearing) > 1.f) set_target_bearing(bearing);
+    if (Physik::distanz(pos.x, pos.z, target_x, target_y) <= motor_linear.get_bremsweg()) {
+        std::get<bool>(target_pos) = false; // Ziel erreicht.
+        stop();
+        set_target_bearing(bearing);
+    }
+}
+
+void Objekt_Steuerbar::set_target_v(float v) {
+    motor_linear.v_target = v * motor_linear.v_max;
 }

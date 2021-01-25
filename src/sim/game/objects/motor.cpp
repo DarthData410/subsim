@@ -1,4 +1,5 @@
 #include "motor.hpp"
+#include "../../physik.hpp"
 
 #include <algorithm>
 
@@ -10,4 +11,8 @@ void Motor::tick(float s) {
     else if (v < v_target) v += a * s; // Beschleunigen
     else if (v > v_target) v -= a * s; // Bremsen
     v = std::clamp(v, -v_max, v_max); // Höchstgeschw. nicht überschreiten
+}
+
+float Motor::get_bremsweg() const {
+    return Physik::bremsweg(v, a);
 }

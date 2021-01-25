@@ -23,7 +23,8 @@ public:
     /// Startet den Bremsvorgang, leitet kompletten Stilltstand ein.
     void stop();
 
-    void set_target_v(float v) { motor_linear.v_target = v; }
+    /// Zielgeschwindigkeit als Faktor der Höchstgeschwindigkeit von -1.0 bis +1.0.
+    void set_target_v(float v);
 
     void set_target_pitch(float degree) { motor_tauch.v_target = degree; }
 
@@ -34,6 +35,12 @@ public:
     void set_target_bearing(float degree);
 
     //TODO void set_target_depth(float depth);
+
+    /// Getter: Aktuelle x/z-Geschwindigkeit (absolut).
+    float get_speed() const { return motor_linear.v; }
+
+    /// Liefert die relative x/z-Geschwindigkeit zur Höchstgeschwindigkeit (negativ, wenn Rückwärts).
+    float get_speed_relativ() const { return motor_linear.v / motor_linear.v_max; }
 
 protected:
 
@@ -60,4 +67,5 @@ private:
     /// Ruder in Zielrichtung einstellen.
     void auto_rudder();
 
+    void auto_path();
 };

@@ -7,14 +7,13 @@ class Objekt {
 
 public:
 
-    enum class Typ {
-        OBJEKT, OBJEKT_STEUERBAR, SUB, TORPEDO
-    };
+    /// Vererbungshierachie von Objekt. Zur Typenbestimmung bei Laufzeit.
+    enum class Typ { OBJEKT, OBJEKT_STEUERBAR, SUB, TORPEDO };
 
     Objekt() = default;
 
     explicit Objekt(const Ogre::Vector3& pos, const Ogre::Quaternion& orientation =
-                    Ogre::Quaternion::IDENTITY); //Ogre::Quaternion(Ogre::Degree(180), Ogre::Vector3::UNIT_Y));
+                    Ogre::Quaternion(Ogre::Degree(90), Ogre::Vector3::UNIT_Y));
 
     virtual Typ get_typ() const = 0;
 
@@ -33,6 +32,9 @@ public:
     virtual ~Objekt();
 
 protected:
+
+    /// Toleranz bei der Entfernungsbestimmung.
+    static constexpr float DISTANZ_SIGMA = 8.f;
 
     /// Einmalige ID.
     uint32_t id;
