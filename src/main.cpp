@@ -1,10 +1,21 @@
 #include "gfx/ui.hpp"
 #include "fenster/szene.hpp"
+#include "sim/net/host.hpp"
 
 #include <OgreRoot.h>
 #include <iostream>
+#include <log.hpp>
+
+void start_server(Host*& host) {
+    Log::out() << "Server startet..." << Log::flush;
+    host = new Host(2907);
+    host->start();
+}
 
 int main(int, char**) {
+    Host* host = nullptr;
+    std::thread* host_thread = new std::thread(start_server, std::ref(host));
+
     try {
         Szene app;
         app.initApp();
@@ -13,6 +24,18 @@ int main(int, char**) {
     } catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;
         return 1;
+    }
+    /*#if defined(__linux__)
+        if (server) std::this_thread::sleep_for(std::chrono::seconds(1)); // X11 workaround
+    #endif*/
+
+    // Host stoppen
+    if (host && host_thread) {
+        Log::out() << "Server stop.\n";
+        host->stop();
+        host_thread->join();
+        delete host;
+        delete host_thread;
     }
     return 0;
 }

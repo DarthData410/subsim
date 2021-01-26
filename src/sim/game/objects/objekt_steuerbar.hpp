@@ -3,6 +3,9 @@
 #include "objekt.hpp"
 #include "motor.hpp"
 
+#include <cereal/types/base_class.hpp>
+#include <cereal/types/tuple.hpp>
+
 class Objekt_Steuerbar : public Objekt {
 
 public:
@@ -45,6 +48,21 @@ public:
     /// Liefert einen Wert zwischen 0 und 1, wie gut sichtbar das fremden Objekt ist.
     //float get_sichtbarkeit(const Objekt_Steuerbar* objekt);//TODO
 
+    /// Serialisierung via cereal.
+    template <class Archive> void serialize(Archive& ar) {
+        ar(cereal::base_class<Objekt>(this),
+            motor_linear, motor_rot, motor_tauch,
+            target_bearing, target_pos
+        );
+    }
+
+private:
+
+    /// Ruder in Zielrichtung einstellen.
+    void auto_rudder();
+
+    void auto_path();
+
 protected:
 
     /// Motor zur linearen Bewegung.
@@ -65,10 +83,4 @@ protected:
     /// Zieltiefe
     // TODO std::tuple<bool, float> target_depth;
 
-private:
-
-    /// Ruder in Zielrichtung einstellen.
-    void auto_rudder();
-
-    void auto_path();
 };

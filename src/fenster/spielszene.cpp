@@ -1,8 +1,7 @@
 #include "spielszene.hpp"
-#include "../sim/welt.hpp"
 #include "../sim/physik.hpp"
+#include "imgui_addons.hpp"
 
-#include <imgui.h>
 #include <OgreNode.h>
 #include <OgreEntity.h>
 #include <OgreRenderWindow.h>
@@ -12,10 +11,6 @@
 #include <iostream>
 
 Spielszene::Spielszene(Ogre::RenderWindow* window, Ogre::SceneManager* scene_manager)
-    : player_sub(Ogre::Vector3(0, 2, 0),
-                 Motor(5, 0.2),
-                 Motor(5, 1),
-                 Motor(20, 0.1))
 {
     Spielszene::scene_manager = scene_manager;
 
@@ -35,7 +30,6 @@ Spielszene::Spielszene(Ogre::RenderWindow* window, Ogre::SceneManager* scene_man
     //camNode->setPosition(0, 0, 15);
     //camNode->lookAt(Ogre::Vector3(0, 0, -1), Ogre::Node::TS_PARENT);
     //camNode->setPosition(Ogre::Vector3(0, 5, 15));
-    camNode->setAutoTracking(true, subNode);
 
     // Himmel // drawFirst evtl. problematisch
     scene_manager->setSkyBox(true, "Examples/MorningSkyBox", 200, false);
@@ -44,13 +38,6 @@ Spielszene::Spielszene(Ogre::RenderWindow* window, Ogre::SceneManager* scene_man
     //Ogre::ColourValue fadeColour(0.5, 0.5, 0.7);
     //window->getViewport(0)->setBackgroundColour(fadeColour);
     //scene_manager->setFog(Ogre::FOG_LINEAR, fadeColour, 0, 0, 250);
-
-    // finally something to render
-    Ogre::Entity* ent = scene_manager->createEntity("Sinbad.mesh"); //sub1.mesh
-    subNode = scene_manager->getRootSceneNode()->createChildSceneNode();
-    //ent->getWorldBoundingBox().intersects(ent->getWorldBoundingBox());
-    ent->setCastShadows(true);
-    subNode->attachObject(ent);
 
     //camNode->setAutoTracking(true, subNode, Ogre::Vector3::NEGATIVE_UNIT_Z, Ogre::Vector3(0, 0, 150));
 
@@ -71,57 +58,6 @@ Spielszene::Spielszene(Ogre::RenderWindow* window, Ogre::SceneManager* scene_man
     node_ground->setPosition(0,0,0); // TODO move?
 }
 
-void Spielszene::render() {
-    subNode->setPosition(player_sub.get_pos());
-    subNode->setOrientation(player_sub.get_orientation());
-    camNode->setPosition(subNode->getPosition() + Ogre::Vector3(10, 1, 10));
-
-    ImGui::SetNextWindowSize({300,0});
-    ImGui::Begin("debugWindow");
-    ImGui::Text("Sub: %.1f %.1f %.1f", player_sub.get_pos().x, player_sub.get_pos().y, player_sub.get_pos().z);
-    ImGui::Text("Pitch: %.1f", player_sub.get_pitch());
-    ImGui::Text("Bearing: %.1f", player_sub.get_bearing());
-
-    static float target_x = 0, target_z = 0;
-    ImGui::InputFloat("Target_x", &target_x);
-    ImGui::InputFloat("Target_z", &target_z);
-    if (ImGui::Button("Set##set_target_pos")) player_sub.set_target_pos(target_x, target_z);
-
-    static float target_bearing = 0;
-    ImGui::SliderFloat("target_bearing", &target_bearing, 0, 360.f);
-    if (ImGui::Button("Set##set_bearing")) player_sub.set_target_bearing(target_bearing);
-    ImGui::Separator();
-
-    static float target_speed = 0;
-    ImGui::SliderFloat("target_speed", &target_speed, -1.0f, 1.0f);
-    if (ImGui::Button("Set##set_speed")) player_sub.set_target_v(target_speed);
-    ImGui::Separator();
-
-    if (ImGui::Button("vorwärts")) player_sub.set_target_v(100);
-    if (ImGui::Button("stop")) player_sub.stop();
-    if (ImGui::Button("rückwärts")) player_sub.set_target_v(-100);
-    if (ImGui::Button("rechts")) player_sub.set_target_rudder(100);
-    if (ImGui::Button("links")) player_sub.set_target_rudder(-100);
-    if (ImGui::Button("auf")) player_sub.set_target_pitch(100);
-    if (ImGui::Button("ab")) player_sub.set_target_pitch(-100);
-
-    ImGui::Separator();
-
-    if (ImGui::Button("bearing")) {
-        std::cout << Physik::bearing(
-                player_sub.get_pos().x, player_sub.get_pos().z, target_x, target_z) << '\n';
-    }
-
-    ImGui::End();
-
-    static Ogre::Timer timer;
-    static Welt welt;
-    if (timer.getMilliseconds() > 50) {
-        player_sub.tick(&welt, (float)timer.getMilliseconds() / 1000.f);
-        timer.reset();
-    }
-}
-
 void Spielszene::key_pressed(const OgreBites::Keysym& key) {
     switch (key.sym) {
         case SDLK_RIGHT: camNode->yaw(Ogre::Degree(-1)); break;
@@ -130,4 +66,69 @@ void Spielszene::key_pressed(const OgreBites::Keysym& key) {
         case SDLK_DOWN:  camNode->pitch(Ogre::Degree(-1)); break;
         default: break;
     }
+}
+
+void Spielszene::render() {
+    static Ogre::Timer timer;
+    if (timer.getMilliseconds() > 500.f) {
+        timer.reset();
+        sync();
+    }
+    if (subNode) render_subcontrol();
+}
+
+void Spielszene::sync() {
+    // Sub vorhanden - Grafik erzeugen
+    if (player_sub) {
+        if (subNode == nullptr) {
+            Ogre::Entity* ent = scene_manager->createEntity("Sinbad.mesh"); //sub1.mesh
+            subNode = scene_manager->getRootSceneNode()->createChildSceneNode();
+            //ent->getWorldBoundingBox().intersects(ent->getWorldBoundingBox());
+            ent->setCastShadows(true);
+            subNode->attachObject(ent);
+            //camNode->setAutoTracking(true, subNode);
+        }
+        // Grafik Position Update
+        subNode->setPosition(player_sub->get_pos());
+        subNode->setOrientation(player_sub->get_orientation());
+        camNode->setPosition(subNode->getPosition() + Ogre::Vector3(10, 1, 10));
+    }
+    //else player_sub = welt.get_new_player_sub(1);
+}
+
+void Spielszene::render_subcontrol() {
+    ImGui::SetNextWindowSize({300,0});
+    ImGui::Begin("debugWindow");
+
+    ImGui::Text("Sub: %.1f %.1f %.1f", player_sub->get_pos().x, player_sub->get_pos().y, player_sub->get_pos().z);
+    ImGui::Text("Pitch: %.1f", player_sub->get_pitch());
+    ImGui::Text("Bearing: %.1f", player_sub->get_bearing());
+
+    static float target_x = 0, target_z = 0;
+    ImGui::InputFloat("Target_x", &target_x);
+    ImGui::InputFloat("Target_z", &target_z);
+    if (ImGui::Button("Set##set_target_pos")) player_sub->set_target_pos(target_x, target_z);
+    if (ImGui::Button("bearing")) { // Physik::bearing Test
+        std::cout << Physik::bearing(player_sub->get_pos().x, player_sub->get_pos().z, target_x, target_z) << '\n';
+    }
+
+    static float target_bearing = 0;
+    ImGui::Nada::KnobDegree("target_bearing", &target_bearing);
+    if (ImGui::Button("Set##set_bearing")) player_sub->set_target_bearing(target_bearing);
+    ImGui::Separator();
+
+    static float target_speed = 0;
+    ImGui::SliderFloat("target_speed", &target_speed, -1.0f, 1.0f);
+    if (ImGui::Button("Set##set_speed")) player_sub->set_target_v(target_speed);
+    ImGui::Separator();
+
+    if (ImGui::Button("vorwärts")) player_sub->set_target_v(100);
+    if (ImGui::Button("stop")) player_sub->stop();
+    if (ImGui::Button("rückwärts")) player_sub->set_target_v(-100);
+    if (ImGui::Button("rechts")) player_sub->set_target_rudder(100);
+    if (ImGui::Button("links")) player_sub->set_target_rudder(-100);
+    if (ImGui::Button("auf")) player_sub->set_target_pitch(100);
+    if (ImGui::Button("ab")) player_sub->set_target_pitch(-100);
+
+    ImGui::End();
 }

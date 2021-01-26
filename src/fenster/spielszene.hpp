@@ -7,7 +7,6 @@
 
 class Spielszene final {
 
-
 public:
 
     Spielszene() = default;
@@ -18,13 +17,18 @@ public:
 
     void key_pressed(const OgreBites::Keysym& key);
 
+    virtual void sync();
+
 private:
 
+    void render_subcontrol();
+
+    /// Simulation Data
+    std::optional<Sub> player_sub = std::nullopt;
+
+    /// Gfx Data
     Ogre::RenderWindow* window = nullptr;
     Ogre::SceneManager* scene_manager = nullptr;
-
-    Sub player_sub;
-
     Ogre::SceneNode* camNode   = nullptr;
     Ogre::SceneNode* lightNode = nullptr;
     Ogre::SceneNode* subNode = nullptr;

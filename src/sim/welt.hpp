@@ -4,7 +4,7 @@
 
 class Welt final {
 
-    friend class Spielszene;
+    friend class Server;
 
 public:
 
@@ -14,14 +14,16 @@ public:
 
     void tick();
 
+    Sub get_new_player_sub(uint8_t team);
+
 private:
 
     float timelapse = 1.0f;
 
     Ogre::Timer timer;
 
-    std::vector<Team> teams;
+    std::unordered_map<uint8_t, Team> teams;
 
-    std::unordered_map<decltype(std::declval<Objekt>().get_id()), std::unique_ptr<Objekt>> objekte;
+    std::unordered_map<uint32_t, Objekt*> objekte;
 
 };

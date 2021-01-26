@@ -1,4 +1,5 @@
 #include <Ogre.h>
+#include <cereal/cereal.hpp>
 
 class Welt;
 
@@ -19,7 +20,11 @@ public:
 
     virtual void tick(Welt* welt, float s) = 0;
 
+    /// Getter: Einmalige ID, global gültig für alle Objekte und vererbte Klassen.
     uint32_t get_id() const { return id; }
+
+    /// Getter: Teamzugehörigkeit. 0 = Kein Team.
+    uint8_t get_team() const { return team; }
 
     const Ogre::Vector3& get_pos() const { return pos; }
 
@@ -31,13 +36,18 @@ public:
 
     virtual ~Objekt();
 
-protected:
+    /// Serialisierung via cereal.
+    template <class Archive> void serialize(Archive& ar) {
+        ar(id, team, pos.x, pos.y, pos.z, orientation.x, orientation.y, orientation.z, orientation.w);
+    }
 
-    /// Toleranz bei der Entfernungsbestimmung.
-    static constexpr float DISTANZ_SIGMA = 8.f;
+protected:
 
     /// Einmalige ID.
     uint32_t id;
+
+    /// Teamzugehörigkeit. 0 = Kein Team.
+    uint8_t team = 0;
 
     /// Position.
     Ogre::Vector3 pos;

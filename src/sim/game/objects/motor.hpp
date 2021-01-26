@@ -24,4 +24,9 @@ struct Motor final {
     /// Beschleunigung.
     float a;
 
+    /// Serialisierung via cereal.
+    template <class Archive> void serialize(Archive& ar) {
+        ar(v_max, v_target, v, a);
+    }
+
 };

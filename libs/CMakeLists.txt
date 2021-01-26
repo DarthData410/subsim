@@ -10,6 +10,7 @@ if (WIN32)
     #osmesa
     #find_package(GLEW REQUIRED)
     #set(MSYS2_LIBS SDL2 osmesa)
+    set(MSYS2_LIBS ws2_32 wsock32)
 endif()
 
 #list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
@@ -34,6 +35,9 @@ else()
 endif()
 add_subdirectory(ogre-${OGRE_VER} ogre3d)
 
+# RPCLIB 5b26d69 https://github.com/qchateau/rpclib http://rpclib.net/
+add_subdirectory(rpclib rpclib)
+
 # Bibliotheken Bauen
 add_library(libs STATIC
         #${IMGUI_VER}/imgui.cpp
@@ -52,20 +56,18 @@ target_compile_definitions(libs PUBLIC
         )
 
 target_include_directories(libs SYSTEM PUBLIC
-        #${SDL2_INCLUDE_DIRS}
-        #${SDL2_IMAGE_INCLUDE_DIRS}
-        #${OpenGL_INCLUDE_DIRS}
-        ${PROJECT_BINARY_DIR}/libs/implot
         ${PROJECT_BINARY_DIR}/libs/ogre3d/imgui-1.79
         ${PROJECT_BINARY_DIR}/libs/ogre3d/include
-        ${CMAKE_CURRENT_LIST_DIR}/ogre-${OGRE_VER}/OgreMain/include }
-        #${CMAKE_CURRENT_LIST_DIR}/${IMGUI_VER}
+        ${CMAKE_CURRENT_LIST_DIR}/ogre-${OGRE_VER}/OgreMain/include
+        ${CMAKE_CURRENT_LIST_DIR}/implot
+        ${CMAKE_CURRENT_LIST_DIR}/rpclib/include
         )
 
 target_link_libraries(libs
-        ${MSYS2_LIBS}
+        rpc
         OgreBites
         OgreRTShaderSystem
+        ${MSYS2_LIBS}
         #${SDL2_LIBRARIES}
         #${SDL2_IMAGE_LIBRARIES}
         #${OPENGL_LIBRARIES}

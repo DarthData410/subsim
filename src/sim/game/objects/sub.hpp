@@ -15,4 +15,9 @@ public:
 
     void tick(Welt* welt, float s) override final;
 
+    /// Serialisierung via cereal.
+    template <class Archive> void serialize(Archive& ar) {
+        ar(cereal::base_class<Objekt_Steuerbar>(this));
+    }
+
 };

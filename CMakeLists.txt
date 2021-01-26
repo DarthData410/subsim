@@ -18,11 +18,14 @@ else () # Debug build
 endif ()
 add_subdirectory(libs/libnada)
 
+find_package(CEREAL REQUIRED)
+
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/build/)
 file(GLOB_RECURSE QUELLTEXT src/*.hpp src/*cpp)
 add_executable(nada_sub ${QUELLTEXT})
 target_include_directories(nada_sub PRIVATE
         ${LIBNADA_INCLUDE_DIRS}
+        ${CEREAL_INCLUDE_DIRS}
         )
 target_link_libraries(nada_sub
         nada
