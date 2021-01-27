@@ -1,6 +1,7 @@
 #include "gfx/ui.hpp"
 #include "fenster/szene.hpp"
 #include "sim/net/host.hpp"
+#include "sim/net/net.hpp"
 
 #include <OgreRoot.h>
 #include <iostream>
@@ -8,26 +9,32 @@
 
 void start_server(Host*& host) {
     Log::out() << "Server startet..." << Log::flush;
-    host = new Host(2907);
-    host->start();
+    host = new Host(Net::PORT);
+    try { host->start(); }
+    catch (const std::exception& e) { std::cerr << "Server Error: " << e.what() << std::endl; }
 }
 
 int main(int, char**) {
+    // Enet init
+    if (enet_initialize() != 0) {
+        std::cerr << "An error occurred while initializing ENet.\n";
+        return EXIT_FAILURE;
+    } else atexit(enet_deinitialize);
+
     Host* host = nullptr;
-    std::thread* host_thread = new std::thread(start_server, std::ref(host));
+    std::thread* host_thread = nullptr;
+    host_thread = new std::thread(start_server,std::ref(host));
 
     try {
         Szene app;
         app.initApp();
         app.getRoot()->startRendering();
         app.closeApp();
-    } catch (const std::exception& e) {
-        std::cerr << e.what() << std::endl;
-        return 1;
-    }
-    /*#if defined(__linux__)
+    } catch (const std::exception& e) { std::cerr << e.what() << std::endl; }
+
+    #if defined(__linux__)
         if (server) std::this_thread::sleep_for(std::chrono::seconds(1)); // X11 workaround
-    #endif*/
+    #endif
 
     // Host stoppen
     if (host && host_thread) {

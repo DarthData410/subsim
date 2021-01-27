@@ -4,7 +4,7 @@
 
 class Welt final {
 
-    friend class Server;
+    friend class Host;
 
 public:
 

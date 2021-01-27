@@ -1,6 +1,9 @@
 #pragma once
 
-#include <rpc/server.h>
+#include "../welt.hpp"
+
+#include <enet/enet.h>
+#include <mutex>
 
 class Welt;
 
@@ -14,10 +17,19 @@ public:
 
     void stop();
 
+    ~Host();
+
 private:
 
-    Welt* welt;
+    // Model
+    bool loop = true;
 
-    rpc::server server;
+    Welt welt;
+
+    // Impl
+    std::mutex welt_mutex;
+
+    // Net
+    ENetHost* server;
 
 };

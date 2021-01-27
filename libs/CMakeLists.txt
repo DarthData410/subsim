@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.8)
-
 project(libs)
+set(CMAKE_CXX_STANDARD 17)
 
 # Windows spezifisch
 if (WIN32)
@@ -10,13 +10,17 @@ if (WIN32)
     #osmesa
     #find_package(GLEW REQUIRED)
     #set(MSYS2_LIBS SDL2 osmesa)
-    set(MSYS2_LIBS ws2_32 wsock32)
+    #find_package(Threads REQUIRED) #Link: Threads::Threads
+    #ws2_32 wsock32
+    set(MSYS2_LIBS)
 endif()
 
 #list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 #find_package(OpenGL REQUIRED)
 #find_package(SDL2 REQUIRED)
 #find_package(SDL2_image REQUIRED)
+
+add_subdirectory(enet enet)
 
 # Ogre3D einrichten
 set(OGRE_VER "1.12.10")
@@ -36,7 +40,8 @@ endif()
 add_subdirectory(ogre-${OGRE_VER} ogre3d)
 
 # RPCLIB 5b26d69 https://github.com/qchateau/rpclib http://rpclib.net/
-add_subdirectory(rpclib rpclib)
+#set(ASIO_STANDALONE 1)
+#add_subdirectory(rpclib rpclib)
 
 # Bibliotheken Bauen
 add_library(libs STATIC
@@ -60,11 +65,12 @@ target_include_directories(libs SYSTEM PUBLIC
         ${PROJECT_BINARY_DIR}/libs/ogre3d/include
         ${CMAKE_CURRENT_LIST_DIR}/ogre-${OGRE_VER}/OgreMain/include
         ${CMAKE_CURRENT_LIST_DIR}/implot
-        ${CMAKE_CURRENT_LIST_DIR}/rpclib/include
+        ${CMAKE_CURRENT_LIST_DIR}/enet/include
+        #${CMAKE_CURRENT_LIST_DIR}/rpclib/include
         )
 
 target_link_libraries(libs
-        rpc
+        enet
         OgreBites
         OgreRTShaderSystem
         ${MSYS2_LIBS}
