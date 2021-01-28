@@ -26,7 +26,7 @@ public:
 
 private:
 
-    Spielszene spielszene;
+    Spielszene* spielszene = nullptr;
 
     std::unique_ptr<OgreBites::ImGuiInputListener> mImguiListener;
     Ogre::RTShader::ShaderGenerator* shadergen = nullptr;

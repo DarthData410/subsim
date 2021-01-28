@@ -6,19 +6,19 @@
 Host::Host(uint16_t port) {
     ENetAddress address {
         .host = ENET_HOST_ANY,
-        .port = Net::PORT
+        .port = port
     };
-    if (server = enet_host_create(&address, 32, 2, 0, 0); server == nullptr) {
+    if (server = enet_host_create(&address, 32, 2, 0, 0); !server) {
         Log::err() << "An error occurred while trying to create an ENet server host.\n";
         exit(EXIT_FAILURE);
     }
-
 }
 
 void Host::start() {
     while (loop) {
         welt.tick();
 
+        Log::out() << "Server eventloop" << Log::endl;
         ENetEvent event;
         while(enet_host_service(server, &event, 1000) > 0) switch (event.type) {
             case ENET_EVENT_TYPE_CONNECT:
@@ -50,5 +50,6 @@ void Host::stop() {
 }
 
 Host::~Host() {
+    stop();
     enet_host_destroy(server);
 }

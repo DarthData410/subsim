@@ -8,5 +8,4 @@ public:
 
     static constexpr uint16_t PORT = 29078;
 
-
 };

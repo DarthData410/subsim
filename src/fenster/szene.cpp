@@ -17,6 +17,7 @@ Szene::Szene() : OgreBites::ApplicationContext("nadasub") {
 }
 
 Szene::~Szene() {
+    delete spielszene;
     /*getRenderWindow()->removeAllViewports();
     removeInputListener(mImguiListener.get());
     scnMgr->removeRenderQueueListener(Ogre::OverlaySystem::getSingletonPtr());
@@ -50,14 +51,14 @@ void Szene::setup() {
     // register our scene with the RTSS
     shadergen = Ogre::RTShader::ShaderGenerator::getSingletonPtr();
     shadergen->addSceneManager(scnMgr);
-    spielszene = Spielszene(getRenderWindow(), scnMgr);
+    spielszene = new Spielszene(getRenderWindow(), scnMgr);
 }
 
 bool Szene::keyPressed(const OgreBites::KeyboardEvent& evt) {
     switch (evt.keysym.sym) {
         using namespace OgreBites;
         case SDLK_ESCAPE: getRoot()->queueEndRendering(); break;
-        default: spielszene.key_pressed(evt.keysym);
+        default: spielszene->key_pressed(evt.keysym);
     }
     return true;
 }
@@ -67,5 +68,5 @@ void Szene::preViewportUpdate(const Ogre::RenderTargetViewportEvent& evt) {
     //if (!mTrayMgr->getTraysLayer()->isVisible()) return;
     Ogre::ImGuiOverlay::NewFrame();
     //ImGui::ShowDemoWindow();
-    spielszene.render();
+    spielszene->render();
 }

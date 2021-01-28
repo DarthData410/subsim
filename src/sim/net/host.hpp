@@ -3,7 +3,6 @@
 #include "../welt.hpp"
 
 #include <enet/enet.h>
-#include <mutex>
 
 class Welt;
 
@@ -26,10 +25,7 @@ private:
 
     Welt welt;
 
-    // Impl
-    std::mutex welt_mutex;
-
     // Net
-    ENetHost* server;
+    ENetHost* server = nullptr;
 
 };

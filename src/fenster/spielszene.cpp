@@ -10,8 +10,8 @@
 #include <SDL2/SDL_keycode.h>
 #include <iostream>
 
-Spielszene::Spielszene(const std::string& ip) : klient(ip) {
-
+Spielszene::Spielszene(const std::string& ip) : klient(new Klient(ip)) {
+    //
 }
 
 Spielszene::Spielszene(Ogre::RenderWindow* window, Ogre::SceneManager* scene_manager)
@@ -63,13 +63,17 @@ Spielszene::Spielszene(Ogre::RenderWindow* window, Ogre::SceneManager* scene_man
     node_ground->setPosition(0,0,0); // TODO move?
 }
 
+Spielszene::~Spielszene() {
+    delete klient;
+}
+
 void Spielszene::key_pressed(const OgreBites::Keysym& key) {
     switch (key.sym) {
         case SDLK_RIGHT: camNode->yaw(Ogre::Degree(-1)); break;
         case SDLK_LEFT:  camNode->yaw(Ogre::Degree(1)); break;
         case SDLK_UP:    camNode->pitch(Ogre::Degree(1)); break;
         case SDLK_DOWN:  camNode->pitch(Ogre::Degree(-1)); break;
-        case SDLK_SPACE: klient.test(); break;
+        case SDLK_SPACE: klient->test(); break;
         default: break;
     }
 }

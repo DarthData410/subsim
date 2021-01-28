@@ -21,13 +21,15 @@ public:
 
     virtual void sync();
 
+    virtual ~Spielszene();
+
 private:
 
     /// Zeigt das eigene Sub + dessen Steuerung
     void render_subcontrol();
 
     /// Netzwerkklient
-    Klient klient;
+    Klient* klient = nullptr;
 
     /// Simulation
     std::optional<Sub> player_sub = std::nullopt;

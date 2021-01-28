@@ -10,8 +10,7 @@
 void start_server(Host*& host) {
     Log::out() << "Server startet..." << Log::flush;
     host = new Host(Net::PORT);
-    try { host->start(); }
-    catch (const std::exception& e) { std::cerr << "Server Error: " << e.what() << std::endl; }
+    host->start();
 }
 
 int main(int, char**) {
@@ -23,7 +22,7 @@ int main(int, char**) {
 
     Host* host = nullptr;
     std::thread* host_thread = nullptr;
-    host_thread = new std::thread(start_server,std::ref(host));
+    host_thread = new std::thread(start_server, std::ref(host));
 
     try {
         Szene app;
