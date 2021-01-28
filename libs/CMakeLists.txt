@@ -4,23 +4,11 @@ set(CMAKE_CXX_STANDARD 17)
 
 # Windows spezifisch
 if (WIN32)
-    # TODO doc
-    # mingw64/mingw-w64-x86_64-mesa
-    #opengl32 glew32 freeglut glu32
-    #osmesa
-    #find_package(GLEW REQUIRED)
-    #set(MSYS2_LIBS SDL2 osmesa)
-    #find_package(Threads REQUIRED) #Link: Threads::Threads
     #ws2_32 wsock32
     set(MSYS2_LIBS)
 endif()
 
-#list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
-#find_package(OpenGL REQUIRED)
-#find_package(SDL2 REQUIRED)
-#find_package(SDL2_image REQUIRED)
-
-add_subdirectory(enet enet)
+add_subdirectory(enet enet) # ENet 1.3.17 getestet
 
 # Ogre3D einrichten
 set(OGRE_VER "1.12.10")
@@ -39,17 +27,8 @@ else()
 endif()
 add_subdirectory(ogre-${OGRE_VER} ogre3d)
 
-# RPCLIB 5b26d69 https://github.com/qchateau/rpclib http://rpclib.net/
-#set(ASIO_STANDALONE 1)
-#add_subdirectory(rpclib rpclib)
-
 # Bibliotheken Bauen
 add_library(libs STATIC
-        #${IMGUI_VER}/imgui.cpp
-        #${IMGUI_VER}/imgui_widgets.cpp
-        #${IMGUI_VER}/imgui_draw.cpp
-        #${IMGUI_VER}/examples/imgui_impl_sdl.cpp
-        #${IMGUI_VER}/examples/imgui_impl_opengl3.cpp
         implot/implot.cpp
         implot/implot_items.cpp
         )
@@ -66,7 +45,6 @@ target_include_directories(libs SYSTEM PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}/ogre-${OGRE_VER}/OgreMain/include
         ${CMAKE_CURRENT_LIST_DIR}/implot
         ${CMAKE_CURRENT_LIST_DIR}/enet/include
-        #${CMAKE_CURRENT_LIST_DIR}/rpclib/include
         )
 
 target_link_libraries(libs
@@ -74,7 +52,4 @@ target_link_libraries(libs
         OgreBites
         OgreRTShaderSystem
         ${MSYS2_LIBS}
-        #${SDL2_LIBRARIES}
-        #${SDL2_IMAGE_LIBRARIES}
-        #${OPENGL_LIBRARIES}
         )

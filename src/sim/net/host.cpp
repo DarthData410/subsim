@@ -1,5 +1,6 @@
 #include "host.hpp"
 #include "net.hpp"
+#include "kommando.hpp"
 
 #include <log.hpp>
 
@@ -28,14 +29,24 @@ void Host::start() {
                        //event.peer->data = "Client information";
                 break;
 
-            case ENET_EVENT_TYPE_RECEIVE:
-                printf("A packet of length %u containing %s was received from %s on channel %u.\n",
-                       event.packet->dataLength,
-                       event.packet->data,
-                       event.peer->data,
-                       event.channelID);
-                enet_packet_destroy(event.packet);
-                break;
+            case ENET_EVENT_TYPE_RECEIVE: {
+                printf("Server: A packet of length [%u] containing [%s] was received from [%s] on channel [%u].\n",
+                       event.packet->dataLength, event.packet->data, event.peer->data, event.channelID);
+                std::string data((const char*) event.packet->data);
+                std::cout << "Data = " << data << std::endl;
+
+                // Anfrage parsen
+                std::stringstream ss;
+                Net::Deserializer ds(ss);
+                Net::Request request;
+                ds >> request;
+                if (request == Net::SUB_CMD) {
+                    Kommando kommando;
+                    ds >> kommando;
+                    kommando.apply(&welt);
+                } else Log::err() << "\tUnknown Request Net::" << request << '\n';
+                enet_packet_destroy(event.packet); // Aufräumen
+                } break;
 
             case ENET_EVENT_TYPE_DISCONNECT:
                 printf("%s disconnected.\n", event.peer->data);

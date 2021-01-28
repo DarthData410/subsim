@@ -5,6 +5,7 @@
 class Welt final {
 
     friend class Host;
+    friend class Kommando;
 
 public:
 

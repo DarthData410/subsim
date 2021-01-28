@@ -46,13 +46,7 @@ bool Klient::connect() {
 
 void Klient::test() {
     if (server) {
-        std::cout << "Klient: wuppi." << std::endl;
-        ENetPacket* packet = enet_packet_create ("packet",
-                                                 strlen ("packet") + 1,
-                                                 ENET_PACKET_FLAG_RELIABLE);
-        //enet_packet_resize (packet, strlen ("packetfoo") + 1);
-        //strcpy (& packet -> data [strlen ("packet")], "foo");
-        enet_peer_send(server, 0, packet);
+        sende("Wuppiger Test!");
     }
 }
 
@@ -63,4 +57,19 @@ void Klient::keep_alive() {
         std::scoped_lock lock(connection_mutex);
         enet_host_service(klient, &event, 5000);
     }
+}
+
+void Klient::sende(const std::string& paket) {
+    ENetPacket* packet = enet_packet_create(paket.c_str(), paket.size() + 1, ENET_PACKET_FLAG_RELIABLE);
+    //(packet != NULL);
+    enet_peer_send(server, 0, packet);
+    enet_host_flush(klient);
+}
+
+void Klient::sende_kommando(const Kommando& cmd) {
+    std::stringstream ss;
+    Net::Serializer s(ss);
+    s << Net::SUB_CMD;
+    s << cmd;
+    sende(ss.str());
 }
