@@ -32,7 +32,7 @@ int main(int, char**) {
     } catch (const std::exception& e) { std::cerr << e.what() << std::endl; }
 
     #if defined(__linux__)
-        if (server) std::this_thread::sleep_for(std::chrono::seconds(1)); // X11 workaround
+        if (host) std::this_thread::sleep_for(std::chrono::seconds(1)); // X11 workaround
     #endif
 
     // Host stoppen

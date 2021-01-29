@@ -18,7 +18,9 @@ else () # Debug build
 endif ()
 add_subdirectory(libs/libnada)
 
-find_package(CEREAL REQUIRED)
+if (WIN32)
+    find_package(CEREAL)
+endif()
 
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/build/)
 file(GLOB_RECURSE QUELLTEXT src/*.hpp src/*cpp)
@@ -30,5 +32,6 @@ target_include_directories(nada_sub PRIVATE
 target_link_libraries(nada_sub
         nada
         libs
+        stdc++fs
         )
 target_compile_options(nada_sub PRIVATE ${NADA_CXX_FLAGS})
