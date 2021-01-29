@@ -20,12 +20,19 @@ public:
 
 private:
 
-    // Model
+    /// Verwaltet den Fall, wenn ein `ENET_EVENT_TYPE_RECEIVE` auftritt.
+    void handle_receive(ENetEvent& event);
+
+    /// Sendet eine Antwort an den Peer aus `event`, wiederverwendet dabei `event->packet`.
+    void sende_antwort(ENetEvent& event, const std::string& response);
+
+    /// Net
+    ENetHost* server = nullptr;
+
+    /// Model
     bool loop = true;
 
+    /// Simulierte Welt.
     Welt welt;
-
-    // Net
-    ENetHost* server = nullptr;
 
 };

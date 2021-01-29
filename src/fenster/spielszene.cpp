@@ -9,6 +9,7 @@
 #include <OgreViewport.h>
 #include <SDL2/SDL_keycode.h>
 #include <iostream>
+#include <log.hpp>
 
 Spielszene::Spielszene(const std::string& ip) : klient(new Klient(ip)) {
     //
@@ -73,7 +74,12 @@ void Spielszene::key_pressed(const OgreBites::Keysym& key) {
         case SDLK_LEFT:  camNode->yaw(Ogre::Degree(1)); break;
         case SDLK_UP:    camNode->pitch(Ogre::Degree(1)); break;
         case SDLK_DOWN:  camNode->pitch(Ogre::Degree(-1)); break;
-        case SDLK_SPACE: klient->test(); break;
+        case SDLK_m: {
+            if (player_sub) { Log::debug() << "New player_sub not needed\n"; break; }
+            const std::string& antwort = klient->request(Net::AKTION_NEUES_UBOOT, 1);
+            if (!antwort.empty()) player_sub = Net::deserialize<Sub>(antwort);
+            else Log::err() << "New player_sub not available\n";
+        } break;
         default: break;
     }
 }
@@ -103,7 +109,6 @@ void Spielszene::sync() {
         subNode->setOrientation(player_sub->get_orientation());
         camNode->setPosition(subNode->getPosition() + Ogre::Vector3(10, 1, 10));
     }
-    //else player_sub = welt.get_new_player_sub(1);
 }
 
 void Spielszene::render_subcontrol() {

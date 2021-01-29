@@ -14,9 +14,7 @@ Klient::Klient(const std::string& ip) : host_ip(ip) {
         Log::err() << "Klient: An error occurred while trying to create an ENet client host.\n";
         return;
     }
-    Log::debug() << "Klient: ()\n";
     connect();
-    test();
     flush_thread = std::thread(&Klient::keep_alive, this);
 }
 
@@ -27,6 +25,7 @@ Klient::~Klient() {
 }
 
 bool Klient::connect() {
+    Log::debug() << "Klient: Connecting " << host_ip << Log::endl;
     ENetAddress host_address;
     enet_address_set_host(&host_address, host_ip.c_str());
     host_address.port = Net::PORT;
@@ -35,7 +34,7 @@ bool Klient::connect() {
         return false;
     }
     ENetEvent event;
-    if (enet_host_service(klient, &event, 5000) > 0 && event.type == ENET_EVENT_TYPE_CONNECT) {
+    if (enet_host_service(klient, &event, 1000) > 0 && event.type == ENET_EVENT_TYPE_CONNECT) {
         Log::out() << "Klient: Connection established to Host " << host_ip << Log::endl;
         return true;
     }
@@ -44,29 +43,56 @@ bool Klient::connect() {
     return false;
 }
 
-void Klient::test() {
-    if (server) {
-        sende("Wuppiger Test!");
-    }
-}
-
 void Klient::keep_alive() {
     while (alive.load()) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(200));
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
         ENetEvent event;
         std::scoped_lock lock(connection_mutex);
-        enet_host_service(klient, &event, 5000);
+        enet_host_service(klient, &event, 1000);
     }
 }
 
-void Klient::sende(const std::string& paket) {
-    ENetPacket* packet = enet_packet_create(paket.c_str(), paket.size() + 1, ENET_PACKET_FLAG_RELIABLE);
-    //(packet != NULL);
+void Klient::sende(const std::string& paket_daten) {
+    Log::debug() << "Klient::sende paket_daten=" << paket_daten.size() << Log::endl;
+    ENetPacket* packet = enet_packet_create(paket_daten.c_str(), paket_daten.size(), ENET_PACKET_FLAG_RELIABLE);
+    std::scoped_lock lock(connection_mutex);
     enet_peer_send(server, 0, packet);
     enet_host_flush(klient);
 }
 
-void Klient::sende_kommando(const Kommando& cmd) {
+std::string Klient::sende_und_empfange(const std::string& paket_daten) {
+    Log::debug() << "Klient::sende_und_empfange paket_daten >> " << paket_daten.size() << Log::endl;
+    ENetPacket* packet = enet_packet_create(paket_daten.c_str(), paket_daten.size(), ENET_PACKET_FLAG_RELIABLE);
+    std::scoped_lock lock(connection_mutex);
+    enet_peer_send(server, 0, packet);
+    while (true) {
+        // Antwort abwarten
+        ENetEvent event;
+        enet_host_service(klient, &event, 1000);
+        switch (event.type) {
+            case ENET_EVENT_TYPE_RECEIVE: {
+                std::string antwort((const char*) event.packet->data, event.packet->dataLength);
+                Log::debug() << "Klient::sende_und_empfange paket_daten << " << antwort.size() << Log::endl;
+                enet_packet_destroy(event.packet);
+                return antwort;
+            }
+            case ENET_EVENT_TYPE_DISCONNECT:
+                Log::err() << "Klient: " << __func__ << " disconnected.\n";
+                return "";
+            default: break;
+        }
+    }
+}
+
+std::string Klient::request(Net::Request request_typ, std::optional<Net::id_t> objekt_id) {
+    std::stringstream ss;
+    Net::Serializer s(ss);
+    s << request_typ;
+    if (objekt_id) s << objekt_id.value();
+    return sende_und_empfange(ss.str());
+}
+
+void Klient::kommando(const Kommando& cmd) {
     std::stringstream ss;
     Net::Serializer s(ss);
     s << Net::SUB_CMD;
