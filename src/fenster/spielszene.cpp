@@ -2,14 +2,13 @@
 #include "../sim/physik.hpp"
 #include "imgui_addons.hpp"
 
+#include <log.hpp>
 #include <OgreNode.h>
 #include <OgreEntity.h>
 #include <OgreRenderWindow.h>
 #include <OgreMeshManager.h>
 #include <OgreViewport.h>
 #include <SDL2/SDL_keycode.h>
-#include <iostream>
-#include <log.hpp>
 
 Spielszene::Spielszene(const std::string& ip) : klient(new Klient(ip)) {
     //
@@ -85,29 +84,43 @@ void Spielszene::key_pressed(const OgreBites::Keysym& key) {
 }
 
 void Spielszene::render() {
-    static Ogre::Timer timer;
-    if (timer.getMilliseconds() > 500.f) {
-        timer.reset();
-        sync();
+    sync();
+    // Sub vorhanden - Grafik erzeugen
+    if (subNode) {
+        render_subcontrol();
     }
-    if (subNode) render_subcontrol();
 }
 
 void Spielszene::sync() {
-    // Sub vorhanden - Grafik erzeugen
+    static Ogre::Timer timer;
+
+    // Gfx Interpolieren
     if (player_sub) {
+        player_sub->tick(nullptr, timer.getMilliseconds() / 1000.f);
+        if (subNode) {
+            subNode->setPosition(player_sub->get_pos());
+            subNode->setOrientation(player_sub->get_orientation());
+            camNode->setPosition(subNode->getPosition() + Ogre::Vector3(10, 1, 10));
+        }
+    }
+    if (timer.getMilliseconds() < 500.f) return;
+    timer.reset();
+
+    // Player Sub update
+    if (player_sub) {
+        const std::string& antwort = klient->request(Net::REQUEST_SUB, player_sub->get_id());
+        if (!antwort.empty()) player_sub = Net::deserialize<Sub>(antwort);
+        else Log::err() << "Spielszene::" << __func__ << " no sub returned with ID " << player_sub->get_id() << '\n';
+
+        // Gfx erstellen
         if (subNode == nullptr) {
-            Ogre::Entity* ent = scene_manager->createEntity("Sinbad.mesh"); //sub1.mesh
+            Ogre::Entity *ent = scene_manager->createEntity("Sinbad.mesh"); //sub1.mesh
             subNode = scene_manager->getRootSceneNode()->createChildSceneNode();
             //ent->getWorldBoundingBox().intersects(ent->getWorldBoundingBox());
             ent->setCastShadows(true);
             subNode->attachObject(ent);
             //camNode->setAutoTracking(true, subNode);
         }
-        // Grafik Position Update
-        subNode->setPosition(player_sub->get_pos());
-        subNode->setOrientation(player_sub->get_orientation());
-        camNode->setPosition(subNode->getPosition() + Ogre::Vector3(10, 1, 10));
     }
 }
 
@@ -134,7 +147,9 @@ void Spielszene::render_subcontrol() {
 
     static float target_speed = 0;
     ImGui::SliderFloat("target_speed", &target_speed, -1.0f, 1.0f);
-    if (ImGui::Button("Set##set_speed")) player_sub->set_target_v(target_speed);
+    if (ImGui::Button("Set##set_speed")) {
+        klient->kommando({Kommando::MOTOR_LINEAR, player_sub->get_id(), target_speed});
+    }
     ImGui::Separator();
 
     if (ImGui::Button("vorwärts")) player_sub->set_target_v(100);

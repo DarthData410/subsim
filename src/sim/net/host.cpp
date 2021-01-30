@@ -19,9 +19,9 @@ void Host::start() {
     while (loop) {
         welt.tick(); // TODO benchmark ms
 
-        Log::out() << "Server eventloop" << Log::endl;
+        //Log::out() << "Server eventloop" << Log::endl;
         ENetEvent event;
-        while(enet_host_service(server, &event, 1000) > 0) switch (event.type) {
+        while(enet_host_service(server, &event, 50) > 0) switch (event.type) {
             case ENET_EVENT_TYPE_CONNECT:
                 printf("A new client connected from %x:%u.\n",
                        event.peer->address.host,
@@ -69,11 +69,12 @@ void Host::handle_receive(ENetEvent& event) {
             const Sub& neues_sub = welt.get_new_player_sub(team);
             sende_antwort(event, Net::serialize(neues_sub));
         } break;
-        case Net::REQUEST_SUB:
+        case Net::REQUEST_SUB: {
             Net::id_t sub_id;
             ds >> sub_id;
-            if (welt.objekte.count(sub_id)) sende_antwort(event, Net::serialize(*(Sub*)welt.objekte[sub_id]));
+            if (welt.objekte.count(sub_id)) sende_antwort(event, Net::serialize(*(Sub *) welt.objekte[sub_id]));
             else sende_antwort(event, "");
+        } break;
         default: Log::err() << "\tUnknown Request Net::" << request << '\n'; break;
     }
 }

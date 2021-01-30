@@ -68,7 +68,7 @@ std::string Klient::sende_und_empfange(const std::string& paket_daten) {
     while (true) {
         // Antwort abwarten
         ENetEvent event;
-        enet_host_service(klient, &event, 1000);
+        enet_host_service(klient, &event, 50);
         switch (event.type) {
             case ENET_EVENT_TYPE_RECEIVE: {
                 std::string antwort((const char*) event.packet->data, event.packet->dataLength);
