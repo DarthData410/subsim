@@ -85,34 +85,13 @@ void Spielszene::key_pressed(const OgreBites::Keysym& key) {
 
 void Spielszene::render() {
     sync();
-    // Sub vorhanden - Grafik erzeugen
-    if (subNode) {
-        render_subcontrol();
-    }
-}
-
-void Spielszene::sync() {
-    static Ogre::Timer timer;
 
     // Gfx Interpolieren
-    if (player_sub) {
-        player_sub->tick(nullptr, timer.getMilliseconds() / 1000.f);
-        if (subNode) {
-            subNode->setPosition(player_sub->get_pos());
-            subNode->setOrientation(player_sub->get_orientation());
-            camNode->setPosition(subNode->getPosition() + Ogre::Vector3(10, 1, 10));
-        }
-    }
-    if (timer.getMilliseconds() < 500.f) return;
-    timer.reset();
+    if (static Ogre::Timer timer_interpol; player_sub.has_value()) {
+        player_sub->tick(nullptr, timer_interpol.getMilliseconds() / 1000.f);
+        timer_interpol.reset();
 
-    // Player Sub update
-    if (player_sub) {
-        const std::string& antwort = klient->request(Net::REQUEST_SUB, player_sub->get_id());
-        if (!antwort.empty()) player_sub = Net::deserialize<Sub>(antwort);
-        else Log::err() << "Spielszene::" << __func__ << " no sub returned with ID " << player_sub->get_id() << '\n';
-
-        // Gfx erstellen
+        // Gfx erstellen?
         if (subNode == nullptr) {
             Ogre::Entity *ent = scene_manager->createEntity("Sinbad.mesh"); //sub1.mesh
             subNode = scene_manager->getRootSceneNode()->createChildSceneNode();
@@ -121,6 +100,22 @@ void Spielszene::sync() {
             subNode->attachObject(ent);
             //camNode->setAutoTracking(true, subNode);
         }
+        subNode->setPosition(player_sub->get_pos());
+        subNode->setOrientation(player_sub->get_orientation());
+        camNode->setPosition(subNode->getPosition() + Ogre::Vector3(10, 1, 10));
+        render_subcontrol();
+    }
+}
+
+void Spielszene::sync() {
+    // Net Sync
+    if (static Ogre::Timer timer; timer.getMilliseconds() >= 500.f) {
+        if (player_sub) {
+            const std::string& antwort = klient->request(Net::REQUEST_SUB, player_sub->get_id());
+            if (!antwort.empty()) player_sub = Net::deserialize<Sub>(antwort);
+            else Log::err() << "Spielszene::" << __func__ << " no sub returned with ID " << player_sub->get_id() << '\n';
+        }
+        timer.reset();
     }
 }
 

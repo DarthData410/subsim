@@ -48,12 +48,12 @@ void Klient::keep_alive() {
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
         ENetEvent event;
         std::scoped_lock lock(connection_mutex);
-        enet_host_service(klient, &event, 1000);
+        enet_host_service(klient, &event, 0);
     }
 }
 
 void Klient::sende(const std::string& paket_daten) {
-    Log::debug() << "Klient::sende paket_daten=" << paket_daten.size() << Log::endl;
+    //Log::debug() << "Klient::sende paket_daten=" << paket_daten.size() << Log::endl;
     ENetPacket* packet = enet_packet_create(paket_daten.c_str(), paket_daten.size(), ENET_PACKET_FLAG_RELIABLE);
     std::scoped_lock lock(connection_mutex);
     enet_peer_send(server, 0, packet);
@@ -61,18 +61,18 @@ void Klient::sende(const std::string& paket_daten) {
 }
 
 std::string Klient::sende_und_empfange(const std::string& paket_daten) {
-    Log::debug() << "Klient::sende_und_empfange paket_daten >> " << paket_daten.size() << Log::endl;
+    //Log::debug() << "Klient::sende_und_empfange paket_daten >> " << paket_daten.size() << Log::endl;
     ENetPacket* packet = enet_packet_create(paket_daten.c_str(), paket_daten.size(), ENET_PACKET_FLAG_RELIABLE);
     std::scoped_lock lock(connection_mutex);
     enet_peer_send(server, 0, packet);
     while (true) {
         // Antwort abwarten
         ENetEvent event;
-        enet_host_service(klient, &event, 50);
+        enet_host_service(klient, &event, 0);
         switch (event.type) {
             case ENET_EVENT_TYPE_RECEIVE: {
                 std::string antwort((const char*) event.packet->data, event.packet->dataLength);
-                Log::debug() << "Klient::sende_und_empfange paket_daten << " << antwort.size() << Log::endl;
+                //Log::debug() << "Klient::sende_und_empfange paket_daten << " << antwort.size() << Log::endl;
                 enet_packet_destroy(event.packet);
                 return antwort;
             }

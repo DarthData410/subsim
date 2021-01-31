@@ -51,7 +51,7 @@ Host::~Host() {
 void Host::handle_receive(ENetEvent& event) {
     Net::Request request;
     std::string data((const char*) event.packet->data, event.packet->dataLength);
-    Log::debug() << "Host::handle_receive paket_daten = " << data.size() << Log::endl;
+    //Log::debug() << "Host::handle_receive paket_daten = " << data.size() << Log::endl;
     std::stringstream ss(data);
     Net::Deserializer ds(ss);
     ds >> request;
@@ -80,7 +80,7 @@ void Host::handle_receive(ENetEvent& event) {
 }
 
 void Host::sende_antwort(ENetEvent& event, const std::string& response) {
-    Log::debug() << "Host::sende_antwort paket_daten=" << response.size() << Log::endl;
+    //Log::debug() << "Host::sende_antwort paket_daten=" << response.size() << Log::endl;
     ENetPacket* paket = event.packet;
     enet_packet_resize(paket, response.size());
     std::copy(response.begin(), response.end(), paket->data);
