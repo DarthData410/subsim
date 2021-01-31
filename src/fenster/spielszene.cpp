@@ -17,6 +17,7 @@ Spielszene::Spielszene(const std::string& ip) : klient(new Klient(ip)) {
 Spielszene::Spielszene(Ogre::RenderWindow* window, Ogre::SceneManager* scene_manager)
     : Spielszene()
 {
+    //window->resize(1600,900);
     Spielszene::scene_manager = scene_manager;
 
     // without light we would just get a black screen
@@ -123,37 +124,40 @@ void Spielszene::render_subcontrol() {
     ImGui::SetNextWindowSize({300,0});
     ImGui::Begin("debugWindow");
 
-    ImGui::Text("Sub: %.1f %.1f %.1f", player_sub->get_pos().x, player_sub->get_pos().y, player_sub->get_pos().z);
+    ImGui::Text("Sub: %.1f %.1f Depth: %.1f", player_sub->get_pos().x, player_sub->get_pos().z, player_sub->get_pos().y);
     ImGui::Text("Pitch: %.1f", player_sub->get_pitch());
     ImGui::Text("Bearing: %.1f", player_sub->get_bearing());
 
     static float target_x = 0, target_z = 0;
     ImGui::InputFloat("Target_x", &target_x);
     ImGui::InputFloat("Target_z", &target_z);
-    if (ImGui::Button("Set##set_target_pos")) player_sub->set_target_pos(target_x, target_z);
-    if (ImGui::Button("bearing")) { // Physik::bearing Test
-        std::cout << Physik::bearing(player_sub->get_pos().x, player_sub->get_pos().z, target_x, target_z) << '\n';
+    if (ImGui::Button("Set##set_target_pos")) {
+        klient->kommando({Kommando::AUTO_POS, player_sub->get_id(),
+                          std::tuple<float, float>(target_x, target_z)});
     }
 
     static float target_bearing = 0;
     ImGui::Nada::KnobDegree("target_bearing", &target_bearing);
-    if (ImGui::Button("Set##set_bearing")) player_sub->set_target_bearing(target_bearing);
+    if (ImGui::Button("Set##set_bearing")) {
+        klient->kommando({Kommando::AUTO_KURS, player_sub->get_id(), (float)target_bearing});
+    }
     ImGui::Separator();
 
     static float target_speed = 0;
     ImGui::SliderFloat("target_speed", &target_speed, -1.0f, 1.0f);
     if (ImGui::Button("Set##set_speed")) {
-        klient->kommando({Kommando::MOTOR_LINEAR, player_sub->get_id(), target_speed});
+        klient->kommando({Kommando::MOTOR_LINEAR, player_sub->get_id(), (float)target_speed});
     }
     ImGui::Separator();
 
-    if (ImGui::Button("vorwärts")) player_sub->set_target_v(100);
-    if (ImGui::Button("stop")) player_sub->stop();
-    if (ImGui::Button("rückwärts")) player_sub->set_target_v(-100);
-    if (ImGui::Button("rechts")) player_sub->set_target_rudder(100);
-    if (ImGui::Button("links")) player_sub->set_target_rudder(-100);
-    if (ImGui::Button("auf")) player_sub->set_target_pitch(100);
-    if (ImGui::Button("ab")) player_sub->set_target_pitch(-100);
-
+    if (ImGui::Button("stop")) {
+        klient->kommando({Kommando::STOP, player_sub->get_id()});
+    }
+    if (ImGui::Button("rechts")) {
+        klient->kommando({Kommando::MOTOR_ROT, player_sub->get_id(), 100.f});
+    }
+    if (ImGui::Button("links")) {
+        klient->kommando({Kommando::MOTOR_ROT, player_sub->get_id(), -100.f});
+    }
     ImGui::End();
 }

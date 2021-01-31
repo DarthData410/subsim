@@ -20,10 +20,17 @@ public:
         AUTO_TIEFE
     };
 
+    /// Ctor.
     Kommando() = default;
 
+    /// Ctor für Kommandos ohne Daten.
+    Kommando(Typ typ, uint32_t sub_id) : typ(typ), sub_id(sub_id) {}
+
+    /// Ctor mit optionalen Daten.
     template<typename T>
-    Kommando(Typ typ, uint32_t sub_id, T daten) : typ(typ), sub_id(sub_id), data(as_string(daten)) {}
+    Kommando(Typ typ, uint32_t sub_id, T daten) : Kommando(typ, sub_id) {
+        data = as_string(daten);
+    }
 
     Typ typ;
 

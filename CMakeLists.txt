@@ -29,7 +29,7 @@ target_include_directories(nada_sub PRIVATE
         ${LIBNADA_INCLUDE_DIRS}
         ${CEREAL_INCLUDE_DIRS}
         )
-target_link_libraries(nada_sub
+target_link_libraries(nada_sub PRIVATE
         nada
         libs
         stdc++fs

@@ -37,6 +37,7 @@ void Szene::setup() {
     // get a pointer to the already created root
     Ogre::Root* root = getRoot();
     scnMgr = root->createSceneManager();
+    //getRenderWindow()
 
     // Setup ImGui as Overlay
     Ogre::ImGuiOverlay* imguiOverlay = new Ogre::ImGuiOverlay();
