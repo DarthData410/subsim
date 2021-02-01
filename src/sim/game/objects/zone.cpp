@@ -12,7 +12,7 @@ Zone::Zone(const std::tuple<float, float>& pos, float groesse) : team(0), pos(po
 void Zone::tick(Welt* welt, float s) {
     // Punkte an Team geben
     static float s_counter = 0.f;
-    if (s_counter >= 1.0f) {
+    if (s_counter += s; s_counter >= 1.0f) {
         s_counter = 0.f;
         if (team > 0) welt->teams[team].punkte += 1;
     }
@@ -30,18 +30,9 @@ void Zone::tick(Welt* welt, float s) {
                 }
             }
         }
-        if (!team_subs.empty()) {
-            // Team mit den meisten Subs in der Zone
-            team = std::max_element(team_subs.begin(), team_subs.end(),
-                                                  [](const auto& paar1, const auto& paar2) {
-                                                      return paar1.second < paar2.second;
-                                                      })->first;
-            for (const auto& paar : team_subs) {
-                if (paar.second == team_subs[team] && paar.first != team) {
-                    team = 0; // Gleichstand? -> Kein Besitzer
-                }
-            }
-        }
+        // Alleiniges Team mit Subs in der Zone
+        if (team_subs.size() == 1) team = team_subs.begin()->first;
+        else team = 0; // Keine Subs hier oder Subs von verschiedenen Teams
         timer.reset();
     }
 }

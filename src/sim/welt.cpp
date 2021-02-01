@@ -4,10 +4,10 @@ Welt::Welt() {
     // Teams hinzufügen
     for (uint8_t i = 1; i <= 2; ++i) {
         teams[i] = Team(i);
-        teams[i].basis = {i % 2 == 0 ? 10'000.f : -10'000.f, 0.f};
+        teams[i].basis = {i % 2 == 0 ? 1'500.f : -1'500.f, 0.f};
     }
     // Punktezonen hinzufügen
-    zonen.emplace_back(std::tuple(0.f,0.f), 1000.f);
+    zonen.emplace_back(std::tuple(0.f,0.f), 2000.f);
 }
 
 Welt::~Welt() {

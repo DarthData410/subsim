@@ -8,6 +8,7 @@ class Welt;
 class Objekt {
 
     friend class Welt;
+    friend class Team;
 
 public:
 

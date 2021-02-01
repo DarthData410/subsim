@@ -28,6 +28,9 @@ private:
     /// Zeigt das eigene Sub + dessen Steuerung
     void render_subcontrol();
 
+    /// Zeigt Strategieübersicht (Teams, Zonen, Karte).
+    void render_strategy();
+
     /// Netzwerkklient
     Klient* klient = nullptr;
 

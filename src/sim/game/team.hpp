@@ -21,6 +21,9 @@ public:
     /// Getter: Position des Hauptquartierts.
     const std::tuple<float, float>& get_pos() const { return basis; };
 
+    /// Getter: Punkte.
+    uint32_t get_punkte() const { return punkte; }
+
     /// Serialisierung via cereal.
     template <class Archive> void serialize(Archive& ar) {
         ar(id, basis, punkte, sub_designs);
@@ -38,6 +41,6 @@ private:
     std::tuple<float, float> basis;
 
     /// Punkte.
-    unsigned punkte;
+    uint32_t punkte;
 
 };

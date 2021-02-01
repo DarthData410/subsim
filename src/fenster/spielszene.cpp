@@ -106,6 +106,7 @@ void Spielszene::render() {
         camNode->setPosition(subNode->getPosition() + Ogre::Vector3(10, 1, 10));
         render_subcontrol();
     }
+    render_strategy();
 }
 
 void Spielszene::sync() {
@@ -158,6 +159,24 @@ void Spielszene::render_subcontrol() {
     }
     if (ImGui::Button("links")) {
         klient->kommando({Kommando::MOTOR_ROT, player_sub->get_id(), -100.f});
+    }
+    ImGui::End();
+}
+
+void Spielszene::render_strategy() {
+    static std::unordered_map<uint8_t, Team> teams = klient->get_teams();
+    static std::vector<Zone> zonen = klient->get_zonen();
+    if (static Ogre::Timer timer; timer.getMilliseconds() > 500) {
+        teams = klient->get_teams();
+        zonen = klient->get_zonen();
+    }
+    ImGui::Begin("Strategic Overview");
+    for (const auto& team : teams) {
+        ImGui::Text("Team %u: %u Points", team.first, team.second.get_punkte());
+    }
+    for (const auto& zone : zonen) {
+        ImGui::Text("Zone @ x=%.0f, y=%.0f, owned by Team %u",
+                    std::get<0>(zone.get_pos()), std::get<1>(zone.get_pos()), zone.get_team());
     }
     ImGui::End();
 }
