@@ -3,13 +3,17 @@
 #include "kommando.hpp"
 
 #include <log.hpp>
+#include <cereal/types/vector.hpp>
+#include <cereal/types/unordered_map.hpp>
 
 Host::Host(uint16_t port) {
     ENetAddress address {
         .host = ENET_HOST_ANY,
         .port = port
     };
-    if (server = enet_host_create(&address, 32, 2, 0, 0); !server) {
+    if (server = enet_host_create(&address, 32, // Max. Klienten
+                                  2, // Kanäle; 0 = Request/Receive, 1 = Broadcast
+                                  0, 0); !server) {
         Log::err() << "An error occurred while trying to create an ENet server host.\n";
         exit(EXIT_FAILURE);
     }
@@ -35,6 +39,19 @@ void Host::start() {
                 printf("%s disconnected.\n", event.peer->data);
                 event.peer->data = nullptr; // delete wenn nötig
                 break;
+        }
+        // Broadcast
+        if (static Ogre::Timer timer; timer.getMilliseconds() > 1000) {
+            std::stringstream ss;
+            Net::Serializer s(ss);
+            s << Net::BROADCAST;
+            s << welt.timelapse << welt.teams << welt.zonen;
+            const std::string& data = ss.str();
+            ENetPacket* paket = enet_packet_create(data.c_str(), data.size(),
+                                                   ENET_PACKET_FLAG_UNRELIABLE_FRAGMENT);
+            enet_host_broadcast(server, 1, paket);
+            enet_host_flush(server);
+            timer.reset();
         }
     }
 }

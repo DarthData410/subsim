@@ -1,7 +1,7 @@
 #include "team.hpp"
 #include <zufall.hpp>
 
-Team::Team(uint8_t id) : id(id) {
+Team::Team(uint8_t id) : id(id), punkte(1000) {
     sub_designs.emplace_back(Sub(
             {0,0,0},
             Motor(4, 0.5),

@@ -2,11 +2,12 @@
 #include <cereal/cereal.hpp>
 #include <cereal/types/polymorphic.hpp>
 
-/// Prädeklaration.
 class Welt;
 
 /// Elternklasse für alle von der Physiksimulation betroffenen Objekte.
 class Objekt {
+
+    friend class Welt;
 
 public:
 

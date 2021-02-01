@@ -11,9 +11,10 @@ public:
 
     /// Typen von Anfragen vom Klienten.
     enum Request : uint8_t {
-        SUB_CMD            = 0, // "Kommando"
-        AKTION_NEUES_UBOOT = 1, // "uint8_t Team" -> "Sub"
-        REQUEST_SUB        = 2, // "uint32_t ID"  -> "Sub" oder ""
+        SUB_CMD            = 0,   // "Kommando"
+        AKTION_NEUES_UBOOT = 1,   // "uint8_t Team" -> "Sub"
+        REQUEST_SUB        = 2,   // "uint32_t ID"  -> "Sub" oder ""
+        BROADCAST          = 100, // ServerBroadcast -> Klienten auf Kanal 2: welt - "teams" & "zonen"
     };
 
     /// Einheitliche Klasse zur Serialisierung.
