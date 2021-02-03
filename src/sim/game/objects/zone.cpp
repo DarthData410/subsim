@@ -23,8 +23,8 @@ void Zone::tick(Welt* welt, float s) {
             const Objekt* o = paar.second;
             if (o->get_typ() == Objekt::Typ::SUB) {
                 const Sub* sub = (Sub*) o;
-                auto diff_x = std::abs(sub->get_pos().x - std::get<0>(pos));
-                auto diff_y = std::abs(sub->get_pos().z - std::get<1>(pos));
+                const auto diff_x = std::abs(sub->get_pos().x - std::get<0>(pos));
+                const auto diff_y = std::abs(sub->get_pos().z - std::get<1>(pos));
                 if (diff_x <= groesse && diff_y <= groesse) {
                     team_subs[sub->get_team()] += 1; // 1 Sub vom Team in der Zone gezählt
                 }

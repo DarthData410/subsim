@@ -4,9 +4,22 @@
 
 namespace ImGui::Nada {
 
-    /// Modifiziert vom Original: https://github.com/Flix01/imgui
+    /**
+     * Modifiziert vom Original: https://github.com/Flix01/imgui
+     * @param label
+     * @param p_value Zu setzender Wert
+     * @param v_min Wert - Minimum
+     * @param v_max Wert - Maximum
+     * @param v_step Wert - Schrittweite
+     * @param radius Knopfradius
+     * @param thickness Dicke des Zeigers
+     * @param fmt Tooltip Wertanzeige
+     * @return
+     */
     bool KnobDegree(const char* label, float* p_value,
                     float v_min = 0.f, float v_max = 360.f, float v_step = 1.f,
-                    float radius = 40.f, const char* fmt = "%.0f");
+                    float radius = 40.f, float thickness = 2.0f, const char* fmt = "%.0f°");
+
+    bool Sonar();
 
 }

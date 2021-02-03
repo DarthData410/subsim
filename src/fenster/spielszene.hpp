@@ -25,11 +25,31 @@ public:
 
 private:
 
-    /// Zeigt das eigene Sub + dessen Steuerung
-    void render_subcontrol();
+    enum Tab : uint8_t {
+        MAINMENU,   // TODO
+        NAV,
+        SONAR,      // TODO
+        WEAPONS,    // TODO
+        THREE_D
+    };
 
-    /// Zeigt Strategieübersicht (Teams, Zonen, Karte).
-    void render_strategy();
+    /// Zeigt das Hauptmenü.
+    void render_menu();
+
+    /// Zeigt die Navigation inkl. Strategie - (Teams, Zonen, Karte).
+    void render_nav();
+
+    /// Zeigt Aktives, Passives und Externes Sonar.
+    void render_sonar();
+
+    /// Zeigt Zielsteuerung & Waffenkontrolle.
+    void render_weapons();
+
+    /// Zeigt die 3D-Ansicht.
+    void render_3d();
+
+    /// Anzuzeigendes Fenster.
+    Tab tab = NAV;
 
     /// Netzwerkklient
     Klient* klient = nullptr;
@@ -43,5 +63,4 @@ private:
     Ogre::SceneNode* camNode   = nullptr;
     Ogre::SceneNode* lightNode = nullptr;
     Ogre::SceneNode* subNode = nullptr;
-
 };
