@@ -8,6 +8,7 @@ class Welt final {
     friend class Host;
     friend class Kommando;
     friend class Zone;
+    friend class Sub_AI;
 
 public:
 

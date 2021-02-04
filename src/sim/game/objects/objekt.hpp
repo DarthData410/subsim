@@ -13,7 +13,12 @@ class Objekt {
 public:
 
     /// Vererbungshierachie von Objekt. Zur Typenbestimmung bei Laufzeit.
-    enum class Typ { OBJEKT, OBJEKT_STEUERBAR, SUB, TORPEDO };
+    enum class Typ { OBJEKT,
+            OBJEKT_STEUERBAR,
+            SUB,    // Spieler Sub
+            SUB_AI, // Computergesteuertes Sub
+            TORPEDO
+    };
 
     /// Ctor.
     Objekt() = default;

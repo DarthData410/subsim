@@ -80,6 +80,13 @@ void Spielszene::key_pressed(const OgreBites::Keysym& key) {
             if (!antwort.empty()) player_sub = Net::deserialize<Sub>(antwort);
             else Log::err() << "New player_sub not available\n";
         } break;
+
+        // Tabs
+        case SDLK_F1: tab = NAV;      break;
+        case SDLK_F2: tab = SONAR;    break;
+        case SDLK_F3: tab = WEAPONS;  break;
+        case SDLK_F4: tab = THREE_D;  break;
+        case SDLK_F5: tab = MAINMENU; break;
         default: break;
     }
 }

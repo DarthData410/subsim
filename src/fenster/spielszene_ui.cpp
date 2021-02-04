@@ -7,7 +7,7 @@
 void Spielszene::render_nav() {
     if (!player_sub) return;
     ImGui::SetNextWindowSize({300,0});
-    ImGui::Begin("debugWindow");
+    ImGui::Begin("Nav View");
 
     ImGui::Text("Sub: %.1f %.1f Depth: %.1f", player_sub->get_pos().x, player_sub->get_pos().z, player_sub->get_pos().y);
     ImGui::Text("Pitch: %.1f", player_sub->get_pitch());
@@ -60,14 +60,15 @@ void Spielszene::render_nav() {
         ImGui::Text("Zone @ x=%.0f, y=%.0f, owned by Team %u",
                     std::get<0>(zone.get_pos()), std::get<1>(zone.get_pos()), zone.get_team());
     }
-
-    ImGui::Nada::Sonar();
-
     ImGui::End();
 }
 
 void Spielszene::render_sonar() {
+    ImGui::Begin("Sonar View");
 
+    ImGui::Nada::Sonar();
+
+    ImGui::End();
 }
 
 void Spielszene::render_weapons() {

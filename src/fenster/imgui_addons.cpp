@@ -1,7 +1,6 @@
 #include "imgui_addons.hpp"
 #include <cmath>
 #include <algorithm>
-#include <cstring>
 #include <zufall.hpp>
 
 bool ImGui::Nada::KnobDegree(const char* label, float* p_value, float v_min, float v_max, float v_step, float radius, float thickness, const char* fmt) {
@@ -63,6 +62,8 @@ bool ImGui::Nada::Sonar() {
     ImGuiIO& io = ImGui::GetIO();
     const ImGuiStyle& style = ImGui::GetStyle();
     ImDrawList* draw_list = ImGui::GetWindowDrawList();
+    const ImColor IM_WHITE = ImColor(0xFF, 0xFF, 0xFF);
+    const ImColor IM_GREEN = ImColor(0x00, 0xFF, 0x00);
 
     const unsigned sonar_data_size = 36;
     static std::array<std::vector<float>, 60> history;
@@ -108,9 +109,9 @@ bool ImGui::Nada::Sonar() {
         const float line_y = start_pos.y + r * rect_h + 0.5f * rect_h;
         draw_list->AddLine({start_pos.x + w,          line_y},
                            {start_pos.x + w + line_w, line_y},
-                           ImColor(1.f, 1.f, 1.f));
+                           IM_GREEN);
         draw_list->AddText({start_pos.x + w + line_w, line_y - 8.f},
-                           ImColor(1.f, 1.f, 1.f),
+                           IM_GREEN,
                            u_to_str[history.size() - row].c_str());
     }
 
@@ -119,7 +120,9 @@ bool ImGui::Nada::Sonar() {
     if (ImGui::IsItemHovered()) {
         const ImVec2& mouse_pos = io.MousePos;
         const ImVec2& win_pos = ImGui::GetWindowPos();
-        ImGui::SetNextWindowPos({mouse_pos.x, mouse_pos.y - 20.f});
+        draw_list->AddLine({mouse_pos.x, start_pos.y}, {mouse_pos.x, start_pos.y + h}, IM_GREEN);
+        draw_list->AddLine({start_pos.x, mouse_pos.y}, {start_pos.x + w, mouse_pos.y}, IM_GREEN);
+        ImGui::SetNextWindowPos({mouse_pos.x - 20.f, start_pos.y + h});
         ImGui::BeginTooltip();
         const float deg = std::clamp(-188.f + 360.f * (mouse_pos.x - win_pos.x) / w,
                                      -180.f, 180.f);
@@ -135,7 +138,7 @@ bool ImGui::Nada::Sonar() {
         const float y = start_pos.y + h;
         draw_list->AddLine({x, y},
                            {x, y + line_w},
-                           ImColor(1.f, 1.f, 1.f));
+                           IM_GREEN);
         ImGui::SameLine();
         ImGui::SetCursorPosX(static_cast<float>(i) * (w / tick_marks));
         ImGui::Text("%d°", -180 + i * (360 / tick_marks));
