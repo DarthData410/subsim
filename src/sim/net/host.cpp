@@ -83,8 +83,7 @@ void Host::handle_receive(ENetEvent& event) {
         case Net::AKTION_NEUES_UBOOT: {
             Net::id_t team;
             ds >> team;
-            const Sub& neues_sub = welt.get_new_player_sub(team);
-            sende_antwort(event, Net::serialize(neues_sub));
+            sende_antwort(event, Net::serialize(*welt.get_new_sub(team, false)));
         } break;
         case Net::REQUEST_SUB: {
             Net::id_t sub_id;

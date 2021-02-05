@@ -1,13 +1,17 @@
 #include "welt.hpp"
+#include "game/objects/sub_ai.hpp"
+
+#include <zufall.hpp>
 
 Welt::Welt() {
     // Teams hinzufügen
     for (uint8_t i = 1; i <= 2; ++i) {
         teams[i] = Team(i);
         teams[i].basis = {i % 2 == 0 ? 1'500.f : -1'500.f, 0.f};
+        get_new_sub(i, true);
     }
     // Punktezonen hinzufügen
-    zonen.emplace_back(std::tuple(0.f,0.f), 2000.f);
+    zonen.emplace_back(std::tuple(0.f,0.f), 1000.f);
 }
 
 Welt::~Welt() {
@@ -25,13 +29,16 @@ void Welt::tick() {
     for (auto& zone : zonen) zone.tick(this, s);
 }
 
-Sub Welt::get_new_player_sub(uint8_t team) {
-    Sub* sub_ptr = new Sub(teams.at(team).get_new_sub());
+const Sub* Welt::get_new_sub(uint8_t team, bool computer_controlled) {
+    Log::debug() << "Welt::" << __func__ << " for team " << (unsigned)team << Log::endl;
+    Sub* sub_ptr = nullptr;
+    if (computer_controlled) sub_ptr = new Sub_AI(teams.at(team).get_new_sub());
+    else sub_ptr = new Sub(teams.at(team).get_new_sub());
     objekte[sub_ptr->get_id()] = sub_ptr;
-    sub_ptr->pos = { // Startposition beim Team
-            std::get<0>(teams[team].get_pos()),
-            sub_ptr->pos.y,
-            std::get<1>(teams[team].get_pos())
+    sub_ptr->pos = { // Startposition beim Team, leicht versetzt
+            std::get<0>(teams[team].get_pos()) + Zufall::f(-100.f, 100.f),
+            20.f, // Tiefe
+            std::get<1>(teams[team].get_pos()) + Zufall::f(-100.f, 100.f)
     };
-    return *sub_ptr;
+    return sub_ptr;
 }

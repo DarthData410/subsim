@@ -18,7 +18,8 @@ public:
 
     void tick();
 
-    Sub get_new_player_sub(uint8_t team);
+    /// Erstellt ein neues Sub via `new` - manueller `delete` notwendig.
+    const Sub* get_new_sub(uint8_t team, bool computer_controlled = false);
 
 private:
 

@@ -4,6 +4,10 @@
 
 #include <zufall.hpp>
 
+Sub_AI::Sub_AI(const Sub& sub) : Sub(sub){
+
+}
+
 void Sub_AI::tick(Welt* welt, float s) {
     Sub::tick(welt, s);
     if (timer.getMilliseconds() < 1000.f) return; // Nicht jeden tick() nachdenken
@@ -14,7 +18,7 @@ void Sub_AI::tick(Welt* welt, float s) {
 
     // Nichts zu tun -> Zone einnehmen / bewachen
     if (status == DONE) {
-
+        Log::debug() << "Sub_AI " << id << " looking for new job" << Log::endl;
         // Zone finden und als Ziel setzen
         const auto it = std::find_if(welt->zonen.begin(), welt->zonen.end(), [this](const Zone& zone) {
             return zone.get_team() != this->get_team();
@@ -26,6 +30,7 @@ void Sub_AI::tick(Welt* welt, float s) {
         }
         add_status(TRAVEL);
     }
+
     // Zum Ziel bewegen
     if (hat_status(TRAVEL)) {
         set_target_pos(ziel.x, ziel.z);
@@ -34,11 +39,11 @@ void Sub_AI::tick(Welt* welt, float s) {
 
         // Ziel erreicht?
         if (Physik::distanz(pos.x, pos.z, ziel.z, ziel.z) < 1000.f) {
+            Log::debug() << "Sub_AI " << id << " target reached" << Log::endl;
             remove_status(TRAVEL);
             add_status(SEARCH);
             stop();
         }
     }
-
     timer.reset();
 }

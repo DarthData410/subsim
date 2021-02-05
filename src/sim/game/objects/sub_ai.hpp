@@ -15,6 +15,10 @@ class Sub_AI final : public Sub {
 
 public:
 
+    Sub_AI() = default;
+
+    explicit Sub_AI(const Sub& sub);
+
     Typ get_typ() const override { return Typ::SUB_AI; }
 
     void tick(Welt* welt, float s) override;
