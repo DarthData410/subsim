@@ -1,6 +1,7 @@
 #pragma once
 
 #include "objekt_steuerbar.hpp"
+#include "sonar_passiv.hpp"
 
 class Sub : public Objekt_Steuerbar {
 
@@ -17,7 +18,11 @@ public:
 
     /// Serialisierung via cereal.
     template <class Archive> void serialize(Archive& ar) {
-        ar(cereal::base_class<Objekt_Steuerbar>(this));
+        ar(cereal::base_class<Objekt_Steuerbar>(this), sonars);
     }
+
+protected:
+
+    std::vector<Sonar_Passiv> sonars;
 
 };

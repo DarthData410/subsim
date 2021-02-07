@@ -42,6 +42,9 @@ public:
     /// Getter: Teamzugehörigkeit. 0 = Kein Team.
     uint8_t get_team() const { return team; }
 
+    /// Getter: Aktuelle Geräuschentwicklung.
+    virtual float get_noise() const { return 0.f; }
+
     /// Getter: Position.
     const Ogre::Vector3& get_pos() const { return pos; }
 

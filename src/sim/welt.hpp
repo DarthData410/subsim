@@ -9,6 +9,7 @@ class Welt final {
     friend class Kommando;
     friend class Zone;
     friend class Sub_AI;
+    friend class Sonar_Passiv;
 
 public:
 

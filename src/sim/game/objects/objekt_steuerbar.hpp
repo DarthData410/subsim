@@ -45,8 +45,7 @@ public:
     /// Liefert die relative x/z-Geschwindigkeit zur Höchstgeschwindigkeit (negativ, wenn Rückwärts).
     float get_speed_relativ() const { return motor_linear.v / motor_linear.v_max; }
 
-    /// Liefert einen Wert zwischen 0 und 1, wie gut sichtbar das fremden Objekt ist.
-    //float get_sichtbarkeit(const Objekt_Steuerbar* objekt);//TODO
+    float get_noise() const override;
 
     /// Serialisierung via cereal.
     template <class Archive> void serialize(Archive& ar) {
