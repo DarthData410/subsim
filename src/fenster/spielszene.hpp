@@ -2,6 +2,7 @@
 
 #include "../sim/game/objects/sub.hpp"
 #include "../sim/net/klient.hpp"
+#include "sonar_ui.hpp"
 
 #include <OgreInput.h>
 #include <OgreSceneManager.h>
@@ -56,6 +57,7 @@ private:
 
     /// Simulation
     std::optional<Sub> player_sub = std::nullopt;
+    Sonar_UI sonar_ui;
 
     /// Gfx
     Ogre::RenderWindow* window = nullptr;

@@ -35,6 +35,14 @@ public:
     /// Führt erkennungen durch.
     void tick(Sub* parent, Welt* welt, float s);
 
+    float get_noise() const { return noise; }
+
+    uint16_t get_resolution() const { return resolution; }
+
+    uint8_t get_sichtbereich() const { return sichtbereich; }
+
+    uint8_t get_ausrichtung() const { return ausrichtung; }
+
     /// Getter: Aktuelle erkannte Signaturen.
     const auto& get_detections() const { return detections; }
 

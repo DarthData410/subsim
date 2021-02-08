@@ -77,7 +77,10 @@ void Spielszene::key_pressed(const OgreBites::Keysym& key) {
         case SDLK_m: {
             if (player_sub) { Log::debug() << "New player_sub not needed\n"; break; }
             const std::string& antwort = klient->request(Net::AKTION_NEUES_UBOOT, 1);
-            if (!antwort.empty()) player_sub = Net::deserialize<Sub>(antwort);
+            if (!antwort.empty()) {
+                player_sub = Net::deserialize<Sub>(antwort);
+                sonar_ui = Sonar_UI(&player_sub.value());
+            }
             else Log::err() << "New player_sub not available\n";
         } break;
 
