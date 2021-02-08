@@ -30,7 +30,7 @@ void Sonar_Passiv::tick(Sub* parent, Welt* welt, float s) {
         // Lautstärke bestimmen
         const float distance = Physik::distanz(parent->get_pos(), objekt->get_pos());
         const float object_noise = objekt->get_noise();
-        const float gain = distance > 1.f ? object_noise / std::sqrt(distance) // TODO adjust
+        const float gain = distance > 1.f ? object_noise / std::pow(distance, 0.25f) // TODO adjust
                                           : object_noise;
         // Detektion!
         if (gain > 0.f) {

@@ -36,15 +36,13 @@ float Physik::bearing(float x, float y, float target_x, float target_y) {
     return std::atan2(target_x-x, y-target_y) * 180.f / static_cast<float>(M_PI);
 }
 
-float Physik::distanz(float x1, float y1, float x2, float y2) {
-    const float x = x2-x1;
-    const float y = y2-y1;
-    return std::sqrt(x*x + y*y);
-}
-
 float Physik::winkel_tiefe(const Ogre::Vector3& pos, const Ogre::Vector3& target_pos) {
     const float d = Physik::distanz(pos.x, pos.z, target_pos.x, target_pos.z);
     return bearing(0.f, pos.y, d, target_pos.y);
+}
+
+float Physik::distanz(float x1, float y1, float x2, float y2) {
+    return std::hypot(x2-x1, y2-y1);
 }
 
 float Physik::distanz(const Ogre::Vector3& pos, const Ogre::Vector3& target_pos) {

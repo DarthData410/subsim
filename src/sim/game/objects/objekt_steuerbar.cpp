@@ -89,8 +89,8 @@ void Objekt_Steuerbar::set_target_v(float v) {
 }
 
 float Objekt_Steuerbar::get_noise() const {
-    const float noise = std::abs(motor_tauch.v) / motor_tauch.v_max +
-                        std::abs(motor_rot.v) / motor_rot.v_max +
-                        motor_linear.v;
+    const float noise = std::abs(motor_tauch.v)    / motor_tauch.v_max +
+                        std::abs(motor_rot.v)      / motor_rot.v_max +
+                        std::abs(motor_linear.v / motor_linear.v_max * 8.f);
     return noise;
 }

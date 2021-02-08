@@ -45,6 +45,7 @@ public:
     /// Liefert die relative x/z-Geschwindigkeit zur Höchstgeschwindigkeit (negativ, wenn Rückwärts).
     float get_speed_relativ() const { return motor_linear.v / motor_linear.v_max; }
 
+    /// Liefert einen Bewegungsfaktor: 0 (steht still) bis 10 (alle Motoren auf Maximum).
     float get_noise() const override;
 
     /// Serialisierung via cereal.
@@ -60,6 +61,7 @@ private:
     /// Ruder in Zielrichtung einstellen.
     void auto_rudder();
 
+    /// Lenken zum Zielpfad (nicht beschleunigen jedoch).
     void auto_path();
 
 protected:

@@ -8,6 +8,7 @@ Team::Team(uint8_t id) : id(id), punkte(1000) {
             Motor(1, 0.5)
     );
     beginner_sub.team = Team::id;
+    beginner_sub.tarnung = 1.0f;
     sub_designs.push_back(beginner_sub);
 }
 
