@@ -9,6 +9,7 @@ Team::Team(uint8_t id) : id(id), punkte(1000) {
     );
     beginner_sub.team = Team::id;
     beginner_sub.tarnung = 1.0f;
+    beginner_sub.sonars.emplace_back(0.25f, 45, 180);
     sub_designs.push_back(beginner_sub);
 }
 

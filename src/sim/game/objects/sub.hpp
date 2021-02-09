@@ -33,7 +33,7 @@ protected:
     /// Passive Sonars an Board.
     std::vector<Sonar_Passiv> sonars;
 
-    /// 1.0 = keine Tarnung
+    /// Faktor, mit dem `get_noise` multipliziert wird. Das heißt 1.0 = keine Tarnung, 0.0 = unsichtbar.
     float tarnung;
 
 };

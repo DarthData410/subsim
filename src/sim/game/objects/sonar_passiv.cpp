@@ -10,10 +10,12 @@ Sonar_Passiv::Sonar_Passiv(float noise, uint16_t resolution, uint8_t sichtbereic
 }
 
 void Sonar_Passiv::tick(Sub* parent, Welt* welt, float s) {
-    detections.clear(); // Altes rauswerfen
+    if (!welt) return;
 
+    // Erkennungen auffrischen
+    detections.clear();
     for (const auto& objekt_paar : welt->objekte) {
-        Objekt* objekt = objekt_paar.second;
+        const Objekt* objekt = objekt_paar.second;
         // Eigenes Sub überspringen.
         if (parent == objekt) continue;
 

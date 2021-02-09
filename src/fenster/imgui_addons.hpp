@@ -20,6 +20,4 @@ namespace ImGui::Nada {
                     float v_min = 0.f, float v_max = 360.f, float v_step = 1.f,
                     float radius = 40.f, float thickness = 2.0f, const char* fmt = "%.0f°");
 
-    bool Sonar();
-
 }

@@ -66,7 +66,7 @@ void Spielszene::render_nav() {
 void Spielszene::render_sonar() {
     ImGui::Begin("Sonar View");
 
-    ImGui::Nada::Sonar();
+    sonar_ui.update_and_show(&player_sub.value());
 
     ImGui::End();
 }
