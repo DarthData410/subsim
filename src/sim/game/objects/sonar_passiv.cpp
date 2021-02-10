@@ -20,11 +20,10 @@ void Sonar_Passiv::tick(Sub* parent, Welt* welt, float s) {
         if (parent == objekt) continue;
 
         const float sub_bearing = parent->get_bearing();
-        const float sonar_bearing = Physik::rotation(sub_bearing, static_cast<float>(this->ausrichtung));
+        const float sonar_bearing = Physik::rotation(0.f, sub_bearing + this->ausrichtung);
         const float object_bearing = Physik::bearing(parent->get_pos().x, parent->get_pos().z,
                                                      objekt->get_pos().x, objekt->get_pos().z);
-        const float sub_to_object = Physik::rotation(sub_bearing, object_bearing);
-        const float sonar_to_object = Physik::rotation(sonar_bearing, sub_to_object);
+        const float sonar_to_object = Physik::rotation(sonar_bearing, object_bearing);
 
         // Nihcht im Sichtbereich?
         if (std::abs(sonar_to_object) > static_cast<float>(this->sichtbereich) / 2.f) continue;

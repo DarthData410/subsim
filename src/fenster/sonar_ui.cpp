@@ -44,10 +44,13 @@ void Sonar_UI::update_and_show(const Sub* sub) {
                 const unsigned histogram_position = std::clamp<unsigned>(std::round(
                         d.bearing * (sonar.get_resolution() / 360.f)), 0u, newline.size() - 1u);
                 newline[histogram_position] += d.gain;
+                // Verschwimmen mit Nebenkästchen
+                if (histogram_position >= 1) newline[histogram_position-1]               = 0.5f * (newline[histogram_position-1] + newline[histogram_position]);
+                if (histogram_position < newline.size()-1) newline[histogram_position+1] = 0.5f * (newline[histogram_position+1] + newline[histogram_position]);
             }
             // Alle Zeilen 1 weiter rücken
-            histogram[histogram.size()-1] = newline;
-            std::rotate(histogram.rbegin(), histogram.rbegin() + 1, histogram.rend());
+            histogram[0] = newline;
+            std::rotate(histogram.begin(), histogram.begin() + 1, histogram.end());
             timer.reset();
         }
         show(histogram); // Anzeigemethode aufrufen
