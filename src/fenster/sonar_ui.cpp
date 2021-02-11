@@ -28,6 +28,7 @@ void Sonar_UI::reset_sonar_data(const Sub* sub) {
 }
 
 void Sonar_UI::update_and_show(const Sub* sub) {
+    ImGui::Begin("Sonar View");
     for (unsigned i = 0; i < sonar_data.size(); ++i) {
         std::array<std::vector<float>, HISTORY_SIZE>& histogram = sonar_data[i];
         const Sonar_Passiv& sonar = sub->get_sonars()[i];
@@ -55,6 +56,7 @@ void Sonar_UI::update_and_show(const Sub* sub) {
         }
         show(histogram); // Anzeigemethode aufrufen
     }
+    ImGui::End();
 }
 
 void Sonar_UI::show(const std::array<std::vector<float>, HISTORY_SIZE>& histogram) const {

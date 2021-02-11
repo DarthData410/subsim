@@ -24,8 +24,14 @@ void Welt::tick() {
     const float s = timelapse * timer.getMilliseconds() / 1000.f; // Sekunden vergangen
     timer.reset();
 
-    // Ticks
-    for (auto& objekt : objekte) objekt.second->tick(this, s);
+    // Ticks - Objekte
+    std::unordered_set<decltype(objekte)::key_type> tote_objekte;
+    for (auto& objekt : objekte) if (objekt.second->tick(this, s) == false) tote_objekte.insert(objekt.first);
+    for (const auto key : tote_objekte) {
+        delete objekte.at(key);
+        objekte.erase(key);
+    }
+    // Ticks - Zonen
     for (auto& zone : zonen) zone.tick(this, s);
 }
 

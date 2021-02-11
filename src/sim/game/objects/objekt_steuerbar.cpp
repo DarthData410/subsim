@@ -22,7 +22,7 @@ void Objekt_Steuerbar::stop() {
     // TODO std::get<bool>(target_depth) = false;
 }
 
-void Objekt_Steuerbar::tick(Welt* welt, float s) {
+bool Objekt_Steuerbar::tick(Welt* welt, float s) {
     static constexpr float eps = 0.0001f;
 
     // Automatisches Pfadfinden
@@ -48,6 +48,7 @@ void Objekt_Steuerbar::tick(Welt* welt, float s) {
 
     // Vorwärts/Rückwärts in m bewegen
     if (std::abs(motor_linear.v) > eps) Physik::move_ahead(pos, orientation, motor_linear.v * s);
+    return true;
 }
 
 void Objekt_Steuerbar::set_target_bearing(float degree) {

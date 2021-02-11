@@ -1,14 +1,13 @@
 #pragma once
 
+#include "standard_ui.hpp"
+
 #include <vector>
 #include <array>
 #include <OgreTimer.h>
 
-// Prädeklarationen.
-class Sub;
-
 /// UI zur Anzeige vom Passiven Sonar.
-class Sonar_UI final {
+class Sonar_UI final : public Standard_UI {
 
 public:
 
@@ -18,7 +17,7 @@ public:
 
     explicit Sonar_UI(const Sub* sub);
 
-    void update_and_show(const Sub* sub);
+    void update_and_show(const Sub* sub) override;
 
 private:
 

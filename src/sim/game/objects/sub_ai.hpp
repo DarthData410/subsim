@@ -21,7 +21,7 @@ public:
 
     Typ get_typ() const override { return Typ::SUB_AI; }
 
-    void tick(Welt* welt, float s) override;
+    bool tick(Welt* welt, float s) override;
 
     /// Serialisierung via cereal.
     template <class Archive> void serialize(Archive& ar) {

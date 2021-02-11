@@ -2,6 +2,7 @@
 
 #include <imgui.h>
 
+/// Einige Erweiterungen zu ImGui.
 namespace ImGui::Nada {
 
     /**
@@ -19,5 +20,11 @@ namespace ImGui::Nada {
     bool KnobDegree(const char* label, float* p_value,
                     float v_min = 0.f, float v_max = 360.f, float v_step = 1.f,
                     float radius = 40.f, float thickness = 2.0f, const char* fmt = "%.0f°");
+
+    /**
+     * Zeigt am vorigen Element einen Tooltip,
+     * wenn die Maus sich über diesem befindet.
+     */
+    void Tooltip(const char* text);
 
 }

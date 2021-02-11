@@ -52,3 +52,7 @@ bool ImGui::Nada::KnobDegree(const char* label, float* p_value, float v_min, flo
     }
     return value_changed;
 }
+
+void ImGui::Nada::Tooltip(const char* text) {
+    if (ImGui::IsItemHovered()) ImGui::SetTooltip(text);
+}

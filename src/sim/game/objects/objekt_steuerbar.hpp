@@ -21,7 +21,7 @@ public:
     Typ get_typ() const override { return Typ::OBJEKT_STEUERBAR; }
 
     /// Simulationstick in Sekunden.
-    void tick(Welt* welt, float s) override;
+    bool tick(Welt* welt, float s) override;
 
     /// Startet den Bremsvorgang, leitet kompletten Stilltstand ein.
     void stop();

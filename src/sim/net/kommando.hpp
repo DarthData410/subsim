@@ -6,6 +6,7 @@
 
 class Welt;
 
+/// Eine vom Klienten gesendete, auszuführende Aktion auf das Klient-Sub.
 class Kommando final {
 
 public:

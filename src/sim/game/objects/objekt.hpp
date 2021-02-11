@@ -30,8 +30,8 @@ public:
     /// Dtor.
     virtual ~Objekt();
 
-    /// Führt einen Simulationstick für Zeit `s` aus.
-    virtual void tick(Welt* welt, float s) {}
+    /// Führt einen Simulationstick für Zeit `s` aus. Gibt, `false` zurück, wenn das Objekt zerstört ist.
+    virtual bool tick(Welt* welt, float s) { return true; }
 
     /// Liefert den Objekttypen zur Polymorphieauflösung.
     virtual Typ get_typ() const { return Typ::OBJEKT; }

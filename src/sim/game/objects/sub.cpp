@@ -7,9 +7,10 @@ Sub::Sub(const Ogre::Vector3& pos,
     //
 }
 
-void Sub::tick(Welt* welt, float s) {
+bool Sub::tick(Welt* welt, float s) {
     Objekt_Steuerbar::tick(welt, s);
     for (Sonar_Passiv& sonar_passiv : sonars) sonar_passiv.tick(this, welt, s);
+    return true;
 }
 
 float Sub::get_noise() const {

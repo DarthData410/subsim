@@ -8,9 +8,9 @@ Sub_AI::Sub_AI(const Sub& sub) : Sub(sub){
 
 }
 
-void Sub_AI::tick(Welt* welt, float s) {
-    Sub::tick(welt, s);
-    if (timer.getMilliseconds() < 1000.f) return; // Nicht jeden tick() nachdenken
+bool Sub_AI::tick(Welt* welt, float s) {
+    if (const bool alive = Sub::tick(welt, s); !alive) return false; // Lebt nicht mehr
+    if (timer.getMilliseconds() < 1000.f) return true; // Nicht jeden tick() nachdenken
 
     // Konfig
     const float SPEED_TRAVEL = 0.75f;
@@ -46,4 +46,5 @@ void Sub_AI::tick(Welt* welt, float s) {
         }
     }
     timer.reset();
+    return true;
 }
