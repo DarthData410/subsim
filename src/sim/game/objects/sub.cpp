@@ -16,3 +16,11 @@ bool Sub::tick(Welt* welt, float s) {
 float Sub::get_noise() const {
     return Objekt_Steuerbar::get_noise() * tarnung;
 }
+
+bool Sub::shoot(const std::string& torpedo_name) {
+    for (auto& paar : torpedos) if (paar.first.get_name() == torpedo_name) {
+        if (paar.second > 0) { paar.second--; return true; }
+        else return false;
+    }
+    return false;
+}

@@ -18,7 +18,8 @@ public:
         MOTOR_TAUCH,
         AUTO_POS,
         AUTO_KURS,
-        AUTO_TIEFE
+        AUTO_TIEFE,
+        TORP_LAUNCH
     };
 
     /// Ctor.
@@ -29,7 +30,7 @@ public:
 
     /// Ctor mit optionalen Daten.
     template<typename T>
-    Kommando(Typ typ, uint32_t sub_id, T daten) : Kommando(typ, sub_id) {
+    Kommando(Typ typ, uint32_t sub_id, const T& daten) : Kommando(typ, sub_id) {
         data = as_string(daten);
     }
 

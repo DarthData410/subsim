@@ -81,7 +81,7 @@ void Spielszene::key_pressed(const OgreBites::Keysym& key) {
             if (!antwort.empty()) {
                 player_sub = Net::deserialize<Sub>(antwort);
                 sonar_ui = Sonar_UI(&player_sub.value());
-                waffen_ui = Waffen_UI(&player_sub.value());
+                waffen_ui = Waffen_UI(&player_sub.value(), klient);
             }
             else Log::err() << "New player_sub not available\n";
         } break;

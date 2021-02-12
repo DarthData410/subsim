@@ -4,17 +4,23 @@
 
 #include <cereal/types/string.hpp>
 
+class Sub;
+
 class Torpedo final : public Objekt_Steuerbar {
 
 public:
 
     Torpedo() = default;
 
-    Torpedo(const Torpedo& torpedo_typ, float distance_to_activate, float target_bearing, float target_depth);
+    Torpedo(const Torpedo& torpedo_typ, const Sub* sub, float distance_to_activate, float target_bearing, float target_depth);
 
     Objekt::Typ get_typ() const override final { return Typ::TORPEDO; }
 
     bool tick(Welt* welt, float s) override final;
+
+    const std::string& get_name() const { return name; }
+
+    float get_range() const { return range; }
 
     /// Zur Eintragung in `unordered_map` z.B. Muss einmaligen Namen haben.
     friend bool operator<(const Torpedo& lhs, const Torpedo& rhs);
