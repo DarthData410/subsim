@@ -13,7 +13,7 @@ public:
 
     static constexpr unsigned HISTORY_SIZE = 40;
 
-    Sonar_UI() = default;
+    Sonar_UI();
 
     explicit Sonar_UI(const Sub* sub);
 

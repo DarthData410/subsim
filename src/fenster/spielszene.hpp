@@ -2,6 +2,7 @@
 
 #include "../sim/game/objects/sub.hpp"
 #include "../sim/net/klient.hpp"
+#include "nav_ui.hpp"
 #include "sonar_ui.hpp"
 #include "waffen_ui.hpp"
 
@@ -58,6 +59,7 @@ private:
 
     /// Simulation
     std::optional<Sub> player_sub = std::nullopt;
+    Nav_UI nav_ui;
     Sonar_UI sonar_ui;
     Waffen_UI waffen_ui;
 

@@ -3,7 +3,11 @@
 #include "../sim/game/objects/sub.hpp"
 #include "imgui_addons.hpp"
 
-Sonar_UI::Sonar_UI(const Sub* sub) {
+Sonar_UI::Sonar_UI() : Standard_UI(nullptr) {
+    //
+}
+
+Sonar_UI::Sonar_UI(const Sub* sub) : Standard_UI(nullptr) {
     reset_sonar_data(sub);
 }
 

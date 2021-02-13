@@ -2,6 +2,15 @@
 #include "../../../sim/physik.hpp"
 #include "sub.hpp"
 
+Torpedo::Torpedo(const Motor& motor_linear, const Motor& motor_rot, const Motor& motor_tauch,
+                 const std::string& name, float range)
+        : Objekt_Steuerbar({0,0,0}, // unwichtig, wird überschrieben bei Kopie
+                           motor_linear, motor_rot, motor_tauch),
+          name(name), range(range)
+{
+    //
+}
+
 Torpedo::Torpedo(const Torpedo& torpedo_typ, const Sub* sub, float distance_to_activate, float target_bearing, float target_depth)
     : name(torpedo_typ.name), range(torpedo_typ.range),
     distance_to_activate(distance_to_activate), target_bearing(target_bearing), target_depth(target_depth)

@@ -3,10 +3,12 @@
 #include "../sim/game/objects/sub.hpp"
 #include "../sim/net/klient.hpp"
 
-Waffen_UI::Waffen_UI(const Sub* sub, Klient* klient)
-    : klient(klient)
-{
-    (void) sub;
+Waffen_UI::Waffen_UI() : Standard_UI(nullptr) {
+    //
+}
+
+Waffen_UI::Waffen_UI(Klient* klient) : Standard_UI(klient) {
+    //
 }
 
 void Waffen_UI::update_and_show(const Sub* sub) {
