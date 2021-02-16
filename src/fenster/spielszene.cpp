@@ -130,6 +130,7 @@ void Spielszene::render() {
         subNode->setOrientation(player_sub->get_orientation());
         camNode->setPosition(subNode->getPosition() + Ogre::Vector3(10, 1, 10));
     }
+    if (!player_sub) tab = MAINMENU; // Kein Sub? -> Hauptmenü
     switch (tab) {
         case MAINMENU:  render_menu();      break;
         case NAV:       render_nav();       break;

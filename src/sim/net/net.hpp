@@ -14,6 +14,7 @@ public:
         SUB_CMD            = 0,   // "Kommando"
         AKTION_NEUES_UBOOT = 1,   // "uint8_t Team" -> "Sub"
         REQUEST_SUB        = 2,   // "uint32_t ID"  -> "Sub" oder ""
+        ALLE_OBJEKTE       = 3,   // "" -> std::vector<Objekt>
         BROADCAST          = 100, // ServerBroadcast -> Klienten auf Kanal 2: welt - "teams" & "zonen"
     };
 
@@ -35,6 +36,7 @@ public:
         return ss.str();
     }
 
+    /// Deserialisiert einen String in gegebenen Objekttypen über default-Ctor und gibt es zurück.
     template<typename T>
     static T deserialize(const std::string& s) {
         std::stringstream ss(s);

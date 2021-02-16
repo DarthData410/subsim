@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <zufall.hpp>
 
-bool ImGui::Nada::KnobDegree(const char* label, float* p_value, float v_min, float v_max, float v_step, float radius, float thickness, const char* fmt) {
+bool ImGui::Nada::KnobDegree(const char* label, float* p_value, float v_min, float v_max, float v_step, float radius, float thickness, const char* fmt, const std::optional<float>& value2) {
     /// Modified from Source: https://github.com/Flix01/imgui
     ImGuiIO& io = ImGui::GetIO();
     ImGuiStyle& style = ImGui::GetStyle();
@@ -42,6 +42,14 @@ bool ImGui::Nada::KnobDegree(const char* label, float* p_value, float v_min, flo
                        ImGui::GetColorU32(ImGuiCol_SliderGrabActive), thickness);
     draw_list->AddCircleFilled(center, radius_inner, ImGui::GetColorU32(is_active ? ImGuiCol_FrameBgActive : is_hovered ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg), 16);
     draw_list->AddText(ImVec2(pos.x, pos.y + radius_outer * 2 + style.ItemInnerSpacing.y), ImGui::GetColorU32(ImGuiCol_Text), label);
+    if (value2) { // Optionaler 2ter Wert
+        const float t2 = (value2.value() - v_min) / (v_max - v_min);
+        const float angle2 = ANGLE_MIN + (ANGLE_MAX - ANGLE_MIN) * t2;
+        const float angle_cos2 = cosf(angle2), angle_sin2 = sinf(angle2);
+        draw_list->AddLine(ImVec2(center.x + angle_cos2*radius_inner, center.y + angle_sin2*radius_inner),
+                           ImVec2(center.x + angle_cos2*(radius_outer-2), center.y + angle_sin2*(radius_outer-2)),
+                           ImColor(0x80'00'00'FF), thickness);
+    }
 
     // Tooltip
     if (is_active || is_hovered)    {

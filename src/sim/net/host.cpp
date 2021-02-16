@@ -88,8 +88,14 @@ void Host::handle_receive(ENetEvent& event) {
         case Net::REQUEST_SUB: {
             Net::id_t sub_id;
             ds >> sub_id;
-            if (welt.objekte.count(sub_id)) sende_antwort(event, Net::serialize(*(Sub *) welt.objekte[sub_id]));
+            if (welt.objekte.count(sub_id)) sende_antwort(event, Net::serialize(*(Sub*) welt.objekte[sub_id]));
             else sende_antwort(event, "");
+        } break;
+        case Net::ALLE_OBJEKTE: {
+            std::vector<Objekt> objekte;
+            objekte.reserve(welt.objekte.size());
+            for (const auto& paar : welt.objekte) objekte.push_back(*paar.second);
+            sende_antwort(event, Net::serialize(objekte));
         } break;
         default: Log::err() << "\tUnknown Request Net::" << request << '\n'; break;
     }

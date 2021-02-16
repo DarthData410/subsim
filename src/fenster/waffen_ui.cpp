@@ -33,6 +33,8 @@ void Waffen_UI::update_and_show(const Sub* sub) {
     ImGui::Text("%u Torpedos Left", ammo);
     ImGui::Text("Range: %.0f", torp.get_range());
 
+    ImGui::NewLine();
+
     static bool temp = false;
     ImGui::Checkbox("Open Torpedobay Door", &temp);
 

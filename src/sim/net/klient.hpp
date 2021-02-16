@@ -18,6 +18,9 @@ public:
 
     ~Klient();
 
+    /// Stellt zu einem Server über die eingestellten IP eine Verbindung her. `true` bei Erfolg.
+    bool connect();
+
     /// Getter: Zeitraffer (siehe `class Welt`). @note Setzt einen ``std::mutex`` ein.
     float get_timelapse();
 
@@ -27,14 +30,26 @@ public:
     /// Getter: Zonen. @note Setzt einen ``std::mutex`` ein.
     std::vector<Zone> get_zonen();
 
-    /// Stellt zu einem Server über die eingestellten IP eine Verbindung her. `true` bei Erfolg.
-    bool connect();
-
     /// Sendet gegebenes Kommando an den Server.
     void kommando(const Kommando& cmd);
 
     /// Fragt Daten vom Server an. @note Vgl. `Net::Request` und `host.cpp` wegen Serialisierung.
     std::string request(Net::Request request_typ, std::optional<Net::id_t> objekt_id = std::nullopt);
+
+    /**
+     * Liefert den Request direkt als Typ deserialisiert zurück.
+     * @note Typ muss default-Ctor haben.
+     * @warning Request *muss* gültig sein.
+     * @warning Fehler, falls das Netzwerkpaket inkorrekt oder gar nicht zurückkommt.
+     * @tparam T Zu deserialisierender Typ.
+     * @param request_typ Requesttyp. Siehe `Net::Request`.
+     * @param objekt_id Optionale ID des angefragten Objekts.
+     * @return Deserialisiertes Netzwerkpaket.
+     */
+    template <typename T>
+    T request(Net::Request request_typ, std::optional<Net::id_t> objekt_id = std::nullopt) {
+        return Net::deserialize<T>(request(request_typ, objekt_id));
+    }
 
 private:
 
