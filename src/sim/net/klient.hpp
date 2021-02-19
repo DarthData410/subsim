@@ -1,7 +1,7 @@
 #pragma once
 
 #include "kommando.hpp"
-#include "../game/team.hpp."
+#include "../game/team.hpp"
 #include "../game/objects/zone.hpp"
 
 #include <enet/enet.h>
