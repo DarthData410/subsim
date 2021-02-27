@@ -8,10 +8,14 @@ if (WIN32)
     set(MSYS2_LIBS)
 endif()
 
-add_subdirectory(enet enet) # ENet 1.3.17 getestet
+# Enet
+set(ENET_VER "1.3.17")
+add_subdirectory(enet-${ENET_VER} enet) # ENet 1.3.17 getestet
 
 # Ogre3D einrichten
-set(OGRE_VER "1.12.10")
+set(OGRE_VER "1.12.11")
+set(OGRE_STATIC TRUE)
+set(OGRE_STATIC_LIB TRUE)
 set(OGRE_BUILD_COMPONENT_OVERLAY TRUE)
 set(OGRE_BUILD_COMPONENT_OVERLAY_IMGUI TRUE)
 set(OGRE_BUILD_COMPONENT_PYTHON FALSE)
@@ -44,9 +48,9 @@ target_compile_definitions(libs PUBLIC
 target_include_directories(libs SYSTEM PUBLIC
         ${PROJECT_BINARY_DIR}/libs/ogre3d/imgui-1.79
         ${PROJECT_BINARY_DIR}/libs/ogre3d/include
-        ${CMAKE_CURRENT_LIST_DIR}/ogre-${OGRE_VER}/OgreMain/include
         ${CMAKE_CURRENT_LIST_DIR}/implot
-        ${CMAKE_CURRENT_LIST_DIR}/enet/include
+        ${CMAKE_CURRENT_LIST_DIR}/ogre-${OGRE_VER}/OgreMain/include
+        ${CMAKE_CURRENT_LIST_DIR}/enet-${ENET_VER}/include
         )
 
 target_link_libraries(libs
