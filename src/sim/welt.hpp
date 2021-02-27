@@ -20,12 +20,12 @@ public:
     void tick();
 
     /// Erstellt ein neues Sub via `new` - manueller `delete` notwendig.
-    const Sub* get_new_sub(uint8_t team, bool computer_controlled = false);
+    const Sub* get_new_sub(uint8_t team, bool computer_controlled);
 
 private:
 
     /// Zeitraffer. TODO: Broadcast
-    float timelapse = 1.0f;
+    float timelapse = 10.0f;
 
     /// Teams. TODO: Broadcast
     std::unordered_map<uint8_t, Team> teams;

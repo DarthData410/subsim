@@ -8,7 +8,7 @@ Welt::Welt() {
     for (uint8_t i = 1; i <= 2; ++i) {
         teams[i] = Team(i);
         teams[i].basis = {i % 2 == 0 ? 1'500.f : -1'500.f, 0.f};
-        get_new_sub(i, true);
+        for (unsigned k = 0; k < 4; ++k) get_new_sub(i, true);
     }
     // Punktezonen hinzufügen
     zonen.emplace_back(std::tuple(0.f,0.f), 1000.f);
@@ -40,7 +40,8 @@ const Sub* Welt::get_new_sub(uint8_t team, bool computer_controlled) {
     Sub* sub_ptr = nullptr;
     if (computer_controlled) sub_ptr = new Sub_AI(teams.at(team).get_new_sub());
     else sub_ptr = new Sub(teams.at(team).get_new_sub());
-    objekte[sub_ptr->get_id()] = sub_ptr;
+    sub_ptr->regenerate_id();
+    objekte.insert({sub_ptr->get_id(), sub_ptr});
     sub_ptr->pos = { // Startposition beim Team, leicht versetzt
             std::get<0>(teams[team].get_pos()) + Zufall::f(-100.f, 100.f),
             20.f, // Tiefe

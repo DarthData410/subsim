@@ -2,7 +2,12 @@
 
 #include "standard_ui.hpp"
 
+class Welt;
+
 class Nav_UI final : public Standard_UI {
+
+    /// Netzwerk-Synchronisationsintervall in ms.
+    static constexpr float SYNC_INTERVALL = 5000.f;
 
 public:
 
@@ -11,5 +16,16 @@ public:
     explicit Nav_UI(Klient* klient);
 
     void update_and_show(const Sub* sub) override;
+
+    /// Fog of War an/aus.
+    void set_fow(bool fow) { Nav_UI::fow = fow; }
+
+private:
+
+    void show_minimap(const Sub* sub) const;
+
+    void show_navigation(const Sub* sub) const;
+
+    bool fow = false;
 
 };

@@ -20,10 +20,10 @@ public:
             TORPEDO
     };
 
-    /// Ctor.
+    /// Ctor. Weist keine ID zu.
     Objekt() = default;
 
-    /// Ctor.
+    /// Ctor. Weist neue ID zu.
     explicit Objekt(const Ogre::Vector3& pos, const Ogre::Quaternion& orientation =
                     Ogre::Quaternion(Ogre::Degree(90), Ogre::Vector3::UNIT_Y));
 
@@ -64,6 +64,9 @@ public:
 
 protected:
 
+    /// Weist dem Objekt eine neue ID zu.
+    void regenerate_id();
+
     /// Einmalige ID. Wird nicht aufsteigend generiert, sondern zufällig.
     uint32_t id;
 
@@ -80,5 +83,8 @@ private:
 
     /// Vergebene IDs.
     static inline std::unordered_set<uint32_t> given_ids;
+
+    /// Mutex auf alle Objekte.
+    static inline std::mutex objekt_mutex;
 
 };

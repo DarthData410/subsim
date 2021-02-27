@@ -3,6 +3,9 @@ project(nada_sub)
 set(CMAKE_CXX_STANDARD 17)
 
 # Build Config
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fuse-ld=lld") # Linker
+endif ()
 if (CMAKE_BUILD_TYPE STREQUAL "Release")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -s -m64 -march=athlon64-sse3 -mtune=generic")
     if (UNIX)

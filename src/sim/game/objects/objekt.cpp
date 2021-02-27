@@ -6,14 +6,18 @@ Objekt::Objekt(const Ogre::Vector3& pos,
                pos(pos),
                orientation(orientation)
 {
-    // ID zuweisen, wiederholen falls doppelt
-    do id = Zufall::get<decltype(id)>(0, std::numeric_limits<decltype(id)>::max());
-    while (given_ids.count(id) != 0);
-    given_ids.insert(id);
+    regenerate_id();
 }
 
 Objekt::~Objekt() {
+    std::scoped_lock lock(objekt_mutex);
     given_ids.erase(id);
+}
+
+void Objekt::regenerate_id() {
+    std::scoped_lock lock(objekt_mutex);
+    while (given_ids.count(id)) [[unlikely]] id = Zufall::random_hash<decltype(id)>();
+    given_ids.insert(id);
 }
 
 float Objekt::get_bearing() const {
