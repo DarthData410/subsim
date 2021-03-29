@@ -23,8 +23,10 @@ public:
 
     bool tick(Welt* welt, float s) override final;
 
+    /// Getter: Torpedoname / Typname.
     const std::string& get_name() const { return name; }
 
+    /// Getter: Reichweite.
     float get_range() const { return range; }
 
     /// Zur Eintragung in `unordered_map` z.B. Muss einmaligen Namen haben.

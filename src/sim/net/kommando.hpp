@@ -11,15 +11,16 @@ class Kommando final {
 
 public:
 
+    /// Welches Kommando soll ausgeführt werden?
     enum Typ : uint8_t {
-        STOP = 0,
-        MOTOR_LINEAR,
-        MOTOR_ROT,
-        MOTOR_TAUCH,
-        AUTO_POS,
-        AUTO_KURS,
-        AUTO_TIEFE,
-        TORP_LAUNCH
+        STOP = 0,       // Alle Motoren stopp.
+        MOTOR_LINEAR,   // Etwas am MOTOR_LINEAR ändern, z.B. schneller / langsamer.
+        MOTOR_ROT,      // Etwas am MOTOR_ROT ändern.
+        MOTOR_TAUCH,    // Etwas am MOTOR_TAUCH ändern.
+        AUTO_POS,       // Automatische Wegfindung zu einer Position.
+        AUTO_KURS,      // Automatisches Drehen zu einem Kurs.
+        AUTO_TIEFE,     // Automatisches Tauchen zu einer Tiefe.
+        TORP_LAUNCH     // Torpedo starten.
     };
 
     /// Ctor.
@@ -38,15 +39,19 @@ public:
 
     uint32_t sub_id;
 
+    /// Enthält evtl. zusätzliche Daten zum senden in einem Netzwerkpaket.
     std::string data;
 
+    /// Wendet dieses Kommando auf `welt` an.
     void apply(Welt* welt);
 
+    /// Serialisierung via Cereal.
     template<class Archive>
     void serialize(Archive& ar) { ar(typ, sub_id, data); }
 
 private:
 
+    /// Hilfsmethode, die die Daten aus diesem Kommando (data) in T konvertiert.
     template<typename T>
     T as() {
         std::stringstream ss(data);
@@ -56,6 +61,10 @@ private:
         return t;
     }
 
+    /** 
+     * Wandelt ein beliebiges Objekt in einen String um, 
+     * um diese als Daten (daten in diesem Kommando) zu speichern.
+     */
     template<typename T>
     std::string as_string(const T& daten) {
         std::stringstream ss;

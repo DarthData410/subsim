@@ -2,6 +2,7 @@
 
 #include <cereal/archives/binary.hpp>
 
+/// Globale Netzwerkdefinitionen.
 class Net final {
 
 public:

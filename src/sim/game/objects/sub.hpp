@@ -6,6 +6,7 @@
 
 #include <cereal/types/map.hpp>
 
+/// Ein U-Boot.
 class Sub : public Objekt_Steuerbar {
 
     friend class Team;

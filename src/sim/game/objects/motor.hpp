@@ -1,9 +1,12 @@
 #pragma once
 
+/// Antrieb für physikalische Objekte in der Simulation.
 struct Motor final {
 
+    /// Ctor.
     Motor() = default;
 
+    /// Erstellt einen Motor mit Höchstgeschwindigkeit v_max und Beschleunigung a.
     Motor(float v_max, float a);
 
     /// Tick mit Zeit in Sekunden.

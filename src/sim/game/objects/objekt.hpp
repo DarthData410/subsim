@@ -4,7 +4,7 @@
 
 class Welt;
 
-/// Elternklasse für alle von der Physiksimulation betroffenen Objekte.
+/// Unbewegliches Objekt. Elternklasse für alle von der Physiksimulation betroffenen Objekte.
 class Objekt {
 
     friend class Welt;

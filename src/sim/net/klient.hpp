@@ -10,12 +10,17 @@
 #include <thread>
 #include <mutex>
 
+/** 
+ * Multiplayer-Klient (UDP).
+ */
 class Klient final {
 
 public:
 
+    /// Reserviert (aber 'startet' nicht) eine Verbindung mit gg. IPv4 Adresse.
     explicit Klient(const std::string& ip);
 
+    /// Stoppt den Klienten und benachrichtigt ggf. den Server über Exit.
     ~Klient();
 
     /// Stellt zu einem Server über die eingestellten IP eine Verbindung her. `true` bei Erfolg.

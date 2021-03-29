@@ -6,16 +6,21 @@
 
 class Welt;
 
+/// UDP Server für Multiplayer.
 class Host final {
 
 public:
 
+    /// Initialisiert (aber startet nicht) den Host am gg. UDP Port.
     explicit Host(uint16_t port);
 
+    /// Startet den Server.
     void start();
 
+    /// Stoppt den Server, gibt den Port aber noch nicht frei.
     void stop();
 
+    /// Dtor. Gibt den Port wieder frei.
     ~Host();
 
 private:
@@ -26,10 +31,10 @@ private:
     /// Sendet eine Antwort an den Peer aus `event`, wiederverwendet dabei `event->packet`.
     void sende_antwort(ENetEvent& event, const std::string& response);
 
-    /// Net
+    /// ENet-Serverobjekt.
     ENetHost* server = nullptr;
 
-    /// Model
+    /// Simlations-Loop + Netzwerk-Listening aktiv?
     bool loop = true;
 
     /// Simulierte Welt.

@@ -3,8 +3,10 @@
 
 #include <OgreTimer.h>
 
+/// Simluierte Welt, die alle Objekte enthält.
 class Welt final {
 
+    /// Welt hat privaten Zugriff auf folgende Klassen:
     friend class Host;
     friend class Kommando;
     friend class Zone;
@@ -13,10 +15,15 @@ class Welt final {
 
 public:
 
+    /// Erstellt eine nutzbare Welt. Teams, Zonen und Computergegner werden auch generiert.
     Welt();
 
+    /// Dtor.
     ~Welt();
 
+    /** 
+     * Führt einen Simulationsschritt durch. Die Methode misst selbst die Zeit, wann sie davor zuletzt
+     * aufgerufen wurde und skaliert entsprechend alle physikalischen Bewegungen etc.
     void tick();
 
     /// Erstellt ein neues Sub via `new` - manueller `delete` notwendig.

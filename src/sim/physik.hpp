@@ -5,10 +5,10 @@ class Physik final {
 
 public:
 
-    /// Setzt den Pitch von `q` auf den Wert `target_pitch`.
+    /// Setzt den Pitch von Quaternion `q` auf den Wert `target_pitch`.
     static void set_pitch(Ogre::Quaternion& q, float target_pitch);
 
-    /// Dreht `q` um `degree` Grad.
+    /// Dreht Quaternion `q` um `degree` Grad.
     static void rotate(Ogre::Quaternion& q, float degree);
 
     /// Bewegt `pos` in Richtung `q` um `amount`.

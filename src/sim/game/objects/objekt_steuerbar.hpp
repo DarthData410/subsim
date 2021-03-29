@@ -6,6 +6,7 @@
 #include <cereal/types/tuple.hpp>
 #include <cereal/types/base_class.hpp>
 
+/// Bewegliches Objekt.
 class Objekt_Steuerbar : public Objekt {
 
 public:
