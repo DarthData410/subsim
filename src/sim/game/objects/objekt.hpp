@@ -1,3 +1,4 @@
+#pragma once
 #include <Ogre.h>
 #include <cereal/cereal.hpp>
 #include <cereal/types/polymorphic.hpp>
@@ -13,7 +14,8 @@ class Objekt {
 public:
 
     /// Vererbungshierachie von Objekt. Zur Typenbestimmung bei Laufzeit.
-    enum class Typ { OBJEKT,
+    enum class Typ {
+            OBJEKT,
             OBJEKT_STEUERBAR,
             SUB,    // Spieler Sub
             SUB_AI, // Computergesteuertes Sub
