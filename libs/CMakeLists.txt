@@ -13,9 +13,11 @@ set(ENET_VER "1.3.17")
 add_subdirectory(enet-${ENET_VER} enet) # ENet 1.3.17 getestet
 
 # Ogre3D einrichten
-set(OGRE_VER "1.12.11")
-set(OGRE_STATIC TRUE)
-set(OGRE_STATIC_LIB TRUE)
+set(OGRE_VER "1.12.10")
+if (UNIX)
+    set(OGRE_STATIC TRUE)
+    set(OGRE_STATIC_LIB TRUE)
+endif()
 set(OGRE_BUILD_COMPONENT_OVERLAY TRUE)
 set(OGRE_BUILD_COMPONENT_OVERLAY_IMGUI TRUE)
 set(OGRE_BUILD_COMPONENT_PYTHON FALSE)
