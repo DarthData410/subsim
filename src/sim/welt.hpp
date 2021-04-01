@@ -24,6 +24,7 @@ public:
     /** 
      * Führt einen Simulationsschritt durch. Die Methode misst selbst die Zeit, wann sie davor zuletzt
      * aufgerufen wurde und skaliert entsprechend alle physikalischen Bewegungen etc.
+     * */
     void tick();
 
     /// Erstellt ein neues Sub via `new` - manueller `delete` notwendig.
