@@ -13,7 +13,7 @@ set(ENET_VER "1.3.17")
 add_subdirectory(enet-${ENET_VER} enet) # ENet 1.3.17 getestet
 
 # Ogre3D einrichten
-set(OGRE_VER "1.12.10")
+set(OGRE_VER "1.12.11")
 if (UNIX)
     set(OGRE_STATIC TRUE)
     set(OGRE_STATIC_LIB TRUE)

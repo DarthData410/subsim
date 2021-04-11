@@ -33,7 +33,7 @@ public:
 private:
 
     /// Zeitraffer. TODO: Broadcast
-    float timelapse = 10.0f;
+    float timelapse = 1.0f;
 
     /// Teams. TODO: Broadcast
     std::unordered_map<uint8_t, Team> teams;

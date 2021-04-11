@@ -69,4 +69,5 @@ private:
     Ogre::SceneNode* camNode   = nullptr;
     Ogre::SceneNode* lightNode = nullptr;
     Ogre::SceneNode* subNode = nullptr;
+
 };

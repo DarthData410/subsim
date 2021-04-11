@@ -99,7 +99,7 @@ void Spielszene::key_pressed(const OgreBites::Keysym& key) {
 
 void Spielszene::sync() {
     // Net Sync
-    if (static Ogre::Timer timer; timer.getMilliseconds() >= 500.f) {
+    if (static Ogre::Timer timer; timer.getMilliseconds() >= 500) {
         if (player_sub) {
             const std::string& antwort = klient->request(Net::REQUEST_SUB, player_sub->get_id());
             if (!antwort.empty()) player_sub = Net::deserialize<Sub>(antwort);
@@ -112,12 +112,12 @@ void Spielszene::sync() {
 void Spielszene::render() {
     sync();
 
-    // Gfx Interpolieren
+    // Gfx Interpolieren (nur eigenes Sub)
     if (static Ogre::Timer timer_interpol; player_sub.has_value()) {
-        player_sub->tick(nullptr, timer_interpol.getMilliseconds() / 1000.f);
+        //player_sub->tick(nullptr, timer_interpol.getMilliseconds() / 1000.f);
         timer_interpol.reset();
 
-        // Gfx erstellen?
+        // Eigenes Sub: Gfx erstellen?
         if (subNode == nullptr) {
             Ogre::Entity *ent = scene_manager->createEntity("Sinbad.mesh"); //sub1.mesh
             subNode = scene_manager->getRootSceneNode()->createChildSceneNode();
@@ -131,6 +131,8 @@ void Spielszene::render() {
         camNode->setPosition(subNode->getPosition() + Ogre::Vector3(10, 1, 10));
     }
     if (!player_sub) tab = MAINMENU; // Kein Sub? -> Hauptmenü
+
+    // Welches Menü rendern?
     switch (tab) {
         case MAINMENU:  render_menu();      break;
         case NAV:       render_nav();       break;

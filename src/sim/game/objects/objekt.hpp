@@ -81,12 +81,4 @@ protected:
     /// Ausrichtung.
     Ogre::Quaternion orientation;
 
-private:
-
-    /// Vergebene IDs.
-    static inline std::unordered_set<uint32_t> given_ids;
-
-    /// Mutex auf alle Objekte.
-    static inline std::mutex objekt_mutex;
-
 };

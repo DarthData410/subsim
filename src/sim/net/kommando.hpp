@@ -20,7 +20,8 @@ public:
         AUTO_POS,       // Automatische Wegfindung zu einer Position.
         AUTO_KURS,      // Automatisches Drehen zu einem Kurs.
         AUTO_TIEFE,     // Automatisches Tauchen zu einer Tiefe.
-        TORP_LAUNCH     // Torpedo starten.
+        TORP_LAUNCH,    // Torpedo starten.
+        TIMELAPSE       // Simulationszeit Ändern
     };
 
     /// Ctor.

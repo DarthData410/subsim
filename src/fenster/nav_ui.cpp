@@ -85,6 +85,7 @@ void Nav_UI::show_navigation(const Sub* sub) const {
     ImGui::Text("Sub: %.1f %.1f Depth: %.1f", sub->get_pos().x, sub->get_pos().z, sub->get_pos().y);
     ImGui::Text("Pitch: %.1f", sub->get_pitch());
     ImGui::Text("Bearing: %.1f", sub->get_bearing());
+    ImGui::Text("Speed: %.1f", sub->get_speed());
 
     static float target_x = 0, target_z = 0;
     ImGui::InputFloat("Target_x", &target_x);

@@ -21,5 +21,10 @@ void Spielszene::render_3d() {
 }
 
 void Spielszene::render_menu() {
-
+    float timelapse = klient->get_timelapse();
+    if (ImGui::SliderFloat("Timelapse", &timelapse, 0, 10)) {
+        Log::debug() << "Timelapse sollte jetzt sein: " << timelapse << '\n';
+        const Kommando neue_zeit_kommando(Kommando::TIMELAPSE, 0, timelapse);
+        klient->kommando(neue_zeit_kommando); // TODO nicht so oft an den server senden
+    }
 }

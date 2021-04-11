@@ -4,8 +4,6 @@
 
 #include <enet/enet.h>
 
-class Welt;
-
 /// UDP Server für Multiplayer.
 class Host final {
 

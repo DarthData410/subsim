@@ -38,6 +38,10 @@ void Kommando::apply(Welt* welt) {
                 else welt->objekte[t->get_id()] = t; // Torpedo in die Welt gesetzt
             } else Log::err() << "Error: Torpedo could not be launched. " << t->get_name() << '\n';
             break;
+        case TIMELAPSE:
+            welt->timelapse = as<float>();
+            Log::debug() << "Welt hat jetzt Timelapse = " << welt->timelapse << '\n';
+            break;
         default:
             Log::err() << "Kommando::apply typ not implemented: " << (unsigned)typ << '\n';
             break;
