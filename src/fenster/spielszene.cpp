@@ -114,7 +114,7 @@ void Spielszene::render() {
 
     // Gfx Interpolieren (nur eigenes Sub)
     if (static Ogre::Timer timer_interpol; player_sub.has_value()) {
-        //player_sub->tick(nullptr, timer_interpol.getMilliseconds() / 1000.f);
+        player_sub->tick(nullptr, timer_interpol.getMilliseconds() / 1000.f);
         timer_interpol.reset();
 
         // Eigenes Sub: Gfx erstellen?
