@@ -48,6 +48,7 @@ void Nav_UI::show_minimap(const Sub* sub) const {
     // Objekte synchronisieren
     static std::vector<Objekt> objekte;
     if (static Ogre::Timer timer; timer.getMilliseconds() > SYNC_INTERVALL) {
+        timer.reset();
         const std::string& objekte_raw = klient->request(Net::ALLE_OBJEKTE);
         if (!objekte_raw.empty()) {
             try { objekte = Net::deserialize<std::vector<Objekt>>(objekte_raw); }

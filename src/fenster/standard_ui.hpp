@@ -19,6 +19,7 @@ public:
 
 protected:
 
+    /// Für das senden von Kommandos an den Server.
     Klient* klient;
 
 };
