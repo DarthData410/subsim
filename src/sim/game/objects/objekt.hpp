@@ -32,7 +32,11 @@ public:
     /// Dtor.
     virtual ~Objekt();
 
-    /// Führt einen Simulationstick für Zeit `s` aus. Gibt, `false` zurück, wenn das Objekt zerstört ist.
+    /**
+     * Führt einen Simulationstick für Zeit `s` aus.
+     * @note Man kann 'false' zurückgeben, um das Objekt zu zerstören.
+     *       Zerstören = wird aus der Welt entfernt.
+     */
     virtual bool tick(Welt* welt, float s) { return true; }
 
     /// Liefert den Objekttypen zur Polymorphieauflösung.

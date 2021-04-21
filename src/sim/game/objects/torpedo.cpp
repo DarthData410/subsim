@@ -29,10 +29,15 @@ bool Torpedo::tick(Welt* welt, float s) {
     if (travelled > range) return false; // Keine Reichweite mehr
     if (travelled < distance_to_activate) set_target_bearing(target_bearing);
     else { // Aktiv
-        // TODO seeker
+        // TODO Nach gültigen Zielen suchen
+        // - alle vom Sonar detektierten Objekte durchgehen und eines davon als 'target' auswählen
     }
-    // TODO seeker
+    // TODO bearing auf 'target' einstellen
+
     // TODO hit detect
+    // TODO if distance torpedo/target < ... dann BOOM ->
+    // target als getroffen irgendwie markieren (damage...)
+    // dieses torpedo return false (entfernen aus der Welt)
     return true;
 }
 
