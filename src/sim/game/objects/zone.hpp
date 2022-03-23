@@ -12,7 +12,7 @@ public:
     /// Ctor default.
     Zone() = default;
 
-    Zone(const std::tuple<float, float>& pos, float groesse);
+    Zone(const std::tuple<double, double>& pos, float groesse);
 
     /// Getter: Das kontrollierende Team. 0, wenn niemand.
     uint8_t get_team() const { return team; }

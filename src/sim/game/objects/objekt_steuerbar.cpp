@@ -1,8 +1,9 @@
 #include <log.hpp>
+#include <valarray>
 #include "objekt_steuerbar.hpp"
 #include "../../physik.hpp"
 
-Objekt_Steuerbar::Objekt_Steuerbar(const Ogre::Vector3& pos,
+Objekt_Steuerbar::Objekt_Steuerbar(const Vektor& pos,
                                    const Motor& motor_linear,
                                    const Motor& motor_rot,
                                    const Motor& motor_tauch)
@@ -36,18 +37,14 @@ bool Objekt_Steuerbar::tick(Welt* welt, float s) {
     motor_tauch.tick(s);
     motor_rot.tick(s);
 
-    // Auf/Ab in Grad festlegen
-    //Physik::set_pitch(orientation, motor_tauch.v - 90.f); // TODO
-    pos.y += motor_tauch.v; // TODO workaround für Quaternion pitch
-
     // Links/Rechts in Grad bewegen
     // + Max. Rotation ist Geschwindigkeitsabhängig
     const float max_rot = std::sqrt(std::abs(get_speed_relativ()));
     if (std::abs(motor_rot.v) > motor_rot.v_max * max_rot) motor_rot.v = motor_rot.v * max_rot;
-    if (std::abs(motor_rot.v) > eps) Physik::rotate(orientation, motor_rot.v * s);
+    if (std::abs(motor_rot.v) > eps) bearing += motor_rot.v * s;
 
     // Vorwärts/Rückwärts in m bewegen
-    if (std::abs(motor_linear.v) > eps) Physik::move_ahead(pos, orientation, motor_linear.v * s);
+    if (std::abs(motor_linear.v) > eps) Physik::move_ahead(pos, bearing, pitch, motor_linear.v * s);
     return true;
 }
 
@@ -56,10 +53,10 @@ void Objekt_Steuerbar::set_target_bearing(float degree) {
     std::get<float>(target_bearing) = degree;
 }
 
-void Objekt_Steuerbar::set_target_pos(float x, float z) {
+void Objekt_Steuerbar::set_target_pos(double x, double y) {
     std::get<bool>(target_pos) = true;
     std::get<1>(target_pos) = x;
-    std::get<2>(target_pos) = z;
+    std::get<2>(target_pos) = y;
 }
 
 void Objekt_Steuerbar::auto_rudder() {
@@ -76,12 +73,12 @@ void Objekt_Steuerbar::auto_path() {
     // Richtung
     const float target_x = std::get<1>(target_pos);
     const float target_y = std::get<2>(target_pos);
-    const float bearing = Physik::bearing(pos.x, pos.z, target_x, target_y);
+    const float bearing = Physik::bearing(pos.x(), pos.y(), target_x, target_y);
     if (std::abs(get_bearing() - bearing) > 1.f) set_target_bearing(bearing);
-    if (Physik::distanz(pos.x, pos.z, target_x, target_y) <= motor_linear.get_bremsweg()) {
+    if (Physik::distanz(pos.x(), pos.y(), target_x, target_y) <= motor_linear.get_bremsweg()) {
         std::get<bool>(target_pos) = false; // Ziel erreicht.
-        stop();
         set_target_bearing(bearing);
+        stop();
     }
 }
 

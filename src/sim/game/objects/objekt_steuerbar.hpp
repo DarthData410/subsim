@@ -13,7 +13,7 @@ public:
 
     Objekt_Steuerbar() = default;
 
-    Objekt_Steuerbar(const Ogre::Vector3& pos,
+    Objekt_Steuerbar(const Vektor& pos,
                      const Motor& motor_linear,
                      const Motor& motor_rot,
                      const Motor& motor_tauch);
@@ -34,7 +34,7 @@ public:
 
     void set_target_rudder(float degree) { motor_rot.v_target = degree; }
 
-    void set_target_pos(float x, float z);
+    void set_target_pos(double x, double y);
 
     void set_target_bearing(float degree);
 
@@ -79,8 +79,8 @@ protected:
     /// Zielrichtung. [Aktiv,Grad]
     std::tuple<bool, float> target_bearing;
 
-    /// Zielposition. [Aktiv,X,Z]
-    std::tuple<bool, float, float> target_pos;
+    /// Zielposition. [Aktiv,X,Y]
+    std::tuple<bool, double, double> target_pos;
 
     /// Zieltiefe
     // TODO std::tuple<bool, float> target_depth;

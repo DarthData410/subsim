@@ -1,74 +1,23 @@
-#include "spielszene.hpp"
-#include "../sim/physik.hpp"
-
 #include <log.hpp>
-#include <OgreNode.h>
-#include <OgreEntity.h>
-#include <OgreRenderWindow.h>
-#include <OgreMeshManager.h>
-#include <OgreViewport.h>
-#include <SDL2/SDL_keycode.h>
+
+#include "spielszene.hpp"
 
 Spielszene::Spielszene(const std::string& ip) : klient(new Klient(ip)) {
     //
 }
 
-Spielszene::Spielszene(Ogre::RenderWindow* window, Ogre::SceneManager* scene_manager)
-    : Spielszene()
+Spielszene::Spielszene(sf::Window* window)
+    : window(window)
 {
-    //window->resize(1600,900);
-    Spielszene::scene_manager = scene_manager;
 
-    // without light we would just get a black screen
-    Ogre::Light* light = scene_manager->createLight("MainLight");
-    lightNode = scene_manager->getRootSceneNode()->createChildSceneNode();
-    lightNode->setPosition(0, 10, 15);
-    lightNode->attachObject(light);
-
-    // also need to tell where we are
-    Ogre::Camera* cam = scene_manager->createCamera("myCam");
-    cam->setAutoAspectRatio(true);
-    cam->setNearClipDistance(3); // specific to this sample
-    //cam->setFarClipDistance() // TODO
-    window->addViewport(cam);
-    camNode = scene_manager->getRootSceneNode()->createChildSceneNode();
-    camNode->attachObject(cam);
-    //camNode->setPosition(0, 0, 15);
-    //camNode->lookAt(Ogre::Vector3(0, 0, -1), Ogre::Node::TS_PARENT);
-    //camNode->setPosition(Ogre::Vector3(0, 5, 15));
-
-    // Himmel // drawFirst evtl. problematisch
-    scene_manager->setSkyBox(true, "Examples/MorningSkyBox", 200, false);
-
-    // Unterwasser https://ogrecave.github.io/ogre/api/latest/tut__terrain_sky_fog.html
-    //Ogre::ColourValue fadeColour(0.5, 0.5, 0.7);
-    //window->getViewport(0)->setBackgroundColour(fadeColour);
-    //scene_manager->setFog(Ogre::FOG_LINEAR, fadeColour, 0, 0, 250);
-
-    //camNode->setAutoTracking(true, subNode, Ogre::Vector3::NEGATIVE_UNIT_Z, Ogre::Vector3(0, 0, 150));
-
-    // Ozean
-    // TODO Schöneres Wasser: https://github.com/OGRECave/ogre/tree/master/Samples/OceanDemo
-    Ogre::MeshManager::getSingleton().createPlane("water", Ogre::RGN_DEFAULT,
-                                                  {Ogre::Vector3::UNIT_Y, 0},
-                                                  1500, 1500,
-                                                  20, 20,
-                                                  true, 1,
-                                                  5, 5,
-                                                  Ogre::Vector3::UNIT_Z);
-    Ogre::Entity* ground = scene_manager->createEntity("water");
-    ground->setCastShadows(false);
-    ground->setMaterialName("Examples/Rockwall"); // 4 is ok //Examples/Water4
-    Ogre::SceneNode* node_ground = scene_manager->getRootSceneNode()->createChildSceneNode();
-    node_ground->attachObject(ground);
-    node_ground->setPosition(0, 0, 0); // TODO move?
 }
 
 Spielszene::~Spielszene() {
     delete klient;
 }
 
-void Spielszene::key_pressed(const OgreBites::Keysym& key) {
+void Spielszene::key_pressed() {
+    /*
     switch (key.sym) {
         case SDLK_RIGHT: camNode->yaw(Ogre::Degree(-1)); break;
         case SDLK_LEFT:  camNode->yaw(Ogre::Degree(1)); break;
@@ -95,41 +44,31 @@ void Spielszene::key_pressed(const OgreBites::Keysym& key) {
         case SDLK_F5: tab = MAINMENU; break;
         default: break;
     }
+     */
 }
 
 void Spielszene::sync() {
     // Net Sync
-    if (static Ogre::Timer timer; timer.getMilliseconds() >= 500) {
+    if (static sf::Clock timer; timer.getElapsedTime().asMilliseconds() >= 500) {
         if (player_sub) {
             const std::string& antwort = klient->request(Net::REQUEST_SUB, player_sub->get_id());
             if (!antwort.empty()) player_sub = Net::deserialize<Sub>(antwort);
             else Log::err() << "Spielszene::" << __func__ << " no sub returned with ID " << player_sub->get_id() << '\n';
         }
-        timer.reset();
+        timer.restart();
     }
 }
 
-void Spielszene::render() {
+void Spielszene::show() {
     sync();
 
+    /* TODO
     // Gfx Interpolieren (nur eigenes Sub)
-    if (static Ogre::Timer timer_interpol; player_sub.has_value()) {
-        player_sub->tick(nullptr, timer_interpol.getMilliseconds() / 1000.f);
-        timer_interpol.reset();
-
-        // Eigenes Sub: Gfx erstellen?
-        if (subNode == nullptr) {
-            Ogre::Entity *ent = scene_manager->createEntity("Sinbad.mesh"); //sub1.mesh
-            subNode = scene_manager->getRootSceneNode()->createChildSceneNode();
-            //ent->getWorldBoundingBox().intersects(ent->getWorldBoundingBox());
-            ent->setCastShadows(true);
-            subNode->attachObject(ent);
-            //camNode->setAutoTracking(true, subNode);
-        }
-        subNode->setPosition(player_sub->get_pos());
-        subNode->setOrientation(player_sub->get_orientation());
-        camNode->setPosition(subNode->getPosition() + Ogre::Vector3(10, 1, 10));
+    if (static sf::Clock timer_interpol; player_sub.has_value()) {
+        player_sub->tick(nullptr, timer_interpol.getElapsedTime().asSeconds() / 1000.f);
+        timer_interpol.restart();
     }
+     */
     if (!player_sub) tab = MAINMENU; // Kein Sub? -> Hauptmenü
 
     // Welches Menü rendern?

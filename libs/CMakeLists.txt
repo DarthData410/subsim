@@ -1,63 +1,36 @@
-cmake_minimum_required(VERSION 3.8)
-project(libs)
-set(CMAKE_CXX_STANDARD 17)
+# CMake Datei zur Erzeugung von ImGui als Library mit SFML im Backend.
+cmake_minimum_required(VERSION 3.7)
 
-# Windows spezifisch
-if (WIN32)
-    #ws2_32 wsock32
-    set(MSYS2_LIBS)
-endif()
+project(bibliotheken)
 
-# Enet
-set(ENET_VER "1.3.17")
-add_subdirectory(enet-${ENET_VER} enet) # ENet 1.3.17 getestet
+include_directories(enet/include)
+include_directories(${SFML_DIR}/include)
+include_directories(libnada/include)
+include_directories(imgui)
+include_directories(implot)
+include_directories(imgui-sfml)
 
-# Ogre3D einrichten
-set(OGRE_VER "1.12.11")
-if (UNIX)
-    set(OGRE_STATIC TRUE)
-    set(OGRE_STATIC_LIB TRUE)
-endif()
-set(OGRE_BUILD_COMPONENT_OVERLAY TRUE)
-set(OGRE_BUILD_COMPONENT_OVERLAY_IMGUI TRUE)
-set(OGRE_BUILD_COMPONENT_PYTHON FALSE)
-set(OGRE_BUILD_COMPONENT_JAVA FALSE)
-set(OGRE_BUILD_COMPONENT_CSHARP FALSE)
-set(OGRE_BUILD_SAMPLES FALSE)
-set(OGRE_NODELESS_POSITIONING FALSE)
-if (EXISTS "${CMAKE_CURRENT_LIST_DIR}/ogre-${OGRE_VER}/CMakeLists.txt")
-    message(STATUS "Ogre3D gefunden")
-else()
-    message(STATUS "Ogre3D wird entpackt...")
-    execute_process(
-            COMMAND ${UNZIP_CMD} ogre-${OGRE_VER}.zip
-            WORKING_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}")
-endif()
-add_subdirectory(ogre-${OGRE_VER} ogre3d)
-
-# Bibliotheken Bauen
-add_library(libs STATIC
+add_library(bibliotheken STATIC
+        imgui/imgui.cpp
+        imgui/imgui_widgets.cpp
+        imgui/imgui_draw.cpp
+        imgui/imgui_tables.cpp
+        imgui/misc/cpp/imgui_stdlib.cpp
+        imgui-sfml/imgui-SFML.cpp
         implot/implot.cpp
         implot/implot_items.cpp
         )
 
-target_compile_definitions(libs PUBLIC
-        #IMGUI_IMPL_OPENGL_LOADER_CUSTOM=<SDL_opengl.h>
-        #GL_GLEXT_PROTOTYPES=1
-        #SDL_MAIN_HANDLED=1
-        )
-
-target_include_directories(libs SYSTEM PUBLIC
-        ${PROJECT_BINARY_DIR}/libs/ogre3d/imgui-1.79
-        ${PROJECT_BINARY_DIR}/libs/ogre3d/include
+target_include_directories(bibliotheken SYSTEM PUBLIC
+        ${SFML_DIR}/include
+        ${CMAKE_CURRENT_LIST_DIR}/imgui
+        ${CMAKE_CURRENT_LIST_DIR}/imgui-sfml
         ${CMAKE_CURRENT_LIST_DIR}/implot
-        ${CMAKE_CURRENT_LIST_DIR}/ogre-${OGRE_VER}/OgreMain/include
-        ${CMAKE_CURRENT_LIST_DIR}/enet-${ENET_VER}/include
+        ${CMAKE_CURRENT_LIST_DIR}/enet/include
+        ${CMAKE_CURRENT_LIST_DIR}/doctest/doctest
+        ${CMAKE_CURRENT_LIST_DIR}/cereal/include
+        ${CMAKE_CURRENT_LIST_DIR}/libnada/include
         )
 
-target_link_libraries(libs
-        enet
-        OgreBites
-        OgreRTShaderSystem
-        ${MSYS2_LIBS}
-        )
+# Ueber Build Modus informieren
+add_custom_command(TARGET bibliotheken PRE_BUILD COMMAND echo CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE})

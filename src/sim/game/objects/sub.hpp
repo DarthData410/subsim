@@ -15,7 +15,7 @@ public:
 
     Sub() = default;
 
-    Sub(const Ogre::Vector3& pos,
+    Sub(const Vektor& pos,
         const Motor& motor_linear, const Motor& motor_rot, const Motor& motor_tauch);
 
     bool tick(Welt* welt, float s) override;

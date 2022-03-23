@@ -1,5 +1,6 @@
 #pragma once
 
+#include <SFML/System/Clock.hpp>
 #include "sub.hpp"
 
 /// Ein Computergesteuertes U-B
@@ -48,10 +49,10 @@ private:
 private:
 
     /// Timer für neue Aufgaben.
-    Ogre::Timer timer;
+    sf::Clock timer;
 
     /// Zielkoordinaten. Zieltyp ist kontextabhängig.
-    Ogre::Vector3 ziel;
+    Vektor ziel;
 
     /// Aktuelle Aufgabe.
     uint8_t status = DONE;

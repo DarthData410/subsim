@@ -1,8 +1,10 @@
-#include <log.hpp>
 #include "nav_ui.hpp"
 #include "imgui_addons.hpp"
 #include "../sim/net/klient.hpp"
 #include "../sim/game/objects/sub.hpp"
+
+#include <log.hpp>
+#include <SFML/System/Clock.hpp>
 
 Nav_UI::Nav_UI() : Standard_UI(nullptr) {
     //
@@ -34,8 +36,8 @@ void Nav_UI::show_minimap(const Sub* sub) const {
 
     const auto world2ui = [&] (float x, float y) {
         std::array<float, 2> coords;
-        coords[0] = center_x + scale * (x - pos_sub.x);
-        coords[1] = center_y + scale * (y - pos_sub.y);
+        coords[0] = center_x + scale * (x - pos_sub.x());
+        coords[1] = center_y + scale * (y - pos_sub.y());
         return coords;
     };
 
@@ -47,8 +49,8 @@ void Nav_UI::show_minimap(const Sub* sub) const {
 
     // Objekte synchronisieren
     static std::vector<Objekt> objekte;
-    if (static Ogre::Timer timer; timer.getMilliseconds() > SYNC_INTERVALL) {
-        timer.reset();
+    if (static sf::Clock timer; timer.getElapsedTime().asMilliseconds() > SYNC_INTERVALL) {
+        timer.restart();
         const std::string& objekte_raw = klient->request(Net::ALLE_OBJEKTE);
         if (!objekte_raw.empty()) {
             try { objekte = Net::deserialize<std::vector<Objekt>>(objekte_raw); }
@@ -62,7 +64,7 @@ void Nav_UI::show_minimap(const Sub* sub) const {
     for (const Objekt& o : objekte) {
         if (fow && o.get_team() != sub->get_team()) continue; // fremdes Team
         if (o.get_id() == sub->get_id()) continue; // eigenes Sub
-        const auto pos = world2ui(o.get_pos().x, o.get_pos().z);
+        const auto pos = world2ui(o.get_pos().x(), o.get_pos().y());
         const float x = pos[0];
         const float y = pos[1];
         //if (x < 0 || x > size_x || y < 0 || y > size_y) continue; // außerhalb des Bildes
@@ -71,7 +73,10 @@ void Nav_UI::show_minimap(const Sub* sub) const {
 
     // Zonen zeichnen
     static std::vector<Zone> zonen = klient->get_zonen();
-    if (static Ogre::Timer timer; timer.getMilliseconds() > SYNC_INTERVALL) zonen = klient->get_zonen();
+    if (static sf::Clock timer; timer.getElapsedTime().asMilliseconds() > SYNC_INTERVALL) {
+        zonen = klient->get_zonen();
+        timer.restart();
+    }
     for (const Zone& zone : zonen) {
         const auto& pos = world2ui(std::get<0>(zone.get_pos()), std::get<1>(zone.get_pos()));
         const ImColor color = zone.get_team() == 0 ? ImColor(0xFF, 0xFF, 0xFF) :
@@ -83,10 +88,10 @@ void Nav_UI::show_minimap(const Sub* sub) const {
 }
 
 void Nav_UI::show_navigation(const Sub* sub) const {
-    ImGui::Text("Sub: %.1f %.1f Depth: %.1f", sub->get_pos().x, sub->get_pos().z, sub->get_pos().y);
-    ImGui::Text("Pitch: %.1f", sub->get_pitch());
+    ImGui::Text("Sub: %.1f %.1f Depth: %.1f", sub->get_pos().x(), sub->get_pos().y(), sub->get_pos().z());
+    ImGui::Text("Pitch:   %.1f", sub->get_pitch());
     ImGui::Text("Bearing: %.1f", sub->get_bearing());
-    ImGui::Text("Speed: %.1f", sub->get_speed());
+    ImGui::Text("Speed:   %.1f", sub->get_speed());
 
     static float target_x = 0, target_z = 0;
     ImGui::InputFloat("Target_x", &target_x);
@@ -124,9 +129,10 @@ void Nav_UI::show_navigation(const Sub* sub) const {
 
     static std::unordered_map<uint8_t, Team> teams = klient->get_teams();
     static std::vector<Zone> zonen = klient->get_zonen();
-    if (static Ogre::Timer timer; timer.getMilliseconds() > 500) {
+    if (static sf::Clock timer; timer.getElapsedTime().asMilliseconds() > 500) {
         teams = klient->get_teams();
         zonen = klient->get_zonen();
+        timer.restart();
     }
     ImGui::Begin("Strategic Overview");
     for (const auto& team : teams) {

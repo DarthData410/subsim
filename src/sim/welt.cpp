@@ -20,9 +20,9 @@ Welt::~Welt() {
 
 void Welt::tick() {
     // Timing
-    static Ogre::Timer timer;
-    const float s = timelapse * timer.getMilliseconds() / 1000.f; // Sekunden vergangen
-    timer.reset();
+    static sf::Clock timer;
+    const float s = timelapse * timer.getElapsedTime().asSeconds(); // Sekunden vergangen
+    timer.restart();
 
     // Ticks - Objekte
     std::unordered_set<decltype(objekte)::key_type> tote_objekte;

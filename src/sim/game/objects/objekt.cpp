@@ -1,10 +1,10 @@
 #include "objekt.hpp"
 #include <zufall.hpp>
 
-Objekt::Objekt(const Ogre::Vector3& pos,
-               const Ogre::Quaternion& orientation) :
+Objekt::Objekt(const Vektor& pos, const float& bearing) :
                pos(pos),
-               orientation(orientation)
+               bearing(bearing),
+               pitch(0)
 {
     regenerate_id();
 }
@@ -18,9 +18,9 @@ void Objekt::regenerate_id() {
 }
 
 float Objekt::get_bearing() const {
-    return 180.f - orientation.getYaw(true).valueDegrees();
+    return bearing;
 }
 
 float Objekt::get_pitch() const {
-    return orientation.getPitch().valueDegrees();
+    return pitch;
 }

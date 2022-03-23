@@ -1,8 +1,6 @@
 #include "game/team.hpp"
 #include "game/objects/zone.hpp"
 
-#include <OgreTimer.h>
-
 /// Simluierte Welt, die alle Objekte enthält.
 class Welt final {
 

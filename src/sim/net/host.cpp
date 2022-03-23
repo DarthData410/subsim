@@ -5,6 +5,7 @@
 #include <log.hpp>
 #include <cereal/types/vector.hpp>
 #include <cereal/types/unordered_map.hpp>
+#include <SFML/System/Clock.hpp>
 
 Host::Host(uint16_t port) {
     ENetAddress address {
@@ -41,7 +42,7 @@ void Host::start() {
                 break;
         }
         // Broadcast
-        if (static Ogre::Timer timer; timer.getMilliseconds() > 1000) {
+        if (static sf::Clock timer; timer.getElapsedTime().asMilliseconds() > 1000) {
             std::stringstream ss;
             Net::Serializer s(ss);
             s << Net::BROADCAST;
@@ -51,7 +52,7 @@ void Host::start() {
                                                    ENET_PACKET_FLAG_UNRELIABLE_FRAGMENT);
             enet_host_broadcast(server, 1, paket);
             enet_host_flush(server);
-            timer.reset();
+            timer.restart();
         }
     }
 }

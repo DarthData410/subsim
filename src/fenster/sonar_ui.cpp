@@ -38,7 +38,7 @@ void Sonar_UI::update_and_show(const Sub* sub) {
         const Sonar_Passiv& sonar = sub->get_sonars()[i];
 
         // Neue Zeile lesen?
-        if (Ogre::Timer& timer = timers[i]; timer.getMilliseconds() > intervalle[i]) {
+        if (auto& timer = timers[i]; timer.getElapsedTime().asMilliseconds() > intervalle[i]) {
 
             // Zeile mit Rauschen erzeugen
             std::vector<float> newline(sonar.get_resolution());
@@ -56,7 +56,7 @@ void Sonar_UI::update_and_show(const Sub* sub) {
             // Alle Zeilen 1 weiter rücken
             histogram[0] = newline;
             std::rotate(histogram.begin(), histogram.begin() + 1, histogram.end());
-            timer.reset();
+            timer.restart();
         }
         show(histogram); // Anzeigemethode aufrufen
     }

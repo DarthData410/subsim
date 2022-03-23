@@ -4,7 +4,7 @@
 
 #include <vector>
 #include <array>
-#include <OgreTimer.h>
+#include <SFML/System/Clock.hpp>
 
 /// UI zur Anzeige vom Passiven Sonar.
 class Sonar_UI final : public Standard_UI {
@@ -29,6 +29,6 @@ private:
 
     /// Updateintervall (Echtzeit) in ms.
     std::vector<unsigned> intervalle;
-    std::vector<Ogre::Timer> timers;
+    std::vector<sf::Clock> timers;
 
 };

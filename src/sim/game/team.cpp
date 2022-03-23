@@ -1,5 +1,7 @@
 #include "team.hpp"
+
 #include <zufall.hpp>
+#include <cassert>
 
 Team::Team(uint8_t id) : id(id), punkte(1000) {
     const Motor m1_linear(4, 0.5);

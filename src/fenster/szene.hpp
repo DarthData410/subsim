@@ -2,34 +2,18 @@
 
 #include "spielszene.hpp"
 
-#include <OgreApplicationContext.h>
-#include <OgreRenderTargetListener.h>
-#include <OgreImGuiInputListener.h>
-
-class Szene : public OgreBites::ApplicationContext,
-              public OgreBites::InputListener,
-              public Ogre::RenderTargetListener {
+class Szene {
 
 public:
 
     Szene();
 
-    void setup() override;
+    void show();
 
-    bool keyPressed(const OgreBites::KeyboardEvent& evt) override;
-
-    void preViewportUpdate(const Ogre::RenderTargetViewportEvent& evt) override;
-
-    //bool frameStarted(const Ogre::FrameEvent& evt) override;
-
-    virtual ~Szene();
+    ~Szene();
 
 private:
 
     Spielszene* spielszene = nullptr;
-
-    std::unique_ptr<OgreBites::ImGuiInputListener> mImguiListener;
-    Ogre::RTShader::ShaderGenerator* shadergen = nullptr;
-    Ogre::SceneManager* scnMgr = nullptr;
 
 };

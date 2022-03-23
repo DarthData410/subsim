@@ -1,7 +1,8 @@
 #pragma once
-#include <Ogre.h>
+
 #include <cereal/cereal.hpp>
 #include <cereal/types/polymorphic.hpp>
+#include "../../vektor.hpp"
 
 class Welt;
 
@@ -26,8 +27,7 @@ public:
     Objekt() = default;
 
     /// Ctor. Weist neue ID zu.
-    explicit Objekt(const Ogre::Vector3& pos, const Ogre::Quaternion& orientation =
-                    Ogre::Quaternion(Ogre::Degree(90), Ogre::Vector3::UNIT_Y));
+    explicit Objekt(const Vektor& pos, const float& bearing = 0);
 
     /// Dtor.
     virtual ~Objekt();
@@ -52,10 +52,7 @@ public:
     virtual float get_noise() const { return 0.f; }
 
     /// Getter: Position.
-    const Ogre::Vector3& get_pos() const { return pos; }
-
-    /// Getter: Orientierung.
-    const Ogre::Quaternion& get_orientation() const { return orientation; }
+    const Vektor& get_pos() const { return pos; }
 
     /// Getter: 0° bis 360° Ausrichtung.
     float get_bearing() const;
@@ -65,7 +62,7 @@ public:
 
     /// Serialisierung via cereal.
     template <class Archive> void serialize(Archive& ar) {
-        ar(id, team, pos.x, pos.y, pos.z, orientation.x, orientation.y, orientation.z, orientation.w);
+        ar(id, team, pos, bearing, pitch);
     }
 
 protected:
@@ -79,10 +76,13 @@ protected:
     /// Teamzugehörigkeit. 0 = Kein Team.
     uint8_t team = 0;
 
-    /// Position.
-    Ogre::Vector3 pos;
+    /// x-y-Position und z-Höhe (+) bzw. z-Tiefe (-).
+    Vektor pos;
 
-    /// Ausrichtung.
-    Ogre::Quaternion orientation;
+    /// x/y Richtung.
+    float bearing;
+
+    /// + nach oben / - nach unten
+    float pitch;
 
 };

@@ -25,7 +25,7 @@ Torpedo::Torpedo(const Torpedo& torpedo_typ, const Sub* sub, float distance_to_a
 bool Torpedo::tick(Welt* welt, float s) {
     const auto pos_alt = this->pos;
     Objekt_Steuerbar::tick(welt, s);
-    travelled += Physik::distanz(pos_alt.x, pos_alt.z, pos.x, pos.z);
+    travelled += Physik::distanz(pos_alt.x(), pos_alt.y(), pos.x(), pos.y());
     if (travelled > range) return false; // Keine Reichweite mehr
     if (travelled < distance_to_activate) set_target_bearing(target_bearing);
     else { // Aktiv

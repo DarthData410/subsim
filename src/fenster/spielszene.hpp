@@ -1,13 +1,11 @@
 #pragma once
 
+#include <SFML/Window/Window.hpp>
 #include "../sim/game/objects/sub.hpp"
 #include "../sim/net/klient.hpp"
 #include "nav_ui.hpp"
 #include "sonar_ui.hpp"
 #include "waffen_ui.hpp"
-
-#include <OgreInput.h>
-#include <OgreSceneManager.h>
 
 class Spielszene final {
 
@@ -16,11 +14,11 @@ public:
     /// Root-Ctor, wird von anderen Ctors aufgerufen zur Verbindungserstellung.
     explicit Spielszene(const std::string& ip = "127.0.0.1");
 
-    Spielszene(Ogre::RenderWindow* window, Ogre::SceneManager* scene_manager);
+    explicit Spielszene(sf::Window* window);
 
-    void render();
+    void show();
 
-    void key_pressed(const OgreBites::Keysym& key);
+    void key_pressed(); // TODO
 
     virtual void sync();
 
@@ -62,12 +60,6 @@ private:
     Nav_UI nav_ui;
     Sonar_UI sonar_ui;
     Waffen_UI waffen_ui;
-
-    /// Gfx
-    Ogre::RenderWindow* window = nullptr;
-    Ogre::SceneManager* scene_manager = nullptr;
-    Ogre::SceneNode* camNode   = nullptr;
-    Ogre::SceneNode* lightNode = nullptr;
-    Ogre::SceneNode* subNode = nullptr;
+    sf::Window* window;
 
 };

@@ -3,6 +3,8 @@
 #include "../../welt.hpp"
 #include "../../physik.hpp"
 
+#include <cmath>
+
 Sonar_Passiv::Sonar_Passiv(float noise, uint16_t resolution, uint8_t sichtbereich)
     : noise(noise), resolution(resolution), sichtbereich(sichtbereich), ausrichtung(0)
 {
@@ -21,8 +23,8 @@ void Sonar_Passiv::tick(Sub* parent, Welt* welt, float s) {
 
         const float sub_bearing = parent->get_bearing();
         const float sonar_bearing = Physik::rotation(0.f, sub_bearing + this->ausrichtung);
-        const float object_bearing = Physik::bearing(parent->get_pos().x, parent->get_pos().z,
-                                                     objekt->get_pos().x, objekt->get_pos().z);
+        const float object_bearing = Physik::bearing(parent->get_pos().x(), parent->get_pos().y(),
+                                                     objekt->get_pos().x(), objekt->get_pos().y());
         const float sonar_to_object = Physik::rotation(sonar_bearing, object_bearing);
 
         // Nihcht im Sichtbereich?
