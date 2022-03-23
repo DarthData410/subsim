@@ -29,7 +29,7 @@ target_link_libraries(nada_sub PRIVATE
         bibliotheken
         stdc++fs
         pthread
-        sfml-system sfml-window sfml-graphics sfml-network
+        OpenGL GL sfml-system sfml-window sfml-graphics sfml-network
         )
 
 target_compile_options(nada_sub PRIVATE ${NADA_CXX_FLAGS})

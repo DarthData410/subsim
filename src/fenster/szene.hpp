@@ -2,6 +2,8 @@
 
 #include "spielszene.hpp"
 
+#include <SFML/Graphics/RenderWindow.hpp>
+
 class Szene {
 
 public:
@@ -14,6 +16,6 @@ public:
 
 private:
 
-    Spielszene* spielszene = nullptr;
+    sf::RenderWindow window;
 
 };

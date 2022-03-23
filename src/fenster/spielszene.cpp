@@ -1,50 +1,41 @@
-#include <log.hpp>
-
 #include "spielszene.hpp"
 
-Spielszene::Spielszene(const std::string& ip) : klient(new Klient(ip)) {
-    //
-}
+#include <log.hpp>
+#include <imgui.h>
+#include <imgui-SFML.h>
+#include <SFML/Window/Event.hpp>
 
-Spielszene::Spielszene(sf::Window* window)
-    : window(window)
+Spielszene::Spielszene(sf::RenderWindow* window, const std::string& ip) :
+    klient(new Klient(ip)), window(window)
 {
-
+    assert(window);
 }
 
-Spielszene::~Spielszene() {
-    delete klient;
-}
+void Spielszene::key_pressed(const sf::Keyboard::Key& key) {
+    switch (key) {
+        case sf::Keyboard::Escape: window->close(); break;
 
-void Spielszene::key_pressed() {
-    /*
-    switch (key.sym) {
-        case SDLK_RIGHT: camNode->yaw(Ogre::Degree(-1)); break;
-        case SDLK_LEFT:  camNode->yaw(Ogre::Degree(1)); break;
-        case SDLK_UP:    camNode->pitch(Ogre::Degree(1)); break;
-        case SDLK_DOWN:  camNode->pitch(Ogre::Degree(-1)); break;
-        case SDLK_m: {
-            // Neues Spieler Sub geben (nur wenn keins vorhanden)
+        // Neues Spieler Sub geben (nur wenn keins vorhanden)
+        case sf::Keyboard::M: {
             if (player_sub) { Log::debug() << "New player_sub not needed\n"; break; }
             const std::string& antwort = klient->request(Net::AKTION_NEUES_UBOOT, 1);
             if (!antwort.empty()) {
                 player_sub = Net::deserialize<Sub>(antwort);
-                nav_ui = Nav_UI(klient);
-                sonar_ui = Sonar_UI(&player_sub.value());
-                waffen_ui = Waffen_UI(klient);
+                nav_ui     = Nav_UI(klient.get());
+                sonar_ui   = Sonar_UI(&player_sub.value());
+                waffen_ui  = Waffen_UI(klient.get());
             }
             else Log::err() << "New player_sub not available\n";
         } break;
 
         // Tabs
-        case SDLK_F1: tab = NAV;      break;
-        case SDLK_F2: tab = SONAR;    break;
-        case SDLK_F3: tab = WEAPONS;  break;
-        case SDLK_F4: tab = THREE_D;  break;
-        case SDLK_F5: tab = MAINMENU; break;
+        case sf::Keyboard::F1: tab = NAV;      break;
+        case sf::Keyboard::F2: tab = SONAR;    break;
+        case sf::Keyboard::F3: tab = WEAPONS;  break;
+        case sf::Keyboard::F4: tab = THREE_D;  break;
+        case sf::Keyboard::F5: tab = MAINMENU; break;
         default: break;
     }
-     */
 }
 
 void Spielszene::sync() {
@@ -62,22 +53,46 @@ void Spielszene::sync() {
 void Spielszene::show() {
     sync();
 
-    /* TODO
-    // Gfx Interpolieren (nur eigenes Sub)
-    if (static sf::Clock timer_interpol; player_sub.has_value()) {
-        player_sub->tick(nullptr, timer_interpol.getElapsedTime().asSeconds() / 1000.f);
-        timer_interpol.restart();
-    }
-     */
-    if (!player_sub) tab = MAINMENU; // Kein Sub? -> Hauptmenü
+    while (window->isOpen()) {
+        sf::Event event;
+        while (window->pollEvent(event)) {
+            ImGui::SFML::ProcessEvent(event);
+            switch (event.type) {
+                case sf::Event::KeyReleased: key_pressed(event.key.code); break;
+                case sf::Event::Closed: window->close(); break;
+            }
+        }
 
-    // Welches Menü rendern?
-    switch (tab) {
-        case MAINMENU:  render_menu();      break;
-        case NAV:       render_nav();       break;
-        case SONAR:     render_sonar();     break;
-        case WEAPONS:   render_weapons();   break;
-        case THREE_D:   render_3d();        break;
-        default:        tab = MAINMENU;     break;
+
+        /* TODO
+        // Gfx Interpolieren (nur eigenes Sub)
+        if (static sf::Clock timer_interpol; player_sub.has_value()) {
+            player_sub->tick(nullptr, timer_interpol.getElapsedTime().asSeconds() / 1000.f);
+            timer_interpol.restart();
+        }
+         */
+        if (!player_sub) tab = MAINMENU; // Kein Sub? -> Hauptmenü
+
+        static sf::Clock fps_clock;
+        ImGui::SFML::Update(*window, fps_clock.restart());
+
+        ImGui::Begin("Spielszene");
+
+        // Welches Menü rendern?
+        switch (tab) {
+            case MAINMENU:  render_menu();      break;
+            case NAV:       render_nav();       break;
+            case SONAR:     render_sonar();     break;
+            case WEAPONS:   render_weapons();   break;
+            case THREE_D:   render_3d();        break;
+            default:        tab = MAINMENU;     break;
+        }
+
+        ImGui::End();
+
+        // SFML Draws
+        window->clear();
+        ImGui::SFML::Render(*window);
+        window->display();
     }
 }
