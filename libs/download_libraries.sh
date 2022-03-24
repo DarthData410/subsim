@@ -13,7 +13,7 @@ lib_download () {
 #           | Library, Version, Download-Link
 # lib_download nada_assets 1.0 https://gitlab.com/chris_nada/nada_assets/-/archive/1.0/nada_assets-1.0.zip
 # lib_download rang 3.2 https://github.com/agauniyal/rang/archive/refs/tags/v3.2.zip
-lib_download doctest 2.4.0 https://github.com/onqtam/doctest/archive/refs/tags/2.4.0.zip
+lib_download doctest 2.4.8 https://github.com/doctest/doctest/archive/refs/tags/v2.4.8.zip
 lib_download cereal 1.3.2 https://github.com/USCiLab/cereal/archive/refs/tags/v1.3.2.zip
 lib_download imgui-sfml 2.5 https://github.com/eliasdaler/imgui-sfml/archive/refs/tags/v2.5.zip
 lib_download implot 0.13 https://github.com/epezent/implot/archive/refs/tags/v0.13.zip

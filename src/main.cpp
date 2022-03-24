@@ -1,6 +1,8 @@
+#define TESTS_AKTIV
 #include "fenster/szene.hpp"
 #include "sim/net/host.hpp"
 #include "sim/net/net.hpp"
+#include "test/test.hpp"
 
 #include <iostream>
 #include <log.hpp>
@@ -11,7 +13,15 @@ void start_server(Host*& host) {
     host->start();
 }
 
-int main(int, char**) {
+int main(int argc, char** argv) {
+    for (int i = 0; i < argc; i++) {
+        const std::string arg(argv[i]);
+        if (arg.find("-test") != std::string::npos) {
+            std::cout << "starte tests\n";
+            return test::run(argc, argv);
+        }
+    }
+
     // Enet init
     if (enet_initialize() != 0) {
         std::cerr << "An error occurred while initializing ENet.\n";
@@ -33,11 +43,12 @@ int main(int, char**) {
 
     // Host stoppen
     if (host && host_thread) {
-        Log::out() << "Server stop.\n";
+        Log::out() << "Stopping server... " << Log::endl;
         host->stop();
         host_thread->join();
         delete host;
         delete host_thread;
+        Log::out() << "Server stopped." << Log::endl;
     }
     return 0;
 }

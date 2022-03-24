@@ -44,7 +44,7 @@ bool Objekt_Steuerbar::tick(Welt* welt, float s) {
     if (std::abs(motor_rot.v) > eps) bearing += motor_rot.v * s;
 
     // Vorwärts/Rückwärts in m bewegen
-    if (std::abs(motor_linear.v) > eps) Physik::move_ahead(pos, bearing, pitch, motor_linear.v * s);
+    if (std::abs(motor_linear.v) > eps) Physik::move(pos, bearing, motor_linear.v * s);
     return true;
 }
 
@@ -60,7 +60,7 @@ void Objekt_Steuerbar::set_target_pos(double x, double y) {
 }
 
 void Objekt_Steuerbar::auto_rudder() {
-    const float rotate_to = Physik::rotation(get_bearing(), std::get<float>(target_bearing));
+    const float rotate_to = Physik::winkel_diff(get_bearing(), std::get<float>(target_bearing));
     if (std::abs(rotate_to) <= motor_rot.get_bremsweg()) { // Erledigt -> Bremsen
         motor_rot.v_target = 0;
         std::get<bool>(target_bearing) = false;
@@ -73,7 +73,7 @@ void Objekt_Steuerbar::auto_path() {
     // Richtung
     const float target_x = std::get<1>(target_pos);
     const float target_y = std::get<2>(target_pos);
-    const float bearing = Physik::bearing(pos.x(), pos.y(), target_x, target_y);
+    const float bearing = Physik::kurs(pos.x(), pos.y(), target_x, target_y);
     if (std::abs(get_bearing() - bearing) > 1.f) set_target_bearing(bearing);
     if (Physik::distanz(pos.x(), pos.y(), target_x, target_y) <= motor_linear.get_bremsweg()) {
         std::get<bool>(target_pos) = false; // Ziel erreicht.

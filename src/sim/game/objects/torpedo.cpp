@@ -32,7 +32,7 @@ bool Torpedo::tick(Welt* welt, float s) {
         // TODO Nach gültigen Zielen suchen
         // - alle vom Sonar detektierten Objekte durchgehen und eines davon als 'target' auswählen
     }
-    // TODO bearing auf 'target' einstellen
+    // TODO kurs auf 'target' einstellen
 
     // TODO hit detect
     // TODO if distance torpedo/target < ... dann BOOM ->
