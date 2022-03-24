@@ -36,8 +36,8 @@ double Physik::distanz_xyz(const Vektor& v1, const Vektor& v2) {
     return hypot(v1.x()-v2.x(), hypot(v1.y()-v2.y(), v1.z()-v2.z()));
 }
 
-double Physik::bremsweg(float v, float a) {
-    return (v * v) / (2.0f * a);
+double Physik::bremsweg(double v, double a) {
+    return std::abs((v * v) / (2.0 * a));
 }
 
 std::pair<double, double> Physik::get_punkt(double x, double y, float kurs, double entfernung) {

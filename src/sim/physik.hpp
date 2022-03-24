@@ -31,7 +31,7 @@ public:
     static double distanz_xyz(const Vektor& v1, const Vektor& v2);
 
     /// Liefert den Bremsweg bei gegebener Geschwindigkeit und Entschleunigung.
-    static double bremsweg(float v, float a);
+    static double bremsweg(double v, double a);
 
     /// Liefert den Punkt x,y als `std::pair` vom gegebenen Punkt aus gesehen im gg. Winkel bei gg. Entfernung.
     static std::pair<double, double> get_punkt(double x, double y, float kurs, double entfernung);

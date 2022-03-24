@@ -6,7 +6,7 @@
 
 TEST_CASE("physik") {
 
-    SUBCASE("move") {
+    SUBCASE("move und get_punkt") {
         const std::vector<Vektor> vektoren {
                 {  0,   0,   0},
                 { 10,  20,  30},
@@ -97,11 +97,10 @@ TEST_CASE("physik") {
     }
 
     SUBCASE("bremsweg") {
-
-    }
-
-    SUBCASE("get_punkt") {
-
+        REQUIRE(Physik::bremsweg( 10,   1) == doctest::Approx(50));
+        REQUIRE(Physik::bremsweg( 10,  -1) == doctest::Approx(50));
+        REQUIRE(Physik::bremsweg(-10,   1) == doctest::Approx(50));
+        REQUIRE(Physik::bremsweg(-10,  -1) == doctest::Approx(50));
     }
 
 }
