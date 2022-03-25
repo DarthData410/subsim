@@ -4,11 +4,11 @@
 #include "../game/objects/sub.hpp"
 
 void Kommando::apply(Welt* welt) {
-    if (welt->objekte.count(sub_id) == 0) {
-        Log::debug() << "Kommando::apply sub_id not found: " << sub_id << Log::endl;
-        return;
-    }
-    Sub* sub = (Sub*) welt->objekte[sub_id];
+    Sub* sub = nullptr;
+    if (welt->objekte.count(sub_id)) sub = (Sub*) welt->objekte[sub_id];
+    else Log::debug() << "Kommando::apply sub_id not found: " << sub_id << Log::endl; // für TIMELAPSE okay
+    Log::debug() << "Kommando::apply sub_id=" << sub_id << " Kommando=" << (int)typ << Log::endl; // für TIMELAPSE okay
+
     switch (typ) {
         case STOP:
             sub->stop();

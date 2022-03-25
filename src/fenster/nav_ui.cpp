@@ -1,7 +1,6 @@
 #include "nav_ui.hpp"
 #include "imgui_addons.hpp"
 #include "../sim/net/klient.hpp"
-#include "../sim/game/objects/sub.hpp"
 
 #include <log.hpp>
 #include <SFML/System/Clock.hpp>
@@ -32,26 +31,27 @@ void Nav_UI::show_minimap(const Sub* sub) const {
     const float size_y = 400.f;
     const float center_x = pos_ui.x + 0.5f*size_x;
     const float center_y = pos_ui.y + 0.5f*size_y;
-    float scale = 0.1f;
+    static float scale = 0.1f;
 
     const auto world2ui = [&] (float x, float y) {
-        std::array<float, 2> coords;
-        coords[0] = center_x + scale * (x - pos_sub.x());
-        coords[1] = center_y + scale * (y - pos_sub.y());
-        return coords;
+        return std::array<float, 2> {
+                static_cast<float>(center_x + scale * x),
+                static_cast<float>(center_y - scale * y)
+        };
     };
 
-    // Ozean zeichnen + Mitte markieren
+    // Ozean zeichnen
     ImDrawList* draw_list = ImGui::GetWindowDrawList();
     draw_list->AddRectFilled(pos_ui, {pos_ui.x + size_x, pos_ui.y + size_y},
                              ImColor(0x00, 0x50, 0xB0), 0.0f);
-    draw_list->AddNgonFilled({center_x, center_y}, 4.f, ImColor(0xFF'FF'FF'FF), 4);
 
     // Objekte synchronisieren
     static std::vector<Objekt> objekte;
+    static std::vector<Zone> zonen = klient->get_zonen();
     if (static sf::Clock timer; timer.getElapsedTime().asMilliseconds() > SYNC_INTERVALL) {
         timer.restart();
         const std::string& objekte_raw = klient->request(Net::ALLE_OBJEKTE);
+        zonen = klient->get_zonen();
         if (!objekte_raw.empty()) {
             try { objekte = Net::deserialize<std::vector<Objekt>>(objekte_raw); }
             catch (const std::exception& e) {
@@ -62,21 +62,16 @@ void Nav_UI::show_minimap(const Sub* sub) const {
     }
     // Objekte zeichnen
     for (const Objekt& o : objekte) {
-        if (fow && o.get_team() != sub->get_team()) continue; // fremdes Team
-        if (o.get_id() == sub->get_id()) continue; // eigenes Sub
-        const auto pos = world2ui(o.get_pos().x(), o.get_pos().y());
-        const float x = pos[0];
-        const float y = pos[1];
+        //if (fow && o.get_team() != sub->get_team()) continue; // fremdes Team TODO
         //if (x < 0 || x > size_x || y < 0 || y > size_y) continue; // außerhalb des Bildes
-        draw_list->AddNgonFilled({x, y}, 4.f, ImColor(0xFF, 0xFF, 0xFF), 4);
+        const auto pos = world2ui(o.get_pos().x(), o.get_pos().y());
+        auto color = ImColor(0xFF, 0xFF, 0xFF);
+        if      (o.get_id()   == sub->get_id())   color = ImColor(0, 0xFF, 0);
+        else if (o.get_team() != sub->get_team()) color = ImColor(0xFF, 0, 0);
+        draw_list->AddNgonFilled({pos[0], pos[1]}, 4.f, color, 4);
     }
 
     // Zonen zeichnen
-    static std::vector<Zone> zonen = klient->get_zonen();
-    if (static sf::Clock timer; timer.getElapsedTime().asMilliseconds() > SYNC_INTERVALL) {
-        zonen = klient->get_zonen();
-        timer.restart();
-    }
     for (const Zone& zone : zonen) {
         const auto& pos = world2ui(std::get<0>(zone.get_pos()), std::get<1>(zone.get_pos()));
         const ImColor color = zone.get_team() == 0 ? ImColor(0xFF, 0xFF, 0xFF) :
@@ -85,13 +80,17 @@ void Nav_UI::show_minimap(const Sub* sub) const {
                            {pos[0] + 0.5f * zone.get_groesse() * scale, pos[1] + 0.5f * zone.get_groesse() * scale},
                            color);
     }
+
+    // Karteneinstellungen
+    ImGui::SetCursorPosY(size_y + 32);
+    ImGui::SliderFloat("Scale", &scale, 0.01, 0.2);
 }
 
 void Nav_UI::show_navigation(const Sub* sub) const {
     ImGui::Text("Sub: %.1f %.1f Depth: %.1f", sub->get_pos().x(), sub->get_pos().y(), sub->get_pos().z());
     ImGui::Text("Pitch:   %.1f", sub->get_pitch());
-    ImGui::Text("Bearing: %.1f", sub->get_bearing());
-    ImGui::Text("Speed:   %.1f", sub->get_speed());
+    ImGui::Text("Bearing: %.1f (Target: %.f)", sub->get_bearing(), sub->get_target_bearing());
+    ImGui::Text("Speed:   %.1f (Target: %.f)", sub->get_speed(), sub->get_target_speed());
 
     static float target_x = 0, target_z = 0;
     ImGui::InputFloat("Target_x", &target_x);
@@ -142,4 +141,8 @@ void Nav_UI::show_navigation(const Sub* sub) const {
         ImGui::Text("Zone @ x=%.0f, y=%.0f, owned by Team %u",
                     std::get<0>(zone.get_pos()), std::get<1>(zone.get_pos()), zone.get_team());
     }
+}
+
+void Nav_UI::draw_gfx() {
+
 }

@@ -31,7 +31,7 @@ public:
 private:
 
     /// Zeitraffer. TODO: Broadcast
-    float timelapse = 1.0f;
+    float timelapse = 1.0f; // TODO 1.0f wenn nicht test
 
     /// Teams. TODO: Broadcast
     std::unordered_map<uint8_t, Team> teams;

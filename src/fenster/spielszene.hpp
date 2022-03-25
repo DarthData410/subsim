@@ -18,9 +18,18 @@ public:
 
     void show();
 
+private:
+
     void key_pressed(const sf::Keyboard::Key& key);
 
     void sync();
+
+    /// Zeigt das Hauptmenü.
+    void draw_menu();
+
+    void draw_imgui();
+
+    void draw_gfx();
 
 private:
 
@@ -32,20 +41,7 @@ private:
         THREE_D
     };
 
-    /// Zeigt das Hauptmenü.
-    void render_menu();
-
-    /// Zeigt die Navigation inkl. Strategie - (Teams, Zonen, Karte).
-    void render_nav();
-
-    /// Zeigt Aktives, Passives und Externes Sonar.
-    void render_sonar();
-
-    /// Zeigt Zielsteuerung & Waffenkontrolle.
-    void render_weapons();
-
-    /// Zeigt die 3D-Ansicht.
-    void render_3d();
+private:
 
     /// Anzuzeigendes Fenster.
     Tab tab = NAV;

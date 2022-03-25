@@ -1,4 +1,4 @@
-#define TESTS_AKTIV
+//#define TESTS_AKTIV
 #include "fenster/szene.hpp"
 #include "sim/net/host.hpp"
 #include "sim/net/net.hpp"

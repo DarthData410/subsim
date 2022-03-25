@@ -40,11 +40,15 @@ public:
 
     //TODO void set_target_depth(float depth);
 
-    /// Getter: Aktuelle x/z-Geschwindigkeit (absolut).
+    /// Getter: Aktuelle x/y-Geschwindigkeit (absolut).
     float get_speed() const { return motor_linear.v; }
 
-    /// Liefert die relative x/z-Geschwindigkeit zur Höchstgeschwindigkeit (negativ, wenn Rückwärts).
+    /// Liefert die relative x/y-Geschwindigkeit zur Höchstgeschwindigkeit (negativ, wenn Rückwärts).
     float get_speed_relativ() const { return motor_linear.v / motor_linear.v_max; }
+
+    /// Liefert die gewünschte absolute x/y-Geschwindigkeit.
+    float get_target_speed() const { return motor_linear.v_target; }
+    float get_target_bearing() const { return std::get<bool>(target_bearing) ? std::get<float>(target_bearing) : bearing; }
 
     /// Liefert einen Bewegungsfaktor: 0 (steht still) bis 10 (alle Motoren auf Maximum).
     float get_noise() const override;

@@ -7,7 +7,7 @@ class Welt;
 class Nav_UI final : public Standard_UI {
 
     /// Netzwerk-Synchronisationsintervall in ms.
-    static constexpr float SYNC_INTERVALL = 5000.f;
+    static constexpr float SYNC_INTERVALL = 1000.f;
 
 public:
 
@@ -19,6 +19,8 @@ public:
 
     /// Fog of War an/aus.
     void set_fow(bool fow) { Nav_UI::fow = fow; }
+
+    void draw_gfx();
 
 private:
 
