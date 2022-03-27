@@ -9,6 +9,7 @@
 #include <atomic>
 #include <thread>
 #include <mutex>
+#include <optional>
 
 /** 
  * Multiplayer-Klient (UDP).

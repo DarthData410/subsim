@@ -32,8 +32,8 @@ target_link_libraries(nada_sub PRIVATE
         nada
         enet
         bibliotheken
+        sfml-graphics sfml-window sfml-system
         ${OS_BIBLIOTHEKEN}
-        sfml-system sfml-window sfml-graphics
         )
 
 target_compile_options(nada_sub PRIVATE ${NADA_CXX_FLAGS})
