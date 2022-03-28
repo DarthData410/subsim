@@ -9,12 +9,10 @@ Sub_AI::Sub_AI(const Sub& sub) : Sub(sub){
 }
 
 bool Sub_AI::tick(Welt* welt, float s) {
+    timer += s;
     if (const bool alive = Sub::tick(welt, s); !alive) return false; // Lebt nicht mehr
-    if (timer.getElapsedTime().asMilliseconds() < 1000.f) return true; // Nicht jeden tick() nachdenken
-
-    // Konfig
-    const float SPEED_TRAVEL = 0.75f;
-    const float DEPTH_TRAVEL = -50.f;
+    if (timer < 1000.f) return true; // Nicht jeden tick() nachdenken
+    timer = 0;
 
     // Nichts zu tun -> Zone einnehmen / bewachen
     if (status == DONE) {
@@ -45,6 +43,5 @@ bool Sub_AI::tick(Welt* welt, float s) {
             stop();
         }
     }
-    timer.restart();
     return true;
 }

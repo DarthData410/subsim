@@ -19,12 +19,13 @@ Welt::~Welt() {
 }
 
 void Welt::tick() {
-    // Timing
     static sf::Clock timer;
     const float s = timelapse * timer.getElapsedTime().asSeconds(); // Sekunden vergangen
     timer.restart();
+    tick(s);
+}
 
-    // Ticks - Objekte
+void Welt::tick(float s) {
     std::unordered_set<decltype(objekte)::key_type> tote_objekte;
     for (auto& objekt : objekte) if (objekt.second->tick(this, s) == false) tote_objekte.insert(objekt.first);
     for (const auto key : tote_objekte) {
@@ -44,7 +45,7 @@ const Sub* Welt::add_new_sub(uint8_t team, bool computer_controlled) {
     objekte.insert({sub_ptr->get_id(), sub_ptr});
     sub_ptr->pos = { // Startposition beim Team, leicht versetzt
             std::get<0>(teams[team].get_pos()) + Zufall::f(-100.f, 100.f),
-            20.f, // Tiefe
+            start_tiefe_sub, // Tiefe
             std::get<1>(teams[team].get_pos()) + Zufall::f(-100.f, 100.f)
     };
     return sub_ptr;

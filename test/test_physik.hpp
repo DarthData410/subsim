@@ -96,6 +96,15 @@ TEST_CASE("physik") {
         REQUIRE(Physik::distanz_xyz({2,2,2}, {5,6,2}) == doctest::Approx( 5));
     }
 
+    SUBCASE("in_reichweite_xy") {
+        REQUIRE(Physik::in_reichweite_xy({0, 0, 0}, {100, 0, 0}, 100) == true);
+        REQUIRE(Physik::in_reichweite_xy({0, 0, 0}, {0, 100, 0}, 100) == true);
+        REQUIRE(Physik::in_reichweite_xy({0, 0, 0}, {100, 1, 0}, 100) == false);
+        REQUIRE(Physik::in_reichweite_xy({0, 0, 0}, {1, 100, 0}, 100) == false);
+        REQUIRE(Physik::in_reichweite_xy({0, 0, 0}, {50, 50, 0}, 100) == true);
+        REQUIRE(Physik::in_reichweite_xy({0, 0, 0}, {75, 75, 0}, 100) == false);
+    }
+
     SUBCASE("bremsweg") {
         REQUIRE(Physik::bremsweg( 10,   1) == doctest::Approx(50));
         REQUIRE(Physik::bremsweg( 10,  -1) == doctest::Approx(50));

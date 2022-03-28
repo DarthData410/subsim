@@ -7,6 +7,9 @@ class Welt;
 /// Eine Zone in der Welt, die von einem Team besetzt werden kann, um Punkte zu bekommen.
 class Zone final {
 
+    /// Alle x Sekunden bekommt der Besitzer einen Punkt.
+    static constexpr float punkte_intervall = 10.f;
+
 public:
 
     /// Ctor default.

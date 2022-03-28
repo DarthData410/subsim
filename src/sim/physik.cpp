@@ -46,3 +46,9 @@ std::pair<double, double> Physik::get_punkt(double x, double y, float kurs, doub
     const double py = y + entfernung * std::cos(winkel_rad);
     return {px,py};
 }
+
+bool Physik::in_reichweite_xy(const Vektor& v1, const Vektor& v2, double reichweite) {
+    if (std::abs(v1.x() - v2.x()) > reichweite) return false;
+    if (std::abs(v1.y() - v2.y()) > reichweite) return false;
+    return distanz_xy(v1, v2) <= reichweite;
+}

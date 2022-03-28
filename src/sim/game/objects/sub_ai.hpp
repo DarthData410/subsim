@@ -6,7 +6,10 @@
 /// Ein Computergesteuertes U-B
 class Sub_AI final : public Sub {
 
-    enum Status : uint8_t {
+    static constexpr float SPEED_TRAVEL = 0.75f;
+    static constexpr float DEPTH_TRAVEL = -50.f;
+
+    enum Status : uint8_t { // nicht vergessen: größeren Typen bei wachsender Zahl Status
         DONE    = 0,        // Keine Aufgabe (mehr).
         TRAVEL = 1 << 0,    // Reisen zu bestimmter Position.    
         SEARCH  = 1 << 1,   // Nach Feinden suchen.
@@ -49,7 +52,7 @@ private:
 private:
 
     /// Timer für neue Aufgaben.
-    sf::Clock timer;
+    float timer;
 
     /// Zielkoordinaten. Zieltyp ist kontextabhängig.
     Vektor ziel;

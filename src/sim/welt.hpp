@@ -24,6 +24,8 @@ public:
      * aufgerufen wurde und skaliert entsprechend alle physikalischen Bewegungen etc.
      * */
     void tick();
+    /// Diese Version führt s Sekunden Simulation durch anstatt Echtzeit (mal timelapse).
+    void tick(float s);
 
     /// Fügt Objekt der Welt hinzu und verwaltet es.
     void add(Objekt* o);
@@ -50,6 +52,9 @@ private:
 
     /// Zeitraffer. TODO: Broadcast
     float timelapse = 1.0f; // TODO 1.0f wenn nicht test
+
+    /// Tiefe, in der Subs gespawnt werden.
+    float start_tiefe_sub = -50.f;
 
     /// Teams. TODO: Broadcast
     std::unordered_map<uint8_t, Team> teams;
