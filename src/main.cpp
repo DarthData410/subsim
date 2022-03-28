@@ -2,7 +2,10 @@
 #include "fenster/szene.hpp"
 #include "sim/net/host.hpp"
 #include "sim/net/net.hpp"
-#include "test/test.hpp"
+
+#if defined(UNITTEST)
+#include "../test/test.hpp"
+#endif
 
 #include <iostream>
 #include <log.hpp>
@@ -17,8 +20,12 @@ int main(int argc, char** argv) {
     for (int i = 0; i < argc; i++) {
         const std::string arg(argv[i]);
         if (arg.find("-test") != std::string::npos) {
+            #if defined(UNITTEST)
             std::cout << "starte tests\n";
             return test::run(argc, argv);
+            #else
+            std::cout << "UNITTEST deaktiviert\n";
+            #endif
         }
     }
 

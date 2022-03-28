@@ -14,7 +14,7 @@ class Welt final {
 public:
 
     /// Erstellt eine nutzbare Welt. Teams, Zonen und Computergegner werden auch generiert.
-    Welt();
+    explicit Welt(unsigned npcs_pro_team = 4);
 
     /// Dtor.
     ~Welt();
@@ -25,8 +25,26 @@ public:
      * */
     void tick();
 
+    /// Fügt Objekt der Welt hinzu und verwaltet es.
+    void add(Objekt* o);
+
     /// Erstellt ein neues Sub via `new` - manueller `delete` notwendig.
-    const Sub* get_new_sub(uint8_t team, bool computer_controlled);
+    const Sub* add_new_sub(uint8_t team, bool computer_controlled);
+
+    /// Liefert den Zeitrafferfaktor. 1.0 bedeutet Echtzeit.
+    float get_timelapse() const { return timelapse; }
+
+    /// Liefert Team i. @note Nummerierung beginnt mit 1.
+    const Team& get_team(uint8_t i) const { return teams.at(i); }
+
+    /// Liefert die Anzahl Teams.
+    size_t get_team_anzahl() const { return teams.size(); }
+
+    /// Liefert alle  in der Welt simulierten Objekte.
+    const std::unordered_map<uint32_t, Objekt*>& get_objekte() const { return objekte; }
+
+    /// Liefert alle eroberbaren Zonen.
+    const std::vector<Zone>& get_zonen() const { return zonen; }
 
 private:
 

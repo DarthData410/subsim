@@ -33,10 +33,8 @@ void Kommando::apply(Welt* welt) {
             // TODO
             break;
         case TORP_LAUNCH:
-            if (Torpedo* t = new Torpedo(as<Torpedo>()); sub->shoot(t->get_name())) {
-                if (welt->objekte.count(t->get_id())) Log::err() << "Error: Objekt duplicate with ID: " << t->get_id() << '\n';
-                else welt->objekte[t->get_id()] = t; // Torpedo in die Welt gesetzt
-            } else Log::err() << "Error: Torpedo could not be launched. " << t->get_name() << '\n';
+            if (Torpedo* t = new Torpedo(as<Torpedo>()); sub->shoot(t->get_name())) welt->add(t);
+            else Log::err() << "Error: Torpedo could not be launched. " << t->get_name() << '\n';
             break;
         case TIMELAPSE:
             welt->timelapse = as<float>();

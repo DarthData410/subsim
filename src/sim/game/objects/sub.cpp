@@ -1,3 +1,4 @@
+#include <log.hpp>
 #include "sub.hpp"
 
 Sub::Sub(const Vektor& pos,
@@ -22,5 +23,6 @@ bool Sub::shoot(const std::string& torpedo_name) {
         if (paar.second > 0) { paar.second--; return true; }
         else return false;
     }
+    Log::err() << "Sub::shoot(): no Torpedo with name=" << torpedo_name << '\n';
     return false;
 }

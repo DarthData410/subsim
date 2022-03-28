@@ -2,7 +2,7 @@
 
 #include <doctest.h>
 
-#include "../sim/physik.hpp"
+#include "../src/sim/physik.hpp"
 
 TEST_CASE("physik") {
 

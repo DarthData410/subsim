@@ -66,8 +66,9 @@ void Nav_UI::show_minimap(const Sub* sub) const {
         //if (x < 0 || x > size_x || y < 0 || y > size_y) continue; // außerhalb des Bildes
         const auto pos = world2ui(o.get_pos().x(), o.get_pos().y());
         auto color = ImColor(0xFF, 0xFF, 0xFF);
-        if      (o.get_id()   == sub->get_id())   color = ImColor(0, 0xFF, 0);
-        else if (o.get_team() != sub->get_team()) color = ImColor(0xFF, 0, 0);
+        if      (o.get_id()   == sub->get_id())        color = ImColor(0, 0xFF, 0); // eigenes Sub
+        else if (o.get_team() != sub->get_team())      color = ImColor(0xFF, 0, 0); // Feindliches Objekt
+        else if (o.get_typ()  == Objekt::Typ::TORPEDO) color = ImColor(0xFF, 0xFF, 0); // Torpedo
         draw_list->AddNgonFilled({pos[0], pos[1]}, 4.f, color, 4);
     }
 

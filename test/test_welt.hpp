@@ -3,7 +3,10 @@
 #include <doctest.h>
 
 TEST_CASE("welt") {
-    SUBCASE("teams") {}
+    Welt welt(0);
+    SUBCASE("teams") {
+        
+    }
     SUBCASE("zonen") {}
     SUBCASE("gegner") {}
 }
