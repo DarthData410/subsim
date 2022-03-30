@@ -2,19 +2,19 @@
 
 class Vektor {
 
-    using p_type = double;
+    typedef double dist_t;
 
 public:
 
     Vektor() = default;
-    Vektor(p_type x, p_type y, p_type z);
+    Vektor(dist_t x, dist_t y, dist_t z);
 
-    p_type x() const { return vx; }
-    p_type y() const { return vy; }
-    p_type z() const { return vz; }
-    void x(p_type x) { Vektor::vx = x; }
-    void y(p_type y) { Vektor::vy = y; }
-    void z(p_type z) { Vektor::vz = z; }
+    dist_t x() const { return vx; }
+    dist_t y() const { return vy; }
+    dist_t z() const { return vz; }
+    void x(dist_t x) { Vektor::vx = x; }
+    void y(dist_t y) { Vektor::vy = y; }
+    void z(dist_t z) { Vektor::vz = z; }
 
     /// Serialisierung via cereal.
     template <class Archive> void serialize(Archive& ar) {
@@ -23,8 +23,8 @@ public:
 
 private:
 
-    p_type vx;
-    p_type vy;
-    p_type vz;
+    dist_t vx;
+    dist_t vy;
+    dist_t vz;
 
 };

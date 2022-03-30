@@ -10,6 +10,7 @@ class Welt final {
     friend class Zone;
     friend class Sub_AI;
     friend class Sonar_Passiv;
+    friend class Test_Welt;
 
 public:
 
@@ -27,11 +28,21 @@ public:
     /// Diese Version führt s Sekunden Simulation durch anstatt Echtzeit (mal timelapse).
     void tick(float s);
 
-    /// Fügt Objekt der Welt hinzu und verwaltet es.
-    void add(Objekt* o);
+    /**
+     * Fügt Objekt der Welt hinzu und verwaltet es. Gibt die vergebene ID zurück.
+     * @note Vergibt niemals die ID 0. Objekte mit ID 0 sind unfertig/fehlerhaft erzeugt worden
+     *       und können so beim Debuggen aufgespürt werden.
+     */
+    uint32_t add(Objekt* o);
 
     /// Erstellt ein neues Sub via `new` - manueller `delete` notwendig.
     const Sub* add_new_sub(uint8_t team, bool computer_controlled);
+
+    /**
+     * Lässt `sub` mit `eingestelltes_torpedo` schießen, welches Zielkoordinaten usw. konfiguriert haben muss.
+     * @note Hat `sub` keine Torpedos mehr des gewünschten Typs, passiert nichts.
+     */
+    bool shoot_torpedo(Sub* sub, const Torpedo& eingestelltes_torpedo);
 
     /// Liefert den Zeitrafferfaktor. 1.0 bedeutet Echtzeit.
     float get_timelapse() const { return timelapse; }

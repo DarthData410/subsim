@@ -38,7 +38,8 @@ public:
 
     void set_target_bearing(float degree);
 
-    //TODO void set_target_depth(float depth);
+    /// TODO
+    void set_target_depth(float depth);
 
     /// Getter: Aktuelle x/y-Geschwindigkeit (absolut).
     float get_speed() const { return motor_linear.v; }
@@ -47,8 +48,11 @@ public:
     float get_speed_relativ() const { return motor_linear.v / motor_linear.v_max; }
 
     /// Liefert die gewünschte absolute x/y-Geschwindigkeit.
-    float get_target_speed() const { return motor_linear.v_target; }
+    float get_target_speed()   const { return motor_linear.v_target; }
+    /// Liefert den Gewünschten Kurs (0-360).
     float get_target_bearing() const { return std::get<bool>(target_bearing) ? std::get<float>(target_bearing) : bearing; }
+    /// Liefert die gewünschte Tiefe. @note Tiefenangaben sind negativ.
+    float get_target_depth()   const { return std::get<bool>(target_depth) ? std::get<float>(target_depth) : pos.z(); }
 
     /// Liefert einen Bewegungsfaktor: 0 (steht still) bis 10 (alle Motoren auf Maximum).
     float get_noise() const override;
@@ -57,7 +61,7 @@ public:
     template <class Archive> void serialize(Archive& ar) {
         ar(cereal::base_class<Objekt>(this),
             motor_linear, motor_rot, motor_tauch,
-            target_bearing, target_pos
+            target_pos, target_bearing, target_depth
         );
     }
 
@@ -87,6 +91,6 @@ protected:
     std::tuple<bool, double, double> target_pos;
 
     /// Zieltiefe
-    // TODO std::tuple<bool, float> target_depth;
+    std::tuple<bool, float> target_depth;
 
 };

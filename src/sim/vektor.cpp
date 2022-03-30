@@ -1,6 +1,6 @@
 #include "vektor.hpp"
 
-Vektor::Vektor(Vektor::p_type x, Vektor::p_type y, Vektor::p_type z) :
+Vektor::Vektor(Vektor::dist_t x, Vektor::dist_t y, Vektor::dist_t z) :
     vx(x), vy(y), vz(z)
 {
 

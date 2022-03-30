@@ -1,34 +1,29 @@
-//#define TESTS_AKTIV
-#include "fenster/szene.hpp"
-#include "sim/net/host.hpp"
-#include "sim/net/net.hpp"
+#include <iostream>
 
 #if defined(UNITTEST)
-#include "../test/test.hpp"
-#endif
-
-#include <iostream>
-#include <log.hpp>
+    #include "../test/test.hpp"
+#else
+    #include "fenster/szene.hpp"
+    #include "sim/net/host.hpp"
+    #include "sim/net/net.hpp"
+    #include <log.hpp>
 
 void start_server(Host*& host) {
     Log::out() << "Server startet..." << Log::flush;
     host = new Host(Net::PORT);
     host->start();
 }
+#endif
 
 int main(int argc, char** argv) {
+#if defined(UNITTEST)
+    std::cout << "starte tests\n";
+    return test::run(argc, argv);
+}
+#else
     for (int i = 0; i < argc; i++) {
         const std::string arg(argv[i]);
-        if (arg.find("-test") != std::string::npos) {
-            #if defined(UNITTEST)
-            std::cout << "starte tests\n";
-            return test::run(argc, argv);
-            #else
-            std::cout << "UNITTEST deaktiviert\n";
-            #endif
-        }
     }
-
     // Enet init
     if (enet_initialize() != 0) {
         std::cerr << "An error occurred while initializing ENet.\n";
@@ -59,3 +54,4 @@ int main(int argc, char** argv) {
     }
     return 0;
 }
+#endif

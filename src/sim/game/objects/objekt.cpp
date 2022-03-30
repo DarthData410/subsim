@@ -14,7 +14,7 @@ Objekt::~Objekt() {
 }
 
 void Objekt::regenerate_id() {
-    id = Zufall::random_hash<decltype(id)>(); // TODO check if exists
+    id = Zufall::random_hash<decltype(id)>();
 }
 
 float Objekt::get_bearing() const {

@@ -36,13 +36,6 @@ public:
         data = as_string(daten);
     }
 
-    Typ typ;
-
-    uint32_t sub_id;
-
-    /// Enthält evtl. zusätzliche Daten zum senden in einem Netzwerkpaket.
-    std::string data;
-
     /// Wendet dieses Kommando auf `welt` an.
     void apply(Welt* welt);
 
@@ -73,5 +66,14 @@ private:
         s << daten;
         return ss.str();
     }
+
+private:
+
+    Typ typ;
+
+    uint32_t sub_id;
+
+    /// Enthält evtl. zusätzliche Daten zum senden in einem Netzwerkpaket.
+    std::string data;
 
 };

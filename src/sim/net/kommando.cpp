@@ -32,10 +32,10 @@ void Kommando::apply(Welt* welt) {
         case AUTO_TIEFE:
             // TODO
             break;
-        case TORP_LAUNCH:
-            if (Torpedo* t = new Torpedo(as<Torpedo>()); sub->shoot(t->get_name())) welt->add(t);
-            else Log::err() << "Error: Torpedo could not be launched. " << t->get_name() << '\n';
-            break;
+        case TORP_LAUNCH: {
+            const Torpedo& t = as<Torpedo>();
+            welt->shoot_torpedo(sub, t);
+        }   break;
         case TIMELAPSE:
             welt->timelapse = as<float>();
             Log::debug() << "Welt hat jetzt Timelapse = " << welt->timelapse << '\n';

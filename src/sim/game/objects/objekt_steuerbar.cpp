@@ -20,7 +20,7 @@ void Objekt_Steuerbar::stop() {
     motor_tauch.v_target  = 0;
     std::get<bool>(target_bearing) = false;
     std::get<bool>(target_pos)     = false;
-    // TODO std::get<bool>(target_depth) = false;
+    std::get<bool>(target_depth)   = false;
 }
 
 bool Objekt_Steuerbar::tick(Welt* welt, float s) {
@@ -45,6 +45,8 @@ bool Objekt_Steuerbar::tick(Welt* welt, float s) {
 
     // Vorwärts/Rückwärts in m bewegen
     if (std::abs(motor_linear.v) > eps) Physik::move(pos, bearing, motor_linear.v * s);
+
+    // TODO target_depth
     return true;
 }
 
@@ -71,9 +73,9 @@ void Objekt_Steuerbar::auto_rudder() {
 
 void Objekt_Steuerbar::auto_path() {
     // Richtung
-    const float target_x = std::get<1>(target_pos);
-    const float target_y = std::get<2>(target_pos);
-    const float bearing = Physik::kurs(pos.x(), pos.y(), target_x, target_y);
+    const auto target_x = std::get<1>(target_pos);
+    const auto target_y = std::get<2>(target_pos);
+    const auto bearing = Physik::kurs(pos.x(), pos.y(), target_x, target_y);
     if (std::abs(get_bearing() - bearing) > 1.f) set_target_bearing(bearing);
     if (Physik::distanz(pos.x(), pos.y(), target_x, target_y) <= motor_linear.get_bremsweg()) {
         std::get<bool>(target_pos) = false; // Ziel erreicht.
@@ -91,4 +93,8 @@ float Objekt_Steuerbar::get_noise() const {
                         std::abs(motor_rot.v)      / motor_rot.v_max +
                         std::abs((0.5f * (motor_linear.v + motor_linear.v_target)) / motor_linear.v_max * 8.f);
     return noise;
+}
+
+void Objekt_Steuerbar::set_target_depth(float depth) {
+    target_depth = {true, depth};
 }

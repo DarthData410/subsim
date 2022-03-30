@@ -1,25 +1,11 @@
 #pragma once
 
+#include "detektion.hpp"
 #include <cereal/types/vector.hpp>
 
 /// Prädeklarationen
 class Welt;
 class Sub;
-
-/// Einzelne Sichtung.
-struct Detection {
-    enum Typ : uint8_t {
-        MOVEMENT_SIGNATURE = 1,
-    };
-    uint32_t objekt_id;
-    float gain;
-    float bearing;
-    Typ typ;
-
-    template <class Archive> void serialize(Archive& ar) {
-        ar(objekt_id, gain, bearing, typ);
-    }
-};
 
 /// Passiver Sonar
 class Sonar_Passiv final {
@@ -66,6 +52,6 @@ private:
     uint8_t ausrichtung;
 
     /// Alle aktuellen Detektionen.
-    std::vector<Detection> detections;
+    std::vector<Detektion> detections;
 
 };

@@ -45,7 +45,7 @@ void Sonar_UI::update_and_show(const Sub* sub) {
             std::generate(newline.begin(), newline.end(), [&]() { return Zufall::f(0.f, sonar.get_noise()); } );
 
             // Detektionen eintragen
-            for (const Detection& d : sonar.get_detections()) {
+            for (const Detektion& d : sonar.get_detections()) {
                 const unsigned histogram_position = std::clamp<unsigned>(std::round(
                         d.bearing * (sonar.get_resolution() / 360.f)), 0u, newline.size() - 1u);
                 newline[histogram_position] += d.gain;

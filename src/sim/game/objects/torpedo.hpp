@@ -23,11 +23,17 @@ public:
 
     bool tick(Welt* welt, float s) override final;
 
+    /// Setter: Distanz, nach der der Sucher aktiviert werden soll.
+    void set_distance_to_activate(float distance_to_activate) { Torpedo::distance_to_activate = distance_to_activate; }
+
     /// Getter: Torpedoname / Typname.
     const std::string& get_name() const { return name; }
 
     /// Getter: Reichweite.
     float get_range() const { return range; }
+
+    /// Getter: Gelaufene Distanz bis zur Aktivierung.
+    float get_distance_to_activate() const { return distance_to_activate; }
 
     /// Zur Eintragung in `unordered_map` z.B. Muss einmaligen Namen haben.
     friend bool operator<(const Torpedo& lhs, const Torpedo& rhs);
@@ -52,11 +58,5 @@ private:
 
     /// In welcher Entfernung soll der Sucher aktiv werden?
     float distance_to_activate;
-
-    /// In welche Richtung soll das Torpedo initial steuern?
-    float target_bearing;
-
-    /// In welcher Tiefe soll das Torpedo unterwegs sein?
-    float target_depth;
 
 };

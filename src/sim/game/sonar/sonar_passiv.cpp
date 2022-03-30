@@ -1,5 +1,5 @@
 #include "sonar_passiv.hpp"
-#include "sub.hpp"
+#include "../objects/sub.hpp"
 #include "../../welt.hpp"
 #include "../../physik.hpp"
 
@@ -12,12 +12,11 @@ Sonar_Passiv::Sonar_Passiv(float noise, uint16_t resolution, uint8_t sichtbereic
 }
 
 void Sonar_Passiv::tick(Sub* parent, Welt* welt, float s) {
-    if (!welt) return;
-
     // Erkennungen auffrischen
     detections.clear();
     for (const auto& objekt_paar : welt->objekte) {
         const Objekt* objekt = objekt_paar.second;
+
         // Eigenes Sub überspringen.
         if (parent == objekt) continue;
 
@@ -37,11 +36,11 @@ void Sonar_Passiv::tick(Sub* parent, Welt* welt, float s) {
                                           : object_noise;
         // Detektion!
         if (gain > 0.f) {
-            const Detection d = {
+            const Detektion d = {
                     .objekt_id = objekt->get_id(),
                     .gain = gain,
                     .bearing = object_bearing,
-                    .typ = Detection::MOVEMENT_SIGNATURE
+                    .typ = Detektion::MOVEMENT_SIGNATURE
             };
             detections.push_back(d);
         }

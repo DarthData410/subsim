@@ -74,6 +74,14 @@ TEST_CASE("physik") {
         REQUIRE(Physik::kurs(0, 0, -5, -5) == doctest::Approx(225));
         REQUIRE(Physik::kurs(0, 0, -5,  0) == doctest::Approx(270));
         REQUIRE(Physik::kurs(0, 0, -5,  5) == doctest::Approx(315));
+        REQUIRE(Physik::kurs({0, 0, 87},  {5,  5, 29})  == doctest::Approx( 45));
+        REQUIRE(Physik::kurs({0, 0, 87},  {0,  5, 29})  == doctest::Approx(  0));
+        REQUIRE(Physik::kurs({0, 0, 87},  {5,  0, 29})  == doctest::Approx( 90));
+        REQUIRE(Physik::kurs({0, 0, 87},  {5,  -5, 29}) == doctest::Approx(135));
+        REQUIRE(Physik::kurs({0, 0, 87},  {0,  -5, 29}) == doctest::Approx(180));
+        REQUIRE(Physik::kurs({0, 0, 87},  {-5, -5, 29}) == doctest::Approx(225));
+        REQUIRE(Physik::kurs({0, 0, 87},  {-5,  0, 29}) == doctest::Approx(270));
+        REQUIRE(Physik::kurs({0, 0, 87},  {-5,  5, 29}) == doctest::Approx(315));
     }
 
     SUBCASE("winkel_tiefe") {

@@ -41,8 +41,7 @@ const Sub* Welt::add_new_sub(uint8_t team, bool computer_controlled) {
     Sub* sub_ptr = nullptr;
     if (computer_controlled) sub_ptr = new Sub_AI(teams.at(team).get_new_sub());
     else sub_ptr = new Sub(teams.at(team).get_new_sub());
-    sub_ptr->regenerate_id();
-    objekte.insert({sub_ptr->get_id(), sub_ptr});
+    add(sub_ptr);
     sub_ptr->pos = { // Startposition beim Team, leicht versetzt
             std::get<0>(teams[team].get_pos()) + Zufall::f(-100.f, 100.f),
             start_tiefe_sub, // Tiefe
@@ -51,10 +50,22 @@ const Sub* Welt::add_new_sub(uint8_t team, bool computer_controlled) {
     return sub_ptr;
 }
 
-void Welt::add(Objekt* o) {
-    if (objekte.count(o->get_id())) {
-        Log::err() << "Error: Objekt duplicate with ID: " << o->get_id() << '\n';
-        throw std::runtime_error("Error: Welt::add Objekt duplicate ID");
+uint32_t Welt::add(Objekt* o) {
+    do o->regenerate_id(); // TODO Limit
+    while (objekte.count(o->get_id()) || o->get_id() == 0);
+    objekte[o->get_id()] = o; // Objekt in die Welt gesetzt
+    return o->get_id();
+}
+
+bool Welt::shoot_torpedo(Sub* sub, const Torpedo& eingestelltes_torpedo) {
+    if (sub->shoot(eingestelltes_torpedo.get_name())) {
+        this->add(new Torpedo(eingestelltes_torpedo, sub,
+                              eingestelltes_torpedo.get_distance_to_activate(),
+                              eingestelltes_torpedo.get_target_bearing(),
+                              eingestelltes_torpedo.get_target_depth()));
+        Log::debug() << "Torpedo name=" << eingestelltes_torpedo.get_name() << " launched by Sub ID=" << sub->get_id() << '\n';
+        return true;
     }
-    else objekte[o->get_id()] = o; // Objekt in die Welt gesetzt
+    Log::debug() << "Sub ID=" << sub->get_id() << " out of Ammo name=" << eingestelltes_torpedo.get_name() << '\n';
+    return false;
 }

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "objekt_steuerbar.hpp"
-#include "sonar_passiv.hpp"
+#include "../sonar/sonar_passiv.hpp"
 #include "torpedo.hpp"
 
 #include <cereal/types/map.hpp>
