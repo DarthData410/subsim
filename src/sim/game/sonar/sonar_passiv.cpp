@@ -7,45 +7,47 @@
 #include <utility>
 
 Sonar_Passiv::Sonar_Passiv(float noise_threshold, float resolution, std::vector<std::tuple<float, float>> blindspots)
-    : noise(noise_threshold), resolution(resolution), blindspots(std::move(blindspots))
+    : timer(0), noise(noise_threshold), resolution(resolution), blindspots(std::move(blindspots))
 {
     //
 }
 
 void Sonar_Passiv::tick(Sub* parent, Welt* welt, float s) {
-    // Erkennungen auffrischen
+    // Zeit, Erkennungen aufzufrischen?
+    timer += s;
+    if (s < 1.f) return;
+    s = 0;
 
-
-    /*detections.clear();
+    detections.clear();
     for (const auto& objekt_paar : welt->objekte) {
         const Objekt* objekt = objekt_paar.second;
 
         // Eigenes Sub überspringen.
         if (parent == objekt) continue;
 
-        const float sub_bearing = parent->get_bearing();
-        const float sonar_bearing = Physik::winkel_diff(0.f, sub_bearing + this->ausrichtung);
-        const float object_bearing = Physik::kurs(parent->get_pos().x(), parent->get_pos().y(),
-                                                  objekt->get_pos().x(), objekt->get_pos().y());
-        const float sonar_to_object = Physik::winkel_diff(sonar_bearing, object_bearing);
-
-        // Nihcht im Sichtbereich?
-        if (std::abs(sonar_to_object) > static_cast<float>(this->blindspots) / 2.f) continue;
+        // Im Sichtbereich?
+        const winkel_t kurs_relativ = Physik::kurs_relativ(parent, objekt);
+        if (is_in_blindspot(kurs_relativ)) continue;
 
         // Lautstärke bestimmen
-        const float distance = Physik::distanz_xyz(parent->get_pos(), objekt->get_pos());
-        const float object_noise = objekt->get_noise();
-        const float gain = distance > 1.f ? object_noise / std::pow(distance, 0.25f) // TODO adjust
-                                          : object_noise;
+        const auto distanz = Physik::distanz_xyz(parent->get_pos(), objekt->get_pos());
+        const auto sichtbarkeit = Physik::sichtbarkeit(objekt->get_noise(), objekt->get_speed(), distanz);
+
         // Detektion!
-        if (gain > 0.f) {
+        if (sichtbarkeit >= this->noise) {
             const Detektion d = {
                     .objekt_id = objekt->get_id(),
-                    .gain = gain,
-                    .bearing = object_bearing,
+                    .gain = sichtbarkeit,
+                    .bearing = Physik::round(kurs_relativ, this->resolution),
                     .typ = Detektion::MOVEMENT_SIGNATURE
             };
-            detections.push_back(d);
+            detections.emplace_back(d);
         }
-    }*/
+    }
+}
+
+bool Sonar_Passiv::is_in_blindspot(winkel_t kurs_relativ) const {
+    return std::any_of(blindspots.begin(), blindspots.end(), [&](const auto& blindspot) {
+        return Physik::is_winkel_zwischen(kurs_relativ, std::get<0>(blindspot), std::get<0>(blindspot));
+    });
 }

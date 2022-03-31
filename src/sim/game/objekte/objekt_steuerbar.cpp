@@ -51,14 +51,6 @@ bool Objekt_Steuerbar::tick(Welt* welt, float s) {
     return true;
 }
 
-void Objekt_Steuerbar::set_target_bearing(float degree) {
-    target_bearing = degree;
-}
-
-void Objekt_Steuerbar::set_target_pos(double x, double y) {
-    target_pos = {x,y};
-}
-
 void Objekt_Steuerbar::auto_rudder() {
     const float rotate_to = Physik::winkel_diff(get_bearing(), target_bearing.value());
     if (std::abs(rotate_to) <= motor_rot.get_bremsweg()) { // Erledigt -> Bremsen
@@ -80,16 +72,4 @@ void Objekt_Steuerbar::auto_path() {
         set_target_bearing(bearing);
         stop();
     }
-}
-
-void Objekt_Steuerbar::set_target_v(float v) {
-    motor_linear.v_target = v * motor_linear.v_max;
-}
-
-void Objekt_Steuerbar::set_target_depth(float depth) {
-    target_depth = depth;
-}
-
-float Objekt_Steuerbar::get_noise() const {
-    return noise;
 }

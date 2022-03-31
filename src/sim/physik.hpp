@@ -5,6 +5,8 @@
 #include "vektor.hpp"
 #include "typedefs.hpp"
 
+class Objekt;
+
 /// Mathematische/Physikalische Hilfsfunktionen.
 namespace Physik {
 
@@ -15,6 +17,8 @@ namespace Physik {
     winkel_t kurs(dist_t x, dist_t y, dist_t target_x, dist_t target_y);
     /// Liefert den Kurs von Punkt (x,y) zu Punkt (target_x,target_y).
     winkel_t kurs(const Vektor& v, const Vektor& v_target);
+    /// Liefert den relativen Kurs von Objekt1 zu Objekt2.
+    winkel_t kurs_relativ(const Objekt* o1, const Objekt* o2);
 
     /// Liefert die Distanz zwischen zwei 2D-Koordinaten.
     dist_t distanz(dist_t x1, dist_t y1, dist_t x2, dist_t y2);
@@ -55,5 +59,8 @@ namespace Physik {
 
     /// Liefert den Punkt x,y als `std::pair` vom gegebenen Punkt aus gesehen im gg. Winkel bei gg. Entfernung.
     std::pair<dist_t, dist_t> get_punkt(dist_t x, dist_t y, winkel_t kurs, dist_t entfernung);
+
+    /// Rundet `wert` auf `faktor`. (18, 5) ergibt bspw. 20.
+    template<typename T> T round(T wert, T faktor);
 
 };

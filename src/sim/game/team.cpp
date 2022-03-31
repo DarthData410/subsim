@@ -15,11 +15,11 @@ Team::Team(uint8_t id) : id(id), punkte(1000) {
     const Torpedo torpedo1(Motor(10, 1),
                            Motor(5, 1),
                            Motor(5, 1),
-                           "T1S", 1000);
+                           "T1S", 10'000);
     const Torpedo torpedo2(Motor(20, 1),
                            Motor(5, 1),
                            Motor(5, 1),
-                           "T1F", 500);
+                           "T1F", 5'000);
     beginner_sub.torpedos[torpedo1] = 4;
     beginner_sub.torpedos[torpedo2] = 4;
     sub_designs.push_back(beginner_sub);

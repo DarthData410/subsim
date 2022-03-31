@@ -1,4 +1,5 @@
 #include "physik.hpp"
+#include "game/objekte/objekt.hpp"
 
 #include <cmath>
 
@@ -91,4 +92,22 @@ float Physik::sichtbarkeit(float s, float v, dist_t d) {
           (y_verschibung + (steigungsglaettung *
           std::atan(((x_faktor * std::abs(v)) + x_verschiebung) + (sichtbarkeitseinfluss * s))));
     return sichtbarkeit;
+}
+
+winkel_t Physik::kurs_relativ(const Objekt* o1, const Objekt* o2) {
+    const float parent_bearing = o1->get_bearing();
+    const float objekt_bearing = Physik::kurs(o1->get_pos().x(), o1->get_pos().y(),
+                                              o2->get_pos().x(), o2->get_pos().y());
+    const float kurs_relativ = Physik::winkel_diff(parent_bearing, objekt_bearing);
+    return kurs_relativ;
+}
+
+template<> float Physik::round<float>(float wert, float faktor) {
+    if (faktor == 0) return wert;
+    return static_cast<float>(std::round(static_cast<float>(wert) / static_cast<float>(faktor)) * static_cast<float>(faktor));
+}
+
+template<> double Physik::round<double>(double wert, double faktor) {
+    if (faktor == 0) return wert;
+    return static_cast<double>(std::round(static_cast<double>(wert) / static_cast<double>(faktor)) * static_cast<double>(faktor));
 }

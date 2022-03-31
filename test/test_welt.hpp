@@ -46,15 +46,33 @@ TEST_CASE_CLASS("welt") {
 
         // sub2 nähert sich auf zieldistanz
         auto distanz = [&]() { return Physik::distanz_xy(sub1->get_pos(), sub2->get_pos()); };
-        const double zieldistanz = 100.0;
+        const double zieldistanz = 1000.0;
         sub2->set_target_v(1.0);
         sub2->set_target_pos(sub1->get_pos().x() + zieldistanz, sub1->get_pos().y());
         for (unsigned i = 0; i < 100'000; ++i) welt.tick(1); // Zeit um sich zu naehern
         REQUIRE(distanz() < zieldistanz * 1.5); // Distanz + Toleranz voneinander entfernt (kann bei >1 ticks ungenauer werden)
-        REQUIRE(sub1->get_speed() == doctest::Approx(0.f));
         REQUIRE(sub2->get_speed() == doctest::Approx(0.f));
 
+        // sub2 im Kreis herum im Uhrzeigersinn fahren lassen
+        sub2->set_target_rudder(1.0);
+        sub2->set_target_v(1.0);
+        for (unsigned i = 0; i < 1000; ++i) welt.tick(1);
+
+        REQUIRE(sub1->get_speed()         == doctest::Approx(0.f));
+        REQUIRE(sub1->get_speed_relativ() == 0.0f);
+        REQUIRE(sub2->get_speed_relativ() == 1.0f);
+        REQUIRE(sub2->get_speed()         == sub2->get_speed_max());
+
         // sub1 Sonar sieht sub2
+        const auto& sonar = sub1->get_sonars().front();
+        const auto& detektionen = sonar.get_detections();
+        const auto kurs_relativ = Physik::kurs_relativ(sub1, sub2);
+        CAPTURE(sub1->get_bearing());
+        CAPTURE(Physik::kurs(sub1->get_pos(), sub2->get_pos()));
+        CAPTURE(kurs_relativ);
+        REQUIRE(sonar.is_in_blindspot(Physik::kurs_relativ(sub1, sub2)) == false);
+        REQUIRE(detektionen.size() == 1);
+        REQUIRE(detektionen.front().bearing == doctest::Approx(Physik::round(kurs_relativ, sonar.get_resolution())));
 
         // sub1 feuert Torpedo auf sub2
         REQUIRE(sub1->get_torpedos().empty() == false); // Torpedotypen existieren

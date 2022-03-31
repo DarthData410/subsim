@@ -48,6 +48,8 @@ public:
     /// Getter: Teamzugehörigkeit. 0 = Kein Team.
     uint8_t get_team() const { return team; }
 
+    virtual float get_speed() const { return 0.f; }
+
     /// Getter: Aktuelle Geräuschentwicklung.
     virtual float get_noise() const { return 0.f; }
 
