@@ -1,5 +1,5 @@
 #include "game/team.hpp"
-#include "game/objects/zone.hpp"
+#include "game/zone.hpp"
 
 /// Simluierte Welt, die alle Objekte enthält.
 class Welt final {

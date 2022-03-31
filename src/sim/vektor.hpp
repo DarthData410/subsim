@@ -1,8 +1,8 @@
 #pragma once
 
-class Vektor {
+#include "typedefs.hpp"
 
-    typedef double dist_t;
+class Vektor {
 
 public:
 

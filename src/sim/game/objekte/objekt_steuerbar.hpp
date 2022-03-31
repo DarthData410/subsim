@@ -3,8 +3,9 @@
 #include "objekt.hpp"
 #include "motor.hpp"
 
-#include <cereal/types/tuple.hpp>
 #include <cereal/types/base_class.hpp>
+#include <cereal/types/array.hpp>
+#include <cereal/types/optional.hpp>
 
 /// Bewegliches Objekt.
 class Objekt_Steuerbar : public Objekt {
@@ -16,7 +17,8 @@ public:
     Objekt_Steuerbar(const Vektor& pos,
                      const Motor& motor_linear,
                      const Motor& motor_rot,
-                     const Motor& motor_tauch);
+                     const Motor& motor_tauch,
+                     float noise = 1.0f);
 
     /// Liefert den genauen Typen zur Identifikation nach Vererbung.
     Typ get_typ() const override { return Typ::OBJEKT_STEUERBAR; }
@@ -49,19 +51,22 @@ public:
 
     /// Liefert die gewünschte absolute x/y-Geschwindigkeit.
     float get_target_speed()   const { return motor_linear.v_target; }
-    /// Liefert den Gewünschten Kurs (0-360).
-    float get_target_bearing() const { return std::get<bool>(target_bearing) ? std::get<float>(target_bearing) : bearing; }
-    /// Liefert die gewünschte Tiefe. @note Tiefenangaben sind negativ.
-    float get_target_depth()   const { return std::get<bool>(target_depth) ? std::get<float>(target_depth) : pos.z(); }
 
-    /// Liefert einen Bewegungsfaktor: 0 (steht still) bis 10 (alle Motoren auf Maximum).
+    /// Liefert den Gewünschten Kurs (0-360).
+    winkel_t get_target_bearing() const { return target_bearing.value_or(bearing); }
+
+    /// Liefert die gewünschte Tiefe. @note Tiefenangaben sind negativ.
+    dist_t get_target_depth()   const { return target_depth.value_or(pos.z()); }
+
+    /// Liefert den Lärmfaktor [0.0, 1.0].
     float get_noise() const override;
 
     /// Serialisierung via cereal.
     template <class Archive> void serialize(Archive& ar) {
         ar(cereal::base_class<Objekt>(this),
             motor_linear, motor_rot, motor_tauch,
-            target_pos, target_bearing, target_depth
+            target_pos, target_bearing, target_depth,
+            noise
         );
     }
 
@@ -85,12 +90,15 @@ protected:
     Motor motor_tauch;
 
     /// Zielrichtung. [Aktiv,Grad]
-    std::tuple<bool, float> target_bearing;
-
-    /// Zielposition. [Aktiv,X,Y]
-    std::tuple<bool, double, double> target_pos;
+    std::optional<winkel_t> target_bearing;
 
     /// Zieltiefe
-    std::tuple<bool, float> target_depth;
+    std::optional<winkel_t> target_depth;
+
+    /// Zielposition. [Aktiv,X,Y]
+    std::optional<std::array<dist_t, 2>> target_pos;
+
+    /// Lärmfaktor [0.0,1.0]
+    float noise;
 
 };

@@ -3,15 +3,10 @@
 #include <array>
 
 #include "vektor.hpp"
+#include "typedefs.hpp"
 
 /// Mathematische/Physikalische Hilfsfunktionen.
 namespace Physik {
-
-    /// Typ für Distanzen.
-    typedef double dist_t;
-
-    /// Typ für Winkel.
-    typedef float winkel_t;
 
     /// Bewegt `pos` in Richtung `q` um `amount`.
     void move(Vektor& pos, winkel_t kurs, dist_t weite);
@@ -34,8 +29,26 @@ namespace Physik {
     /// Liefert den Winkel in der y-Ebene (d.h. Höhe/Tiefe) zwischen zwei 3D-Punkten.
     winkel_t winkel_tiefe(const Vektor& pos, const Vektor& target_pos);
 
+    /// Normalisiert gegebenen Winkel, sodass -180 <= winkel <= +180.
+    void winkel_norm(winkel_t& winkel);
+
+    /// Prüft, ob `winkel` innerhalb von `min` und `max` liegt (einschließend).
+    bool is_winkel_zwischen(winkel_t winkel, winkel_t min, winkel_t max);
+
     /// Liefert distanz(v1,v2) <= reichweite.
     bool in_reichweite_xy(const Vektor& v1, const Vektor& v2, dist_t reichweite);
+
+    /// Liefert die Geräuschverringung nach Distanz (0.0 - kein Schall übrig - 1.0).
+    float schallfaktor(dist_t distanz);
+
+    /**
+     * Liefert die "Sichtbarkeit" (also Geräuschentwicklung) eines Subs von 0.0 (unsichtbar) - 1.0 (ganz deutlich).
+     * @param sichtbarkeitsfaktor 0.0 - 1.0 (ja nach Technologie; kleiner ist besser).
+     * @param v Geschwindigkeit
+     * @param d Entfernung
+     * @return 0.1 und weniger bedeutet quasi unsichtbar. Absolut 0 wird praktisch nie erreicht.
+     */
+    float sichtbarkeit(float sichtbarkeitsfaktor, float v, dist_t d);
 
     /// Liefert den Bremsweg bei gegebener Geschwindigkeit und Entschleunigung.
     dist_t bremsweg(dist_t v, dist_t a);

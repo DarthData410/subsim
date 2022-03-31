@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../sim/game/objects/sub.hpp"
+#include "../sim/game/objekte/sub.hpp"
 #include "../sim/net/klient.hpp"
 #include "nav_ui.hpp"
 #include "sonar_ui.hpp"

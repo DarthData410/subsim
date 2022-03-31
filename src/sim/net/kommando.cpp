@@ -1,7 +1,7 @@
 #include <log.hpp>
 #include "kommando.hpp"
 #include "../welt.hpp"
-#include "../game/objects/sub.hpp"
+#include "../game/objekte/sub.hpp"
 
 void Kommando::apply(Welt* welt) {
     Sub* sub = nullptr;

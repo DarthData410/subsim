@@ -1,5 +1,5 @@
 #include "zone.hpp"
-#include "../../welt.hpp"
+#include "../welt.hpp"
 
 #include <tuple>
 #include <SFML/System/Clock.hpp>

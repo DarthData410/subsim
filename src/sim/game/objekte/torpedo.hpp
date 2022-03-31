@@ -13,11 +13,11 @@ public:
     /// Ctor. Muss zum Serialisieren existieren.
     Torpedo() = default;
 
-    /// Ctor zur Erzeugung aus einem Torpedotypen heraus, der von einem Sub verschossen wird.
-    Torpedo(const Torpedo& torpedo_typ, const Sub* sub, float distance_to_activate, float target_bearing, float target_depth);
-
     /// Ctor zur Erstellung eines neuen Torpedotypen (= Vorlage).
     Torpedo(const Motor& motor_linear, const Motor& motor_rot, const Motor& motor_tauch, const std::string& name, float range);
+
+    /// Ctor zur Erzeugung aus einem Torpedotypen heraus, der von einem Sub verschossen wird.
+    Torpedo(const Torpedo& torpedo_typ, const Sub* sub, float distance_to_activate, float target_bearing, float target_depth);
 
     Objekt::Typ get_typ() const override final { return Typ::TORPEDO; }
 

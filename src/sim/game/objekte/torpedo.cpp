@@ -5,17 +5,17 @@
 Torpedo::Torpedo(const Motor& motor_linear, const Motor& motor_rot, const Motor& motor_tauch,
                  const std::string& name, float range)
         : Objekt_Steuerbar({0,0,0}, // unwichtig, wird überschrieben bei Kopie
-                           motor_linear, motor_rot, motor_tauch),
+                           motor_linear, motor_rot, motor_tauch,
+                           1.0),
           name(name), range(range)
 {
     //
 }
 
 Torpedo::Torpedo(const Torpedo& torpedo_typ, const Sub* sub, float distance_to_activate, float target_bearing, float target_depth)
-    : name(torpedo_typ.name), range(torpedo_typ.range),
-    distance_to_activate(distance_to_activate)
+    : Torpedo(torpedo_typ) // übernimmt alles aus torpedo_typ
 {
-    pos = sub->get_pos();
+    pos = sub->get_pos(); // TODO etwas Abstand nach vorn
     motor_linear.v = std::min(motor_linear.v_max, sub->get_speed() + 1.f);
     set_target_v(1.0f);
     set_target_bearing(target_bearing);

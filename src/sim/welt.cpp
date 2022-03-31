@@ -1,5 +1,5 @@
 #include "welt.hpp"
-#include "game/objects/sub_ai.hpp"
+#include "game/objekte/sub_ai.hpp"
 
 #include <zufall.hpp>
 

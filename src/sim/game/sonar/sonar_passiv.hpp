@@ -2,6 +2,7 @@
 
 #include "detektion.hpp"
 #include <cereal/types/vector.hpp>
+#include <cereal/types/tuple.hpp>
 
 /// Prädeklarationen
 class Welt;
@@ -16,40 +17,41 @@ public:
     Sonar_Passiv() = default;
 
     /// Ctor.
-    Sonar_Passiv(float noise, uint16_t resolution, uint8_t sichtbereich = 180);
+    Sonar_Passiv(float noise_threshold, float resolution, std::vector<std::tuple<float, float>> blindspots);
 
     /// Führt erkennungen durch.
     void tick(Sub* parent, Welt* welt, float s);
 
+    /// Getter: Mindestlärmwert (0-1), den ein Objekt haben muss, um erkannt zu werden.
     float get_noise() const { return noise; }
 
-    uint16_t get_resolution() const { return resolution; }
+    /// Getter: Auf wieviel Grad genau eine Richtung bestimmt werden kann.
+    float get_resolution() const { return resolution; }
 
-    uint8_t get_sichtbereich() const { return sichtbereich; }
-
-    uint8_t get_ausrichtung() const { return ausrichtung; }
+    /// Getter: Sichtbereich(e) des Sonars, relativ zum sub.
+    const std::optional<std::vector<std::tuple<float, float>>>& get_blindspots() const { return blindspots; }
 
     /// Getter: Aktuelle erkannte Signaturen.
     const auto& get_detections() const { return detections; }
 
     /// Serialisierung via cereal.
     template <class Archive> void serialize(Archive& ar) {
-        ar(noise, resolution, sichtbereich, ausrichtung, detections);
+        ar(noise, resolution, blindspots, detections);
     }
 
 private:
 
-    /// Grund-Noise-Level. Eigene Sub-Geräusche kommen noch hinzu. 0.0 = Perfekt, 1.0 = Detektionen unmöglich.
+    /// Grund-Noise-Level. Eigene Sub-Geräusche kommen noch hinzu. 0.0 = Perfekt, 1.0 = Detektionen praktisch unmöglich.
     float noise;
 
-    /// Auflösung. 360° = Perfekt. 180° bedeutet eine Darstellung von 1° auf 2°.
-    uint16_t resolution;
+    /// Auflösung. Auf wieviel Grad ° genau die Detektion ist.
+    float resolution;
 
-    /// Sichtbereich. 90 = von 315 über 0 bis 45. 180° heißt rundum.
-    uint8_t sichtbereich;
+    /// Winkelbereiche (min,max), zwischen denen dieses Sonar nichts sieht.
+    std::vector<std::tuple<float, float>> blindspots;
 
     /// Ausrichtung des Sonars relativ zum Mutterschiff.
-    uint8_t ausrichtung;
+    // uint8_t ausrichtung; TODO notwendig? Einfach immer 0
 
     /// Alle aktuellen Detektionen.
     std::vector<Detektion> detections;

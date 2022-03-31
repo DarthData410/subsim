@@ -1,6 +1,6 @@
 #include <zufall.hpp>
 #include "sonar_ui.hpp"
-#include "../sim/game/objects/sub.hpp"
+#include "../sim/game/objekte/sub.hpp"
 #include "imgui_addons.hpp"
 
 Sonar_UI::Sonar_UI() : Standard_UI(nullptr) {

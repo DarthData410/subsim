@@ -22,8 +22,6 @@ public:
 
     Typ get_typ() const override { return Typ::SUB; }
 
-    float get_noise() const override;
-
     /// Torpedo mit gg. Namen (sofort) abschießen. `false`, wenn nicht möglich, weil z.B. keine Munition.
     bool shoot(const std::string& torpedo_name);
 
@@ -34,7 +32,7 @@ public:
     /// Serialisierung via cereal.
     template <class Archive> void serialize(Archive& ar) {
         ar(cereal::base_class<Objekt_Steuerbar>(this),
-           sonars, torpedos, tarnung
+           sonars, torpedos
         );
     }
 
@@ -45,8 +43,5 @@ protected:
 
     /// Torpedos und deren Anzahl.
     std::map<Torpedo, uint8_t> torpedos;
-
-    /// Faktor, mit dem `get_noise` multipliziert wird. Das heißt 1.0 = keine Tarnung, 0.0 = unsichtbar.
-    float tarnung;
 
 };

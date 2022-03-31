@@ -1,6 +1,6 @@
 #include "waffen_ui.hpp"
 #include "imgui_addons.hpp"
-#include "../sim/game/objects/sub.hpp"
+#include "../sim/game/objekte/sub.hpp"
 #include "../sim/net/klient.hpp"
 
 Waffen_UI::Waffen_UI() : Standard_UI(nullptr) {

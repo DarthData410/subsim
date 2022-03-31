@@ -3,7 +3,7 @@
 
 Sub::Sub(const Vektor& pos,
          const Motor& motor_linear,const Motor& motor_rot, const Motor& motor_tauch)
-         : Objekt_Steuerbar(pos, motor_linear, motor_rot, motor_tauch), tarnung(1.0f)
+         : Objekt_Steuerbar(pos, motor_linear, motor_rot, motor_tauch)
 {
     //
 }
@@ -14,10 +14,6 @@ bool Sub::tick(Welt* welt, float s) {
         for (Sonar_Passiv& sonar_passiv : sonars) sonar_passiv.tick(this, welt, s);
     }
     return true;
-}
-
-float Sub::get_noise() const {
-    return Objekt_Steuerbar::get_noise() * tarnung;
 }
 
 bool Sub::shoot(const std::string& torpedo_name) {

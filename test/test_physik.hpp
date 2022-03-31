@@ -89,6 +89,20 @@ TEST_CASE("physik") {
         REQUIRE(Physik::winkel_tiefe({10,20, 0}, {10,30, -10}) == doctest::Approx(-45));
     }
 
+    SUBCASE("winkel_zwischen") {
+        REQUIRE(Physik::is_winkel_zwischen(  0, -10,  10) == true);
+        REQUIRE(Physik::is_winkel_zwischen(-10, -15,  15) == true);
+        REQUIRE(Physik::is_winkel_zwischen( 10, -15,  15) == true);
+        REQUIRE(Physik::is_winkel_zwischen(359, -10,  10) == true);
+        REQUIRE(Physik::is_winkel_zwischen(360, -10,  10) == true);
+        REQUIRE(Physik::is_winkel_zwischen(361, -10,  10) == true);
+        REQUIRE(Physik::is_winkel_zwischen( 90,  45, 135) == true);
+        REQUIRE(Physik::is_winkel_zwischen( 90, -45,-135) == false);
+        REQUIRE(Physik::is_winkel_zwischen(270, -45,-135) == true);
+        REQUIRE(Physik::is_winkel_zwischen(170, 135,-135) == true);
+        REQUIRE(Physik::is_winkel_zwischen(190, 135,-135) == true);
+    }
+
     SUBCASE("distanz") {
         REQUIRE(Physik::distanz(  0,   0,  0,  0) == doctest::Approx( 0));
         REQUIRE(Physik::distanz(  2,   2,  5,  6) == doctest::Approx( 5));
@@ -118,6 +132,21 @@ TEST_CASE("physik") {
         REQUIRE(Physik::bremsweg( 10,  -1) == doctest::Approx(50));
         REQUIRE(Physik::bremsweg(-10,   1) == doctest::Approx(50));
         REQUIRE(Physik::bremsweg(-10,  -1) == doctest::Approx(50));
+    }
+
+    SUBCASE("schallfaktor") {
+        REQUIRE(Physik::schallfaktor(10000)  == doctest::Approx(0.833333));
+        REQUIRE(Physik::schallfaktor(50000)  == doctest::Approx(0.16667));
+        REQUIRE(Physik::schallfaktor(100000) == doctest::Approx(0.04762));
+    }
+
+    SUBCASE("sichtbarkeit") {
+        REQUIRE(Physik::sichtbarkeit(1.0,  7.5,    500) == doctest::Approx(0.90486));
+        REQUIRE(Physik::sichtbarkeit(0.75, 7.5,  10000) == doctest::Approx(0.68046));
+        REQUIRE(Physik::sichtbarkeit(0.5,  7.5,    500) == doctest::Approx(0.63422));
+        REQUIRE(Physik::sichtbarkeit(0.5,    0, 100000) == doctest::Approx(0.00626));
+        REQUIRE(Physik::sichtbarkeit(0.25,  10,   5000) == doctest::Approx(0.56368));
+        REQUIRE(Physik::sichtbarkeit(0.25, -10,   5000) == doctest::Approx(0.56368));
     }
 
 }

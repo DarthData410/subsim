@@ -2,7 +2,7 @@
 
 #include "kommando.hpp"
 #include "../game/team.hpp"
-#include "../game/objects/zone.hpp"
+#include "../game/zone.hpp"
 
 #include <enet/enet.h>
 #include <iostream>
