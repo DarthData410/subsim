@@ -12,7 +12,7 @@ Sonar_Passiv::Sonar_Passiv(float noise_threshold, float resolution, std::vector<
     //
 }
 
-void Sonar_Passiv::tick(Sub* parent, Welt* welt, float s) {
+void Sonar_Passiv::tick(Objekt* parent, Welt* welt, float s) {
     // Zeit, Erkennungen aufzufrischen?
     timer += s;
     if (s < 1.f) return;

@@ -10,6 +10,7 @@ class Welt final {
     friend class Zone;
     friend class Sub_AI;
     friend class Sonar_Passiv;
+    friend class Torpedo;
     friend class Test_Welt;
 
 public:

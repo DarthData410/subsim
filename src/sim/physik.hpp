@@ -34,13 +34,13 @@ namespace Physik {
     winkel_t winkel_tiefe(const Vektor& pos, const Vektor& target_pos);
 
     /// Normalisiert gegebenen Winkel, sodass -180 <= winkel <= +180.
-    void winkel_norm(winkel_t& winkel);
+    winkel_t winkel_norm(winkel_t winkel);
 
     /// Prüft, ob `winkel` innerhalb von `min` und `max` liegt (einschließend).
     bool is_winkel_zwischen(winkel_t winkel, winkel_t min, winkel_t max);
 
     /// Liefert distanz(v1,v2) <= reichweite.
-    bool in_reichweite_xy(const Vektor& v1, const Vektor& v2, dist_t reichweite);
+    bool in_reichweite_xyz(const Vektor& v1, const Vektor& v2, dist_t reichweite);
 
     /// Liefert die Geräuschverringung nach Distanz (0.0 - kein Schall übrig - 1.0).
     float schallfaktor(dist_t distanz);

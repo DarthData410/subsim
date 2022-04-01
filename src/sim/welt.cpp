@@ -7,11 +7,11 @@ Welt::Welt(unsigned npcs_pro_team) {
     // Teams hinzufügen
     for (uint8_t i = 1; i <= 2; ++i) {
         teams[i] = Team(i);
-        teams[i].basis = {i % 2 == 0 ? 1'500.f : -1'500.f, 0.f};
+        teams[i].basis = {i % 2 == 0 ? 15000.f : -15000.f, 0.f};
         for (unsigned k = 0; k < npcs_pro_team; ++k) add_new_sub(i, true);
     }
     // Punktezonen hinzufügen
-    zonen.emplace_back(std::tuple(0.f,0.f), 1000.f);
+    zonen.emplace_back(std::tuple(0.f,0.f), 2500.f);
 }
 
 Welt::~Welt() {
@@ -43,9 +43,9 @@ const Sub* Welt::add_new_sub(uint8_t team, bool computer_controlled) {
     else sub_ptr = new Sub(teams.at(team).get_new_sub());
     add(sub_ptr);
     sub_ptr->pos = { // Startposition beim Team, leicht versetzt
-            std::get<0>(teams[team].get_pos()) + Zufall::f(-100.f, 100.f),
-            start_tiefe_sub, // Tiefe
-            std::get<1>(teams[team].get_pos()) + Zufall::f(-100.f, 100.f)
+            std::get<0>(teams[team].get_pos()) + Zufall::f(-500.f, 500.f),
+            std::get<1>(teams[team].get_pos()) + Zufall::f(-500.f, 500.f),
+            start_tiefe_sub // Tiefe
     };
     return sub_ptr;
 }
@@ -62,7 +62,8 @@ bool Welt::shoot_torpedo(Sub* sub, const Torpedo& eingestelltes_torpedo) {
         this->add(new Torpedo(eingestelltes_torpedo, sub,
                               eingestelltes_torpedo.get_distance_to_activate(),
                               eingestelltes_torpedo.get_target_bearing(),
-                              eingestelltes_torpedo.get_target_depth()));
+                              eingestelltes_torpedo.get_target_depth(),
+                              eingestelltes_torpedo.get_distance_to_explode()));
         Log::debug() << "Torpedo name=" << eingestelltes_torpedo.get_name() << " launched by Sub ID=" << sub->get_id() << '\n';
         return true;
     }

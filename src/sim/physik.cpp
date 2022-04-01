@@ -50,10 +50,11 @@ std::pair<dist_t, dist_t> Physik::get_punkt(dist_t x, dist_t y, winkel_t kurs, d
     return {px,py};
 }
 
-bool Physik::in_reichweite_xy(const Vektor& v1, const Vektor& v2, dist_t reichweite) {
+bool Physik::in_reichweite_xyz(const Vektor& v1, const Vektor& v2, dist_t reichweite) {
     if (std::abs(v1.x() - v2.x()) > reichweite) return false;
     if (std::abs(v1.y() - v2.y()) > reichweite) return false;
-    return distanz_xy(v1, v2) <= reichweite;
+    if (std::abs(v1.z() - v2.z()) > reichweite) return false;
+    return distanz_xyz(v1, v2) <= reichweite;
 }
 
 winkel_t Physik::kurs(const Vektor& v, const Vektor& v_target) {
@@ -63,15 +64,16 @@ winkel_t Physik::kurs(const Vektor& v, const Vektor& v_target) {
 bool Physik::is_winkel_zwischen(winkel_t winkel, winkel_t min, winkel_t max) {
     min -= winkel;
     max -= winkel;
-    winkel_norm(min);
-    winkel_norm(max);
+    min = winkel_norm(min);
+    max = winkel_norm(max);
     if (min * max >= 0 ) return false;
     return std::fabs(min - max) < 180;
 }
 
-void Physik::winkel_norm(winkel_t& w) {
+winkel_t Physik::winkel_norm(winkel_t w) {
     while (w < -180) w += 360;
     while (w >  180) w -= 360;
+    return w;
 }
 
 float Physik::schallfaktor(dist_t d) {

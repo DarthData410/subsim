@@ -46,15 +46,18 @@ void Waffen_UI::update_and_show(const Sub* sub) {
     ImGui::Nada::Tooltip("Hold CTRL for fast increase/decrease");
 
     static int distance_to_activate = 100;
-    ImGui::InputInt("Distance to Activate", &distance_to_activate, 100, 1000);
+    ImGui::InputInt("Distance to Activate", &distance_to_activate, 50, 100);
     ImGui::Nada::Tooltip("Hold CTRL for fast increase/decrease");
-    if (distance_to_activate < 100) distance_to_activate = 100;
+    distance_to_activate = std::clamp(distance_to_activate, 150, static_cast<int>(torp.get_range()));
 
-    // distance_to_deactivate
+    static int distance_to_explode = 50;
+    ImGui::InputInt("Proximity Fuse in m", &distance_to_explode, 1, 2);
+    distance_to_explode = std::clamp(distance_to_explode, 1, 100);
 
     if (ImGui::Button("Launch") && temp && ammo > 0) {
         // Launch Torpedo
-        const Torpedo t(torp, sub, static_cast<float>(distance_to_activate), target_bearing, static_cast<float>(target_depth));
+        const Torpedo t(torp, sub, static_cast<float>(distance_to_activate), target_bearing,
+                  static_cast<float>(target_depth), static_cast<float>(distance_to_explode));
         const Kommando cmd(Kommando::TORP_LAUNCH, sub->get_id(), t);
         klient->kommando(cmd);
     }

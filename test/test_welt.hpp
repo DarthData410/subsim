@@ -8,60 +8,57 @@ class Test_Welt {
 TEST_CASE_CLASS("welt") {
     Welt welt(0);
     SUBCASE("teams") {
-        REQUIRE(welt.get_team_anzahl() == 2);
-        REQUIRE_NOTHROW(welt.get_team(1));
-        REQUIRE_NOTHROW(welt.get_team(2));
+        CHECK(welt.get_team_anzahl() == 2);
+        CHECK_NOTHROW(welt.get_team(1));
+        CHECK_NOTHROW(welt.get_team(2));
     }
     SUBCASE("zonen") {
-        REQUIRE(welt.get_zonen().size() > 0);
-        for (const auto& zone : welt.get_zonen()) REQUIRE(zone.get_team() == 0);
+        CHECK(welt.get_zonen().size() > 0);
+        for (const auto& zone : welt.get_zonen()) CHECK(zone.get_team() == 0);
     }
     SUBCASE("gegner nimmt zone ein") {
-        REQUIRE(welt.get_objekte().size() == 0);
+        CHECK(welt.get_objekte().size() == 0);
         const uint8_t team = 1;
         welt.add_new_sub(team, true);
         welt.add_new_sub(team, true);
-        REQUIRE(welt.get_objekte().size() == 2);
+        CHECK(welt.get_objekte().size() == 2);
         bool zone_eingenommen = false;
         for (unsigned i = 0; i < 100'000; ++i) { // Anzahl ticks
             welt.tick(10); // s pro tick
             for (const auto& zone : welt.get_zonen()) if (zone.get_team() == team) { zone_eingenommen = true; break; }
         }
-        REQUIRE(zone_eingenommen == true);
-        REQUIRE(welt.get_team(team).get_punkte() > 0);
+        CHECK(zone_eingenommen == true);
+        CHECK(welt.get_team(team).get_punkte() > 0);
     }
-    SUBCASE("sonar detektion") {
-
-    }
-    SUBCASE("torpedo abschuss und treffer") {
+    SUBCASE("szenario torpedo abschuss und treffer") {
         // 2 zueinander feindliche Subs erzeugen
-        REQUIRE(welt.get_objekte().size() == 0); // Welt leer
+        CHECK(welt.get_objekte().size() == 0); // Welt leer
         auto sub1_id = welt.add_new_sub(1, false)->get_id();
         auto sub2_id = welt.add_new_sub(2, false)->get_id();
-        REQUIRE(welt.get_objekte().size() == 2);
+        CHECK(welt.get_objekte().size() == 2);
         Sub* sub1;
         Sub* sub2;
-        REQUIRE_NOTHROW(sub1 = dynamic_cast<Sub*>(welt.get_objekte().at(sub1_id)));
-        REQUIRE_NOTHROW(sub2 = dynamic_cast<Sub*>(welt.get_objekte().at(sub2_id)));
+        CHECK_NOTHROW(sub1 = dynamic_cast<Sub*>(welt.get_objekte().at(sub1_id)));
+        CHECK_NOTHROW(sub2 = dynamic_cast<Sub*>(welt.get_objekte().at(sub2_id)));
 
         // sub2 nähert sich auf zieldistanz
         auto distanz = [&]() { return Physik::distanz_xy(sub1->get_pos(), sub2->get_pos()); };
-        const double zieldistanz = 1000.0;
+        const double zieldistanz = 2000.0;
         sub2->set_target_v(1.0);
         sub2->set_target_pos(sub1->get_pos().x() + zieldistanz, sub1->get_pos().y());
         for (unsigned i = 0; i < 100'000; ++i) welt.tick(1); // Zeit um sich zu naehern
-        REQUIRE(distanz() < zieldistanz * 1.5); // Distanz + Toleranz voneinander entfernt (kann bei >1 ticks ungenauer werden)
-        REQUIRE(sub2->get_speed() == doctest::Approx(0.f));
+        CHECK(distanz() < zieldistanz * 1.1); // Distanz + Toleranz voneinander entfernt (kann bei großen ticks ungenauer werden)
+        CHECK(sub2->get_speed() == doctest::Approx(0.f));
 
         // sub2 im Kreis herum im Uhrzeigersinn fahren lassen
         sub2->set_target_rudder(1.0);
         sub2->set_target_v(1.0);
         for (unsigned i = 0; i < 1000; ++i) welt.tick(1);
 
-        REQUIRE(sub1->get_speed()         == doctest::Approx(0.f));
-        REQUIRE(sub1->get_speed_relativ() == 0.0f);
-        REQUIRE(sub2->get_speed_relativ() == 1.0f);
-        REQUIRE(sub2->get_speed()         == sub2->get_speed_max());
+        CHECK(sub1->get_speed()         == doctest::Approx(0));
+        CHECK(sub1->get_speed_relativ() == 0.0);
+        CHECK(sub2->get_speed()         == sub2->get_speed_max());
+        CHECK(sub2->get_speed_relativ() == 1.0);
 
         // sub1 Sonar sieht sub2
         const auto& sonar = sub1->get_sonars().front();
@@ -70,22 +67,26 @@ TEST_CASE_CLASS("welt") {
         CAPTURE(sub1->get_bearing());
         CAPTURE(Physik::kurs(sub1->get_pos(), sub2->get_pos()));
         CAPTURE(kurs_relativ);
-        REQUIRE(sonar.is_in_blindspot(Physik::kurs_relativ(sub1, sub2)) == false);
-        REQUIRE(detektionen.size() == 1);
-        REQUIRE(detektionen.front().bearing == doctest::Approx(Physik::round(kurs_relativ, sonar.get_resolution())));
+        CHECK(sonar.is_in_blindspot(Physik::kurs_relativ(sub1, sub2)) == false);
+        CHECK(detektionen.size() == 1);
+        CHECK(detektionen.front().bearing == doctest::Approx(Physik::round(kurs_relativ, sonar.get_resolution())));
+
+        // sub1 stellt Torpedo ein auf sub2
+        CHECK(sub1->get_torpedos().empty() == false); // Torpedotypen existieren
+        const auto& torpedotyp = sub1->get_torpedos().begin()->first;
+        CHECK(sub1->get_torpedos().at(torpedotyp) > 0); // torpedotyp hat Munition
+        CHECK(torpedotyp.get_range() * 0.5 >= distanz()); // Ziel in halber Reichweite (zur Sicherheit)
+        Torpedo torpedo(torpedotyp);
+        torpedo.set_target_bearing(detektionen.front().bearing);
+        torpedo.set_target_depth(sub2->get_pos().z());
+        torpedo.set_distance_to_activate(250);
+        torpedo.set_distance_to_explode(50);
+        CHECK(torpedo.get_distance_to_activate() > torpedo.get_distance_to_explode());
 
         // sub1 feuert Torpedo auf sub2
-        REQUIRE(sub1->get_torpedos().empty() == false); // Torpedotypen existieren
-        const auto& torpedotyp = sub1->get_torpedos().begin()->first;
-        REQUIRE(sub1->get_torpedos().at(torpedotyp) > 0); // torpedotyp hat Munition
-        REQUIRE(torpedotyp.get_range() * 0.5 >= distanz()); // Ziel in halber Reichweite (zur Sicherheit)
-        Torpedo torpedo(torpedotyp);
-        torpedo.set_target_bearing(Physik::kurs(sub1->get_pos(), sub2->get_pos()));
-        torpedo.set_target_depth(sub2->get_pos().z());
-
         welt.shoot_torpedo(sub1, torpedo);
-        for (unsigned i = 0; i < 100'000; ++i) welt.tick(1); // Zeit für Torpedo für was auch immer
-        //REQUIRE(welt.get_objekte().size() == 2); // Übrig: 2 Subs // TODO
+        for (unsigned i = 0; i < 100'000; ++i) welt.tick(0.1); // Zeit für Torpedo
+        CHECK(welt.get_objekte().size() == 2); // Übrig: 2 Subs // TODO: nur 1 Sub?
     }
 }
 

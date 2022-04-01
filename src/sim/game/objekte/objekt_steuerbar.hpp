@@ -18,7 +18,7 @@ public:
                      const Motor& motor_linear,
                      const Motor& motor_rot,
                      const Motor& motor_tauch,
-                     float noise = 1.0f);
+                     float noise = 0.0f);
 
     /// Liefert den genauen Typen zur Identifikation nach Vererbung.
     Typ get_typ() const override { return Typ::OBJEKT_STEUERBAR; }

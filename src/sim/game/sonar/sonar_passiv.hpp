@@ -7,7 +7,6 @@
 
 /// Prädeklarationen
 class Welt;
-class Sub;
 class Objekt;
 
 /// Passiver Sonar
@@ -37,7 +36,7 @@ public:
     const auto& get_detections() const { return detections; }
 
     /// Führt erkennungen durch.
-    void tick(Sub* parent, Welt* welt, float s);
+    void tick(Objekt* parent, Welt* welt, float s);
 
     /// Serialisierung via cereal.
     template <class Archive> void serialize(Archive& ar) {

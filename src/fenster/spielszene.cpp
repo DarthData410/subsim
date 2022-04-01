@@ -18,7 +18,7 @@ void Spielszene::sync() {
             const std::string& antwort = klient->request(Net::REQUEST_SUB, player_sub->get_id());
             if (!antwort.empty()) {
                 player_sub = Net::deserialize<Sub>(antwort);
-                Log::debug() << "sync sub id=" << player_sub->get_id() << '\n';
+                //Log::debug() << "sync sub id=" << player_sub->get_id() << '\n';
             }
             else Log::err() << "Spielszene::" << __func__ << " no sub returned with ID " << player_sub->get_id() << '\n';
         }
