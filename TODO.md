@@ -1,3 +1,4 @@
 # TODOs
-+ Noise Graph ingame via implot
++ Torpedo detonates -> spawns explosion -> explosion damages objects
 + Navmap transfer from imgui to SFML
++ Teambase: Repair/Resupply/Change sub

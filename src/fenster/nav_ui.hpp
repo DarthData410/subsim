@@ -1,6 +1,10 @@
 #pragma once
 
+#include <vector>
 #include "standard_ui.hpp"
+#include "../sim/game/objekte/objekt.hpp"
+#include "../sim/game/zone.hpp"
+#include "../sim/game/team.hpp"
 
 class Welt;
 
@@ -24,10 +28,20 @@ public:
 
 private:
 
+    void sync(bool force = false);
+
     void show_minimap(const Sub* sub) const;
 
     void show_navigation(const Sub* sub) const;
 
+    /// Zeichnet 1 Graph für sub's Signaturkurve. Optional: mark_v Markierung setzen bei gegebener Geschwindigkeit.
+    void show_noise_signature(const Sub* sub, std::optional<float> mark_v = std::nullopt) const;
+
     bool fow = false;
+
+    /// SimDaten
+    std::vector<Objekt> objekte;
+    std::vector<Zone> zonen;
+    std::unordered_map<uint8_t, Team> teams;
 
 };

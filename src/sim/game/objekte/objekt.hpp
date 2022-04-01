@@ -14,6 +14,8 @@ class Objekt {
 
 public:
 
+    typedef uint32_t id_t;
+
     /// Vererbungshierachie von Objekt. Zur Typenbestimmung bei Laufzeit.
     enum class Typ {
             OBJEKT,
@@ -72,8 +74,10 @@ protected:
     /// Weist dem Objekt eine neue ID zu.
     void regenerate_id();
 
+protected:
+
     /// Einmalige ID. Wird nicht aufsteigend generiert, sondern zufällig.
-    uint32_t id;
+    id_t id;
 
     /// Teamzugehörigkeit. 0 = Kein Team.
     uint8_t team = 0;
