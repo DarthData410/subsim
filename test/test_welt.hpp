@@ -85,8 +85,16 @@ TEST_CASE_CLASS("welt") {
 
         // sub1 feuert Torpedo auf sub2
         welt.shoot_torpedo(sub1, torpedo);
-        for (unsigned i = 0; i < 100'000; ++i) welt.tick(0.1); // Zeit für Torpedo
-        CHECK(welt.get_objekte().size() == 2); // Übrig: 2 Subs // TODO: nur 1 Sub?
+        CHECK(welt.get_objekte().size() == 3);
+
+        // Treffer + Explosion erwartet
+        bool war_explosion = false;
+        for (unsigned i = 0; i < 100'000; ++i) {
+            welt.tick(0.1); // Zeit für Torpedo
+            if (!war_explosion) for (auto o : welt.get_objekte()) if (o.second->get_typ() == Objekt::Typ::EXPLOSION) war_explosion = true;
+        }
+        CHECK(war_explosion);
+        CHECK(welt.get_objekte().size() == 1); // Übrig: 1 Sub
     }
 }
 

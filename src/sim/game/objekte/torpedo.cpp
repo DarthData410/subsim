@@ -5,11 +5,12 @@
 #include "../../welt.hpp"
 
 Torpedo::Torpedo(const Motor& motor_linear, const Motor& motor_rot, const Motor& motor_tauch,
-                 const std::string& name, float range, const std::optional<Sonar_Passiv>& sonar_passiv)
+                 const std::string& name, float range, const Explosion& explosion,
+                 const std::optional<Sonar_Passiv>& sonar_passiv)
         : Objekt_Steuerbar({0,0,0}, // unwichtig, wird überschrieben bei Kopie
                            motor_linear, motor_rot, motor_tauch,
                            1.0),
-          name(name), range(range), sonar_passiv(sonar_passiv)
+          name(name), range(range), sonar_passiv(sonar_passiv), explosion(explosion)
 {
     //
 }
@@ -19,7 +20,7 @@ Torpedo::Torpedo(const Torpedo& torpedo_typ, const Sub* sub,
     : Torpedo(torpedo_typ) // übernimmt alles aus torpedo_typ
 {
     pos = sub->get_pos(); // TODO etwas Abstand nach vorn
-    bearing = sub->get_bearing();
+    kurs = sub->get_bearing();
     motor_linear.v = std::min(motor_linear.v_max, sub->get_speed() + 1.f);
     set_target_v(1.0f);
     set_target_bearing(target_bearing);
@@ -28,13 +29,9 @@ Torpedo::Torpedo(const Torpedo& torpedo_typ, const Sub* sub,
     Torpedo::distance_to_fuse  = target_distance_to_explode;
 }
 
-bool operator<(const Torpedo& lhs, const Torpedo& rhs) {
-    return lhs.name < rhs.name;
-}
-
 bool Torpedo::tick(Welt* welt, float s) {
     const auto pos_alt = this->pos;
-    Objekt_Steuerbar::tick(welt, s);
+    if (!Objekt_Steuerbar::tick(welt, s)) return false;
     travelled += Physik::distanz(pos_alt.x(), pos_alt.y(), pos.x(), pos.y());
     if (travelled < distance_to_activate) return true; // noch nichts aktiv zu tun
     if (travelled <= range) { // Aktiv
@@ -60,6 +57,12 @@ bool Torpedo::tick(Welt* welt, float s) {
             } else { // entfernt sich -> BOOM!
                 // TODO
                 Log::debug() << "Boom! Torpedo " << this->name << " trifft Objekt: " << o->get_id() << " Distanz: " << distanz << '\n';
+                Explosion* e = new Explosion(this->explosion);
+                e->pos    = this->pos;
+                e->quelle = this->quelle;
+                e->kurs   = 0;
+                e->pitch  = 0;
+                welt->add(e);
                 return false;
             }
         }
@@ -78,4 +81,8 @@ const Detektion* Torpedo::get_beste_detektion() const {
         return &(*ziel);
     }
     return nullptr;
+}
+
+bool operator<(const Torpedo& lhs, const Torpedo& rhs) {
+    return lhs.name < rhs.name;
 }

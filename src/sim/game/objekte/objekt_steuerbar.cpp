@@ -25,8 +25,6 @@ void Objekt_Steuerbar::stop() {
 }
 
 bool Objekt_Steuerbar::tick(Welt* welt, float s) {
-    static constexpr float eps = 0.0001f;
-
     // Automatisches Pfadfinden
     if (target_pos) auto_path();
 
@@ -40,15 +38,18 @@ bool Objekt_Steuerbar::tick(Welt* welt, float s) {
 
     // Links/Rechts in Grad bewegen
     // + Max. Rotation ist Geschwindigkeitsabhängig
+    static constexpr float eps = 0.0001f;
     const float max_rot = std::sqrt(std::abs(get_speed_relativ()));
     if (std::abs(motor_rot.v) > motor_rot.v_max * max_rot) motor_rot.v = motor_rot.v * max_rot;
-    if (std::abs(motor_rot.v) > eps) bearing += motor_rot.v * s;
+    if (std::abs(motor_rot.v) > eps) kurs += motor_rot.v * s;
 
     // Vorwärts/Rückwärts in m bewegen
-    if (std::abs(motor_linear.v) > eps) Physik::move(pos, bearing, motor_linear.v * s);
+    if (std::abs(motor_linear.v) > eps) Physik::move(pos, kurs, motor_linear.v * s);
 
     // TODO target_depth
-    return true;
+
+    // noch am Leben?
+    return schaeden.count(Schaden::ZERSTOERT) == 0;
 }
 
 void Objekt_Steuerbar::auto_rudder() {
@@ -71,5 +72,12 @@ void Objekt_Steuerbar::auto_path() {
         target_pos = std::nullopt; // Ziel erreicht.
         set_target_bearing(bearing);
         stop();
+    }
+}
+
+void Objekt_Steuerbar::apply_damage(Explosion* explosion, float damage) {
+    if (damage > 0) {
+        Log::debug() << "Objekt " << this->get_id() << " zerstoert.\n";
+        schaeden.insert(Schaden::ZERSTOERT); // TODO - momentan immer Zerstörung
     }
 }

@@ -9,9 +9,11 @@ Sub_AI::Sub_AI(const Sub& sub) : Sub(sub){
 }
 
 bool Sub_AI::tick(Welt* welt, float s) {
+    if (!Sub::tick(welt, s)) return false; // Lebt nicht mehr
+
+    // Nicht jeden tick() nachdenken
     timer += s;
-    if (const bool alive = Sub::tick(welt, s); !alive) return false; // Lebt nicht mehr
-    if (timer < 1000.f) return true; // Nicht jeden tick() nachdenken
+    if (timer < 1000.f) return true;
     timer = 0;
 
     // Nichts zu tun -> Zone einnehmen / bewachen

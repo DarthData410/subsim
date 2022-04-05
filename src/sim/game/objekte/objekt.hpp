@@ -20,13 +20,13 @@ public:
     typedef uint32_t oid_t;
 
     /// Vererbungshierachie von Objekt. Zur Typenbestimmung bei Laufzeit.
-    enum class Typ {
-            OBJEKT,
-            OBJEKT_STEUERBAR,
-            SUB,    // Spieler Sub
-            SUB_AI, // Computergesteuertes Sub
-            TORPEDO,
-            EXPLOSION,
+    enum class Typ : uint8_t {
+            OBJEKT           = 0,
+            OBJEKT_STEUERBAR = 1,
+            SUB              = 2, // Spieler Sub
+            SUB_AI           = 3, // Computergesteuertes Sub
+            TORPEDO          = 4,
+            EXPLOSION        = 5,
     };
 
     /// Ctor. Weist keine ID zu.
@@ -45,8 +45,8 @@ public:
      */
     virtual bool tick(Welt* welt, float s) {};
 
-    ///
-    virtual void apply_damage(Explosion* explosion, float damage) {} // todo
+    /// Was Schaden ausrichtet, muss von Kind-Klassen implementiert werden.
+    virtual void apply_damage(Explosion* explosion, float damage) {}
 
     /// Liefert den Objekttypen zur Polymorphieauflösung.
     virtual Typ get_typ() const { return Typ::OBJEKT; };
@@ -73,7 +73,7 @@ public:
 
     /// Serialisierung via cereal.
     template <class Archive> void serialize(Archive& ar) {
-        ar(id, team, pos, bearing, pitch);
+        ar(id, team, pos, kurs, pitch);
     }
 
 protected:
@@ -93,9 +93,12 @@ protected:
     Vektor pos;
 
     /// x/y Richtung.
-    float bearing;
+    float kurs;
 
     /// + nach oben / - nach unten
     float pitch;
+
+    ///
+    //float groesse; // TODO idee: Wird von Distanz bei Treffern abgezogen - quasi "Objektgröße"
 
 };

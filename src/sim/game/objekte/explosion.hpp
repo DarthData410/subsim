@@ -6,11 +6,14 @@
 
 class Explosion final : public Objekt {
 
+    friend class Torpedo;
+
 public:
 
     Explosion() = default;
 
-    Explosion(const Vektor& pos, const float& bearing, oid_t source, dist_t radius, float power, float remaining_time);
+    Explosion(dist_t radius, float power, float remaining_time,
+              const Vektor& pos = {0,0,0}, float bearing = 0, oid_t source = 0);
 
     Typ get_typ() const override { return Objekt::Typ::EXPLOSION; }
 
@@ -22,14 +25,14 @@ public:
     /// Serialisierung via cereal.
     template <class Archive> void serialize(Archive& ar) {
         ar(cereal::base_class<Objekt>(this),
-           source, radius, power, remaining_time, damage_done
+           quelle, radius, power, remaining_time, damage_done
         );
     }
 
 private:
 
-    /// Quelle (Sub-Objekt) der Explosion.
-    oid_t source;
+    /// Quelle (Sub-Objekt) der Explosion. Wird über Torpedo an die Explosion 'weitergereicht'.
+    oid_t quelle;
 
     /// Explosionsradius
     dist_t radius;

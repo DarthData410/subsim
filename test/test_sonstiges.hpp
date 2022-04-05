@@ -39,7 +39,7 @@ TEST_CASE("serialisierung") {
     }
 
     SUBCASE("TORPEDO") {
-        const std::unique_ptr<Objekt> o(new Torpedo(Motor(), Motor(), Motor(), "test_torp", 100));
+        const std::unique_ptr<Objekt> o(new Torpedo(Motor(), Motor(), Motor(), "test_torp", 100, Explosion()));
         CHECK(o->get_typ() == Objekt::Typ::TORPEDO);
         const auto& s = Net::serialize(o);
         const auto& o_serialisiert = Net::deserialize<std::unique_ptr<Objekt>>(s);

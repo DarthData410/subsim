@@ -1,5 +1,6 @@
 #pragma once
 
+#include "explosion.hpp"
 #include "objekt_steuerbar.hpp"
 #include "../sonar/sonar_passiv.hpp"
 
@@ -18,7 +19,8 @@ public:
 
     /// Ctor zur Erstellung eines neuen Torpedotypen (= Vorlage).
     Torpedo(const Motor& motor_linear, const Motor& motor_rot, const Motor& motor_tauch,
-            const std::string& name, float range, const std::optional<Sonar_Passiv>& sonar_passiv = std::nullopt);
+            const std::string& name, float range, const Explosion& explosion,
+            const std::optional<Sonar_Passiv>& sonar_passiv = std::nullopt);
 
     /// Ctor zur Erzeugung aus einem Torpedotypen heraus, der von einem Sub verschossen wird.
     Torpedo(const Torpedo& torpedo_typ, const Sub* sub,
@@ -53,7 +55,8 @@ public:
     /// Serialisierung via cereal.
     template <class Archive> void serialize(Archive& ar) {
         ar(cereal::base_class<Objekt_Steuerbar>(this),
-           name, range, travelled, distance_to_activate, distance_to_fuse, letzte_zielnaehe, sonar_passiv
+           name, range, travelled, distance_to_activate, distance_to_fuse, letzte_zielnaehe, quelle,
+           explosion, sonar_passiv
         );
     }
 
@@ -80,6 +83,12 @@ private:
 
     /// Wie nah kam das (suchende mit aktiven Zünder) Torpedo einem Objekt zuletzt? (Sehr großer Wert, wenn noch nie).
     float letzte_zielnaehe = 999999;
+
+    /// Von welchem Objekt dieses Torpedo stammt (ID).
+    oid_t quelle;
+
+    /// Explosion, die dieses Torpedo verursacht.
+    Explosion explosion;
 
     /// Passiver Sonar (optional).
     std::optional<Sonar_Passiv> sonar_passiv;

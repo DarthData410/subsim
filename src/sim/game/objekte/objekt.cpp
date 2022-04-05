@@ -2,9 +2,9 @@
 #include <zufall.hpp>
 
 Objekt::Objekt(const Vektor& pos, const float& bearing) :
-               pos(pos),
-               bearing(bearing),
-               pitch(0)
+        pos(pos),
+        kurs(bearing),
+        pitch(0)
 {
     regenerate_id();
 }
@@ -14,7 +14,7 @@ void Objekt::regenerate_id() {
 }
 
 float Objekt::get_bearing() const {
-    return bearing;
+    return kurs;
 }
 
 float Objekt::get_pitch() const {

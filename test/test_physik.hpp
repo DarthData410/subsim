@@ -65,7 +65,7 @@ TEST_CASE("physik") {
         CHECK(Physik::winkel_diff(270, 180) == doctest::Approx( -90));
     }
 
-    SUBCASE("kurs") {
+    SUBCASE("bearing") {
         CHECK(Physik::kurs(0, 0, 0,  5)  == doctest::Approx(  0));
         CHECK(Physik::kurs(0, 0, 5,  5)  == doctest::Approx( 45));
         CHECK(Physik::kurs(0, 0, 5,  0)  == doctest::Approx( 90));

@@ -6,11 +6,17 @@
 #include <cereal/types/base_class.hpp>
 #include <cereal/types/array.hpp>
 #include <cereal/types/optional.hpp>
+#include <cereal/types/set.hpp>
 
 /// Bewegliches Objekt.
 class Objekt_Steuerbar : public Objekt {
 
 public:
+
+    /// Schäden, die ein Objekt haben kann. Wird
+    enum class Schaden : uint8_t {
+        ZERSTOERT = 0,
+    };
 
     Objekt_Steuerbar() = default;
 
@@ -23,8 +29,10 @@ public:
     /// Liefert den genauen Typen zur Identifikation nach Vererbung.
     Typ get_typ() const override { return Typ::OBJEKT_STEUERBAR; }
 
-    /// Simulationstick in Sekunden.
+    /// Simulationstick in Sekunden. @note Lebt noch? Liefert false, wenn `schaeden` ZERSTÖRT enthält.
     bool tick(Welt* welt, float s) override;
+
+    void apply_damage(Explosion* explosion, float damage) override;
 
     /// Startet den Bremsvorgang, leitet kompletten Stilltstand ein.
     void stop();
@@ -56,7 +64,7 @@ public:
     float get_target_speed() const { return motor_linear.v_target; }
 
     /// Liefert den Gewünschten Kurs (0-360).
-    winkel_t get_target_bearing() const { return target_bearing.value_or(bearing); }
+    winkel_t get_target_bearing() const { return target_bearing.value_or(kurs); }
 
     /// Liefert die gewünschte Tiefe. @note Tiefenangaben sind negativ.
     dist_t get_target_depth()   const { return target_depth.value_or(pos.z()); }
@@ -69,7 +77,8 @@ public:
         ar(cereal::base_class<Objekt>(this),
             motor_linear, motor_rot, motor_tauch,
             target_pos, target_bearing, target_depth,
-            noise
+            noise,
+            schaeden
         );
     }
 
@@ -103,6 +112,9 @@ protected:
 
     /// Lärmfaktor [0.0,1.0]
     float noise;
+
+    /// Schäden, die das Objekt hat.
+    std::set<Schaden> schaeden;
 
 };
 CEREAL_REGISTER_TYPE(Objekt_Steuerbar)
