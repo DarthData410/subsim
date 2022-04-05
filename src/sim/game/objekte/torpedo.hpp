@@ -18,7 +18,7 @@ public:
 
     /// Ctor zur Erstellung eines neuen Torpedotypen (= Vorlage).
     Torpedo(const Motor& motor_linear, const Motor& motor_rot, const Motor& motor_tauch,
-            const std::string& name, float range, const std::optional<Sonar_Passiv>& sonar_passiv);
+            const std::string& name, float range, const std::optional<Sonar_Passiv>& sonar_passiv = std::nullopt);
 
     /// Ctor zur Erzeugung aus einem Torpedotypen heraus, der von einem Sub verschossen wird.
     Torpedo(const Torpedo& torpedo_typ, const Sub* sub,

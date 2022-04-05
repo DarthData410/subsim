@@ -7,6 +7,7 @@
 #include "test_physik.hpp"
 #include "test_objekte.hpp"
 #include "test_welt.hpp"
+#include "test_sonstiges.hpp"
 
 namespace test {
 

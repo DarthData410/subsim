@@ -2,6 +2,13 @@
 #include "../../welt.hpp"
 #include "../../physik.hpp"
 
+Explosion::Explosion(const Vektor& pos, const float& bearing, Objekt::oid_t source, dist_t radius, float power,
+                     float remaining_time)
+        : Objekt(pos, bearing), source(source), radius(radius), power(power), remaining_time(remaining_time)
+{
+
+}
+
 bool Explosion::tick(Welt* welt, float s) {
     /// Objekten Schaden zufügen
     if (!damage_done) {

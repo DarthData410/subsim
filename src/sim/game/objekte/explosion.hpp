@@ -10,6 +10,8 @@ public:
 
     Explosion() = default;
 
+    Explosion(const Vektor& pos, const float& bearing, oid_t source, dist_t radius, float power, float remaining_time);
+
     Typ get_typ() const override { return Objekt::Typ::EXPLOSION; }
 
     /// Explosionen fügen.
