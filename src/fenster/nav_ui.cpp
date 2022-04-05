@@ -7,6 +7,7 @@
 #include <SFML/System/Clock.hpp>
 #include <implot.h>
 #include <cmath>
+#include <cereal/types/memory.hpp>
 
 Nav_UI::Nav_UI() : Standard_UI(nullptr) {
 
@@ -23,7 +24,7 @@ void Nav_UI::sync(bool force) {
         zonen = klient->get_zonen();
         teams = klient->get_teams();
         if (!objekte_raw.empty()) {
-            try { objekte = Net::deserialize<std::vector<Objekt>>(objekte_raw); }
+            try { objekte = Net::deserialize<std::vector<std::unique_ptr<Objekt>>>(objekte_raw); }
             catch (const std::exception& e) {
                 Log::err() << "Error: Konnte Antwort auf Net::ALLE_OBJEKTE nicht deserialisieren, Größe: ";
                 Log::err() << objekte_raw.size() << " Fehler: " << e.what() << '\n';
@@ -65,14 +66,14 @@ void Nav_UI::show_minimap(const Sub* sub) const {
                              ImColor(0x00, 0x50, 0xB0), 0.0f);
 
     // Objekte zeichnen
-    for (const Objekt& o : objekte) {
+    for (const auto& o : objekte) {
         //if (fow && o.get_team() != sub->get_team()) continue; // fremdes Team TODO
         //if (x < 0 || x > size_x || y < 0 || y > size_y) continue; // außerhalb des Bildes
-        const auto pos = world2ui(o.get_pos().x(), o.get_pos().y());
+        const auto pos = world2ui(o->get_pos().x(), o->get_pos().y());
         auto color = ImColor(0xFF, 0xFF, 0xFF);
-        if      (o.get_id()   == sub->get_id())        color = ImColor(0, 0xFF, 0); // eigenes Sub
-        else if (o.get_team() != sub->get_team())      color = ImColor(0xFF, 0, 0); // Feindliches Objekt
-        else if (o.get_typ()  == Objekt::Typ::TORPEDO) color = ImColor(0xFF, 0xFF, 0); // Torpedo
+        if      (o->get_id()   == sub->get_id())        color = ImColor(0, 0xFF, 0); // eigenes Sub
+        else if (o->get_team() != sub->get_team())      color = ImColor(0xFF, 0, 0); // Feindliches Objekt
+        else if (o->get_typ()  == Objekt::Typ::TORPEDO) color = ImColor(0xFF, 0xFF, 0); // Torpedo
         draw_list->AddNgonFilled({pos[0], pos[1]}, 4.f, color, 4);
     }
 

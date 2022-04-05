@@ -45,3 +45,4 @@ protected:
     std::map<Torpedo, uint8_t> torpedos;
 
 };
+CEREAL_REGISTER_TYPE(Sub)

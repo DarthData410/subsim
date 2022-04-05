@@ -9,10 +9,6 @@ Objekt::Objekt(const Vektor& pos, const float& bearing) :
     regenerate_id();
 }
 
-Objekt::~Objekt() {
-
-}
-
 void Objekt::regenerate_id() {
     id = Zufall::random_hash<decltype(id)>();
 }

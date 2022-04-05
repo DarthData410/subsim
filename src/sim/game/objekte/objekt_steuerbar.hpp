@@ -105,3 +105,4 @@ protected:
     float noise;
 
 };
+CEREAL_REGISTER_TYPE(Objekt_Steuerbar)

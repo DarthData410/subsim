@@ -85,3 +85,4 @@ private:
     std::optional<Sonar_Passiv> sonar_passiv;
 
 };
+CEREAL_REGISTER_TYPE(Torpedo)

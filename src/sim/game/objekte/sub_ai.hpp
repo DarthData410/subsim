@@ -1,7 +1,7 @@
 #pragma once
 
-#include <SFML/System/Clock.hpp>
 #include "sub.hpp"
+#include <SFML/System/Clock.hpp>
 
 /// Ein Computergesteuertes U-B
 class Sub_AI final : public Sub {
@@ -32,7 +32,7 @@ public:
 
     /// Serialisierung via cereal.
     template <class Archive> void serialize(Archive& ar) {
-        ar(cereal::base_class<Sub>(this));
+        ar(cereal:: base_class<Sub>(this));
     }
 
 private:
@@ -61,3 +61,4 @@ private:
     uint8_t status = DONE;
 
 };
+CEREAL_REGISTER_TYPE(Sub_AI)

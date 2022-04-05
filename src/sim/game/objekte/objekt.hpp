@@ -1,10 +1,12 @@
 #pragma once
 
+#include "../../vektor.hpp"
 #include <cereal/cereal.hpp>
 #include <cereal/types/polymorphic.hpp>
-#include "../../vektor.hpp"
+#include <cereal/archives/binary.hpp>
 
 class Welt;
+class Explosion;
 
 /// Unbewegliches Objekt. Elternklasse für alle von der Physiksimulation betroffenen Objekte.
 class Objekt {
@@ -14,7 +16,8 @@ class Objekt {
 
 public:
 
-    typedef uint32_t id_t;
+    /// Typ für Objekt-IDs.
+    typedef uint32_t oid_t;
 
     /// Vererbungshierachie von Objekt. Zur Typenbestimmung bei Laufzeit.
     enum class Typ {
@@ -22,7 +25,8 @@ public:
             OBJEKT_STEUERBAR,
             SUB,    // Spieler Sub
             SUB_AI, // Computergesteuertes Sub
-            TORPEDO
+            TORPEDO,
+            EXPLOSION,
     };
 
     /// Ctor. Weist keine ID zu.
@@ -32,17 +36,20 @@ public:
     explicit Objekt(const Vektor& pos, const float& bearing = 0);
 
     /// Dtor.
-    virtual ~Objekt();
+    //virtual ~Objekt() = default;
 
     /**
      * Führt einen Simulationstick für Zeit `s` aus.
      * @note Man kann 'false' zurückgeben, um das Objekt zu zerstören.
      *       Zerstören = wird aus der Welt entfernt.
      */
-    virtual bool tick(Welt* welt, float s) { return true; }
+    virtual bool tick(Welt* welt, float s) {};
+
+    ///
+    virtual void apply_damage(Explosion* explosion, float damage) {} // todo
 
     /// Liefert den Objekttypen zur Polymorphieauflösung.
-    virtual Typ get_typ() const { return Typ::OBJEKT; }
+    virtual Typ get_typ() const { return Typ::OBJEKT; };
 
     /// Getter: Einmalige ID, global gültig für alle Objekte und vererbte Klassen.
     uint32_t get_id() const { return id; }
@@ -53,7 +60,7 @@ public:
     virtual float get_speed() const { return 0.f; }
 
     /// Getter: Aktuelle Geräuschentwicklung.
-    virtual float get_noise() const { return 0.f; }
+    virtual float get_noise() const = 0;
 
     /// Getter: Position.
     const Vektor& get_pos() const { return pos; }
@@ -77,7 +84,7 @@ protected:
 protected:
 
     /// Einmalige ID. Wird nicht aufsteigend generiert, sondern zufällig.
-    id_t id;
+    oid_t id;
 
     /// Teamzugehörigkeit. 0 = Kein Team.
     uint8_t team = 0;

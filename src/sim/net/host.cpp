@@ -5,6 +5,7 @@
 #include <log.hpp>
 #include <cereal/types/vector.hpp>
 #include <cereal/types/unordered_map.hpp>
+#include <cereal/types/memory.hpp>
 #include <SFML/System/Clock.hpp>
 
 Host::Host(uint16_t port) {
@@ -93,9 +94,13 @@ void Host::handle_receive(ENetEvent& event) {
             else sende_antwort(event, "");
         } break;
         case Net::ALLE_OBJEKTE: {
-            std::vector<Objekt> objekte;
+            static auto no_delete = [](Objekt*) {};
+            std::vector<std::unique_ptr<Objekt, decltype(no_delete)>> objekte;
             objekte.reserve(welt.objekte.size());
-            for (const auto& paar : welt.objekte) objekte.push_back(*paar.second);
+            for (const auto& paar : welt.objekte) {
+                decltype(objekte)::value_type ptr(paar.second, no_delete);
+                objekte.push_back(std::move(ptr));
+            }
             sende_antwort(event, Net::serialize(objekte));
         } break;
         default: Log::err() << "\tUnknown Request Net::" << request << '\n'; break;

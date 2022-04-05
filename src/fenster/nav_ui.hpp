@@ -40,7 +40,7 @@ private:
     bool fow = false;
 
     /// SimDaten
-    std::vector<Objekt> objekte;
+    std::vector<std::unique_ptr<Objekt>> objekte;
     std::vector<Zone> zonen;
     std::unordered_map<uint8_t, Team> teams;
 
