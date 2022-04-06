@@ -4,6 +4,8 @@
 
 #include <cereal/types/base_class.hpp>
 
+class Torpedo;
+
 class Explosion final : public Objekt {
 
     friend class Torpedo;
@@ -11,6 +13,8 @@ class Explosion final : public Objekt {
 public:
 
     Explosion() = default;
+
+    explicit Explosion(const Torpedo* torpedo);
 
     Explosion(dist_t radius, float power, float remaining_time,
               const Vektor& pos = {0,0,0}, float bearing = 0, oid_t source = 0);

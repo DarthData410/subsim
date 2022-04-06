@@ -75,9 +75,11 @@ void Objekt_Steuerbar::auto_path() {
     }
 }
 
-void Objekt_Steuerbar::apply_damage(Explosion* explosion, float damage) {
-    if (damage > 0) {
-        Log::debug() << "Objekt " << this->get_id() << " zerstoert.\n";
-        schaeden.insert(Schaden::ZERSTOERT); // TODO - momentan immer Zerstörung
-    }
+bool Objekt_Steuerbar::apply_damage(Explosion* explosion, float damage) {
+    if (damage <= 0) return false;
+    // Totalschaden
+    if (schaeden.count(Schaden::ZERSTOERT)) return false; // war bereits zerstört
+    Log::debug() << "Objekt " << this->get_id() << " Typ= " << (int)this->get_typ() << " zerstoert.\n";
+    schaeden.insert(Schaden::ZERSTOERT); // TODO - momentan immer Zerstörung
+    return true;
 }

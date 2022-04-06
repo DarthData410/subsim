@@ -90,7 +90,7 @@ void Host::handle_receive(ENetEvent& event) {
         case Net::REQUEST_SUB: {
             Net::id_t sub_id;
             ds >> sub_id;
-            if (welt.objekte.count(sub_id)) sende_antwort(event, Net::serialize(*(Sub*) welt.objekte[sub_id]));
+            if (welt.objekte.count(sub_id)) sende_antwort(event, Net::serialize(*(const Sub*) welt.objekte[sub_id].get()));
             else sende_antwort(event, "");
         } break;
         case Net::ALLE_OBJEKTE: {
@@ -98,7 +98,7 @@ void Host::handle_receive(ENetEvent& event) {
             std::vector<std::unique_ptr<Objekt, decltype(no_delete)>> objekte;
             objekte.reserve(welt.objekte.size());
             for (const auto& paar : welt.objekte) {
-                decltype(objekte)::value_type ptr(paar.second, no_delete);
+                decltype(objekte)::value_type ptr(paar.second.get(), no_delete);
                 objekte.push_back(std::move(ptr));
             }
             sende_antwort(event, Net::serialize(objekte));

@@ -38,8 +38,8 @@ TEST_CASE_CLASS("welt") {
         CHECK(welt.get_objekte().size() == 2);
         Sub* sub1;
         Sub* sub2;
-        CHECK_NOTHROW(sub1 = dynamic_cast<Sub*>(welt.get_objekte().at(sub1_id)));
-        CHECK_NOTHROW(sub2 = dynamic_cast<Sub*>(welt.get_objekte().at(sub2_id)));
+        CHECK_NOTHROW(sub1 = dynamic_cast<Sub*>(welt.get_objekte().at(sub1_id).get()));
+        CHECK_NOTHROW(sub2 = dynamic_cast<Sub*>(welt.get_objekte().at(sub2_id).get()));
 
         // sub2 nähert sich auf zieldistanz
         auto distanz = [&]() { return Physik::distanz_xy(sub1->get_pos(), sub2->get_pos()); };
@@ -59,42 +59,46 @@ TEST_CASE_CLASS("welt") {
         CHECK(sub1->get_speed_relativ() == 0.0);
         CHECK(sub2->get_speed()         == sub2->get_speed_max());
         CHECK(sub2->get_speed_relativ() == 1.0);
-
-        // sub1 Sonar sieht sub2
         const auto& sonar = sub1->get_sonars().front();
         const auto& detektionen = sonar.get_detections();
-        const auto kurs_relativ = Physik::kurs_relativ(sub1, sub2);
-        CAPTURE(sub1->get_bearing());
-        CAPTURE(Physik::kurs(sub1->get_pos(), sub2->get_pos()));
-        CAPTURE(kurs_relativ);
-        CHECK(sonar.is_in_blindspot(Physik::kurs_relativ(sub1, sub2)) == false);
-        CHECK(detektionen.size() == 1);
-        CHECK(detektionen.front().bearing == doctest::Approx(Physik::round(kurs_relativ, sonar.get_resolution())));
 
-        // sub1 stellt Torpedo ein auf sub2
-        CHECK(sub1->get_torpedos().empty() == false); // Torpedotypen existieren
-        const auto& torpedotyp = sub1->get_torpedos().begin()->first;
-        CHECK(sub1->get_torpedos().at(torpedotyp) > 0); // torpedotyp hat Munition
-        CHECK(torpedotyp.get_range() * 0.5 >= distanz()); // Ziel in halber Reichweite (zur Sicherheit)
-        Torpedo torpedo(torpedotyp);
-        torpedo.set_target_bearing(detektionen.front().bearing);
-        torpedo.set_target_depth(sub2->get_pos().z());
-        torpedo.set_distance_to_activate(250);
-        torpedo.set_distance_to_explode(50);
-        CHECK(torpedo.get_distance_to_activate() > torpedo.get_distance_to_explode());
-
-        // sub1 feuert Torpedo auf sub2
-        welt.shoot_torpedo(sub1, torpedo);
-        CHECK(welt.get_objekte().size() == 3);
-
-        // Treffer + Explosion erwartet
-        bool war_explosion = false;
-        for (unsigned i = 0; i < 100'000; ++i) {
-            welt.tick(0.1); // Zeit für Torpedo
-            if (!war_explosion) for (auto o : welt.get_objekte()) if (o.second->get_typ() == Objekt::Typ::EXPLOSION) war_explosion = true;
+        SUBCASE("sonar detektion") {
+            // sub1 Sonar sieht sub2
+            const auto kurs_relativ = Physik::kurs_relativ(sub1, sub2);
+            CAPTURE(sub1->get_bearing());
+            CAPTURE(Physik::kurs(sub1->get_pos(), sub2->get_pos()));
+            CAPTURE(kurs_relativ);
+            CHECK(sonar.is_in_blindspot(Physik::kurs_relativ(sub1, sub2)) == false);
+            CHECK(detektionen.size() == 1);
+            CHECK(detektionen.front().bearing == doctest::Approx(Physik::round(kurs_relativ, sonar.get_resolution())));
         }
-        CHECK(war_explosion);
-        CHECK(welt.get_objekte().size() == 1); // Übrig: 1 Sub
+
+        SUBCASE("torpedo abschuss") {
+            // sub1 stellt Torpedo ein auf sub2
+            CHECK(sub1->get_torpedos().empty() == false); // Torpedotypen existieren
+            const auto& torpedotyp = sub1->get_torpedos().begin()->first;
+            CHECK(sub1->get_torpedos().at(torpedotyp) > 0); // torpedotyp hat Munition
+            CHECK(torpedotyp.get_range() * 0.5 >= distanz()); // Ziel in halber Reichweite (zur Sicherheit)
+            Torpedo torpedo(torpedotyp);
+            torpedo.set_target_bearing(detektionen.front().bearing);
+            torpedo.set_target_depth(sub2->get_pos().z());
+            torpedo.set_distance_to_activate(250);
+            torpedo.set_distance_to_explode(50);
+            CHECK(torpedo.get_distance_to_activate() > torpedo.get_distance_to_explode());
+
+            // sub1 feuert Torpedo auf sub2
+            welt.add_torpedo(sub1, torpedo);
+            CHECK(welt.get_objekte().size() == 3);
+
+            // Treffer + Explosion erwartet
+            bool war_explosion = false;
+            for (unsigned i = 0; i < 100'000; ++i) {
+                welt.tick(0.1); // Zeit für Torpedo
+                if (!war_explosion) for (const auto& o: welt.get_objekte()) if (o.second->get_typ() == Objekt::Typ::EXPLOSION) war_explosion = true;
+            }
+            CHECK(war_explosion);
+            CHECK(welt.get_objekte().size() == 1); // Übrig: 1 Sub
+        }
     }
 }
 

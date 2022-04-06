@@ -20,7 +20,7 @@ void Sonar_Passiv::tick(Objekt* parent, Welt* welt, float s) {
 
     detections.clear();
     for (const auto& objekt_paar : welt->objekte) {
-        const Objekt* objekt = objekt_paar.second;
+        const Objekt* objekt = objekt_paar.second.get();
 
         // Eigenes Sub überspringen.
         if (parent == objekt) continue;

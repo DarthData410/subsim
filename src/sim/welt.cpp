@@ -13,11 +13,6 @@ Welt::Welt(unsigned npcs_pro_team) {
     // Punktezonen hinzufügen
     zonen.emplace_back(std::tuple(0.f,0.f), 2500.f);
 }
-
-Welt::~Welt() {
-    for (auto& paar : objekte) delete paar.second;
-}
-
 void Welt::tick() {
     static sf::Clock timer;
     const float s = timelapse * timer.getElapsedTime().asSeconds(); // Sekunden vergangen
@@ -28,10 +23,7 @@ void Welt::tick() {
 void Welt::tick(float s) {
     std::unordered_set<decltype(objekte)::key_type> tote_objekte;
     for (auto& objekt : objekte) if (objekt.second->tick(this, s) == false) tote_objekte.insert(objekt.first);
-    for (const auto key : tote_objekte) {
-        delete objekte.at(key);
-        objekte.erase(key);
-    }
+    for (const auto key : tote_objekte) objekte.erase(key);
     // Ticks - Zonen
     for (auto& zone : zonen) zone.tick(this, s);
 }
@@ -50,14 +42,14 @@ const Sub* Welt::add_new_sub(uint8_t team, bool computer_controlled) {
     return sub_ptr;
 }
 
-uint32_t Welt::add(Objekt* o) {
+oid_t Welt::add(Objekt* o) {
     do o->regenerate_id(); // TODO Limit
     while (objekte.count(o->get_id()) || o->get_id() == 0);
-    objekte[o->get_id()] = o; // Objekt in die Welt gesetzt
+    objekte[o->get_id()] = std::unique_ptr<Objekt>(o); // Objekt in die Welt gesetzt
     return o->get_id();
 }
 
-bool Welt::shoot_torpedo(Sub* sub, const Torpedo& eingestelltes_torpedo) {
+bool Welt::add_torpedo(Sub* sub, const Torpedo& eingestelltes_torpedo) {
     if (sub->shoot(eingestelltes_torpedo.get_name())) {
         this->add(new Torpedo(eingestelltes_torpedo, sub,
                               eingestelltes_torpedo.get_distance_to_activate(),

@@ -25,7 +25,7 @@ void Zone::tick(Welt* welt, float s) {
         timer_besitzer = 0;
         std::unordered_map<uint8_t, unsigned> team_subs; // Team / Anzahl Subs in der Zone
         for (const auto& paar : welt->objekte) {
-            const Objekt* o = paar.second;
+            const auto& o = paar.second;
             if (o->get_typ() == Objekt::Typ::SUB_AI || o->get_typ() == Objekt::Typ::SUB) {
                 const auto diff_x = std::abs(o->get_pos().x() - std::get<0>(pos));
                 const auto diff_y = std::abs(o->get_pos().y() - std::get<1>(pos));

@@ -32,7 +32,7 @@ public:
     /// Simulationstick in Sekunden. @note Lebt noch? Liefert false, wenn `schaeden` ZERSTÖRT enthält.
     bool tick(Welt* welt, float s) override;
 
-    void apply_damage(Explosion* explosion, float damage) override;
+    bool apply_damage(Explosion* explosion, float damage) override;
 
     /// Startet den Bremsvorgang, leitet kompletten Stilltstand ein.
     void stop();

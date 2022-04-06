@@ -12,6 +12,8 @@ class Sonar_Passiv;
 
 class Torpedo final : public Objekt_Steuerbar {
 
+    friend class Explosion;
+
 public:
 
     /// Ctor. Muss zum Serialisieren existieren.

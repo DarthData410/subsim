@@ -34,40 +34,34 @@ bool Torpedo::tick(Welt* welt, float s) {
     if (!Objekt_Steuerbar::tick(welt, s)) return false;
     travelled += Physik::distanz(pos_alt.x(), pos_alt.y(), pos.x(), pos.y());
     if (travelled < distance_to_activate) return true; // noch nichts aktiv zu tun
-    if (travelled <= range) { // Aktiv
-        // Nach gültigen Zielen suchen: Sonar-Passiv
-        if (sonar_passiv) {
-            sonar_passiv->tick(this, welt, s);
-            if (const auto& ziel = get_beste_detektion(); ziel) {
-                // Kurs auf Ziel stellen
-                set_target_bearing(ziel->bearing);
-            }
-        }
-        // Hit detection
-        for (auto o_paar : welt->objekte) {
-            if (o_paar.second == this) continue;
-            if (!Physik::in_reichweite_xyz(this->pos, o_paar.second->get_pos(), distance_to_fuse)) continue; // zu weit
-
-            // Noch näher möglich?
-            Objekt* o = o_paar.second;
-            const auto distanz = Physik::distanz_xyz(this->pos, o->get_pos());
-            if (distanz <= letzte_zielnaehe) { // noch näher
-                letzte_zielnaehe = distanz;
-                return true;
-            } else { // entfernt sich -> BOOM!
-                // TODO
-                Log::debug() << "Boom! Torpedo " << this->name << " trifft Objekt: " << o->get_id() << " Distanz: " << distanz << '\n';
-                Explosion* e = new Explosion(this->explosion);
-                e->pos    = this->pos;
-                e->quelle = this->quelle;
-                e->kurs   = 0;
-                e->pitch  = 0;
-                welt->add(e);
-                return false;
-            }
+    if (travelled > range) return false;
+    // Nach gültigen Zielen suchen: Sonar-Passiv
+    if (sonar_passiv) {
+        sonar_passiv->tick(this, welt, s);
+        if (const auto& ziel = get_beste_detektion(); ziel) {
+            // Kurs auf Ziel stellen
+            set_target_bearing(ziel->bearing);
         }
     }
-    else return false; // keine Reichweite mehr
+    // Hit detection
+    for (auto& o_paar : welt->objekte) {
+        if (o_paar.second.get() == this) continue;
+        if (!Physik::in_reichweite_xyz(this->pos, o_paar.second->get_pos(), distance_to_fuse)) continue; // zu weit
+
+        // Noch näher möglich?
+        const auto& o = o_paar.second;
+        const auto distanz = Physik::distanz_xyz(this->pos, o->get_pos());
+        if (distanz <= letzte_zielnaehe) { // noch näher
+            letzte_zielnaehe = distanz;
+            return true;
+        } else { // entfernt sich -> BOOM!
+            Log::debug() << "Torpedo " << this->name << " trifft Objekt " << o->get_id()
+                         << " Typ=" << (int)o->get_typ() << ' ' << " Distanz: " << distanz << '\n';
+            Explosion* e = new Explosion(this);
+            welt->add(e);
+            return false;
+        }
+    }
     return true;
 }
 
