@@ -25,9 +25,6 @@ public:
     /// Einheitliche Klasse zur Deserialisierung.
     typedef cereal::BinaryInputArchive Deserializer;
 
-    /// Einheitlicher Typ für IDs.
-    typedef uint32_t id_t;
-
     /// Serialisiert gegebenes Objekt in den `stringstream`, der zuvor **zurückgesetzt** wird.
     template<typename T>
     static std::string serialize(const T& t) {

@@ -22,7 +22,7 @@ namespace Physik {
     winkel_t kurs(dist_t x, dist_t y, dist_t target_x, dist_t target_y);
     /// Liefert den Kurs von Punkt (x,y) zu Punkt (target_x,target_y).
     winkel_t kurs(const Vektor& v, const Vektor& v_target);
-    /// Liefert den relativen Kurs von Objekt1 zu Objekt2.
+    /// Liefert den relativen Kurs von Objekt1 zu Objekt2; also in welcher Richtung liegt o2 von o1 aus gesehen? [-180 bis +180].
     winkel_t kurs_relativ(const Objekt* o1, const Objekt* o2);
 
     /// Liefert die Distanz zwischen zwei 2D-Koordinaten.
@@ -45,7 +45,10 @@ namespace Physik {
     /// Prüft, ob `winkel` innerhalb von `min` und `max` liegt (einschließend).
     bool is_winkel_zwischen(winkel_t winkel, winkel_t min, winkel_t max);
 
-    /// Liefert die Geräuschverringung nach Distanz (0.0 - kein Schall übrig - 1.0).
+    /**
+     * Liefert die Geräuschverringung nach Distanz (0.0 - kein Schall übrig - 1.0).
+     * @note Die verwendete Formel lautet: `1 / (1 + 0.000000002 * d²)`.
+     */
     float schallfaktor(dist_t distanz);
 
     /**
@@ -53,8 +56,9 @@ namespace Physik {
      * @param sichtbarkeitsfaktor 0.0 - 1.0 (ja nach Technologie; kleiner ist besser).
      * @param v Geschwindigkeit
      * @param d Entfernung
+     * @note Verhältnismäßig teuer. Sollte nicht jeden Tick für jedes Objekt berechnet werden.
      * @return 0.1 und weniger bedeutet quasi unsichtbar. Absolut 0 wird praktisch nie erreicht.
      */
     float sichtbarkeit(float sichtbarkeitsfaktor, float v, dist_t d);
 
-};
+}

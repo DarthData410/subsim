@@ -3,14 +3,14 @@
 /// Einzelne Sichtung.
 struct Detektion final {
 
-    enum Typ : uint8_t {
+    enum class Typ : uint8_t {
         MOVEMENT_SIGNATURE = 1,
     };
 
-    uint32_t objekt_id;
-    float gain;
-    float bearing;
-    Typ typ;
+    uint32_t objekt_id; /// ID des erkannten Objekts. Kann bereits vernichtet sein.
+    float gain;         /// Lautstärke der Signatur.
+    float bearing;      /// Kurs.
+    Typ typ;            /// Typ der Signatur.
 
     template <class Archive> void serialize(Archive& ar) {
         ar(objekt_id, gain, bearing, typ);

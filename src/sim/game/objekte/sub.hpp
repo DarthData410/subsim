@@ -10,6 +10,7 @@
 class Sub : public Objekt_Steuerbar {
 
     friend class Team;
+    friend class Test_Physik;
 
 public:
 

@@ -19,8 +19,9 @@ Torpedo::Torpedo(const Torpedo& torpedo_typ, const Sub* sub,
                  float distance_to_activate, float target_bearing, float target_depth, float target_distance_to_explode)
     : Torpedo(torpedo_typ) // übernimmt alles aus torpedo_typ
 {
-    pos = sub->get_pos(); // TODO etwas Abstand nach vorn
-    kurs = sub->get_bearing();
+    pos    = sub->get_pos(); // TODO etwas Abstand nach vorn
+    kurs   = sub->get_bearing();
+    quelle = sub->get_id();
     motor_linear.v = std::min(motor_linear.v_max, sub->get_speed() + 1.f);
     set_target_v(1.0f);
     set_target_bearing(target_bearing);
@@ -66,12 +67,12 @@ bool Torpedo::tick(Welt* welt, float s) {
 }
 
 const Detektion* Torpedo::get_beste_detektion() const {
-    const auto& ziel = std::min_element(sonar_passiv->get_detections().begin(), sonar_passiv->get_detections().end(),
+    const auto& ziel = std::min_element(sonar_passiv->get_detektionen().begin(), sonar_passiv->get_detektionen().end(),
                                         [](const Detektion& d1, const Detektion& d2) {
                                             return std::abs(Physik::winkel_norm(d1.bearing)) <
                                                    std::abs(Physik::winkel_norm(d2.bearing));
                                         });
-    if (ziel != sonar_passiv->get_detections().end()) {
+    if (ziel != sonar_passiv->get_detektionen().end()) {
         return &(*ziel);
     }
     return nullptr;

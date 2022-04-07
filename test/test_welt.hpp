@@ -2,6 +2,7 @@
 
 #include "../src/sim/welt.hpp"
 #include <doctest.h>
+#include <log.hpp>
 
 class Test_Welt {
 
@@ -30,7 +31,7 @@ TEST_CASE_CLASS("welt") {
         CHECK(zone_eingenommen == true);
         CHECK(welt.get_team(team).get_punkte() > 0);
     }
-    SUBCASE("szenario torpedo abschuss und treffer") {
+    SUBCASE("szenario test 1vs1") {
         // 2 zueinander feindliche Subs erzeugen
         CHECK(welt.get_objekte().size() == 0); // Welt leer
         auto sub1_id = welt.add_new_sub(1, false)->get_id();
@@ -60,7 +61,7 @@ TEST_CASE_CLASS("welt") {
         CHECK(sub2->get_speed()         == sub2->get_speed_max());
         CHECK(sub2->get_speed_relativ() == 1.0);
         const auto& sonar = sub1->get_sonars().front();
-        const auto& detektionen = sonar.get_detections();
+        const auto& detektionen = sonar.get_detektionen();
 
         SUBCASE("sonar detektion") {
             // sub1 Sonar sieht sub2
@@ -68,9 +69,9 @@ TEST_CASE_CLASS("welt") {
             CAPTURE(sub1->get_bearing());
             CAPTURE(Physik::kurs(sub1->get_pos(), sub2->get_pos()));
             CAPTURE(kurs_relativ);
-            CHECK(sonar.is_in_blindspot(Physik::kurs_relativ(sub1, sub2)) == false);
+            CHECK(sonar.is_in_toter_winkel(Physik::kurs_relativ(sub1, sub2)) == false);
             CHECK(detektionen.size() == 1);
-            CHECK(detektionen.front().bearing == doctest::Approx(Physik::round(kurs_relativ, sonar.get_resolution())));
+            CHECK(detektionen.front().bearing == doctest::Approx(Physik::round(kurs_relativ, sonar.get_aufloesung())));
         }
 
         SUBCASE("torpedo abschuss") {
@@ -96,8 +97,10 @@ TEST_CASE_CLASS("welt") {
                 welt.tick(0.1); // Zeit für Torpedo
                 if (!war_explosion) for (const auto& o: welt.get_objekte()) if (o.second->get_typ() == Objekt::Typ::EXPLOSION) war_explosion = true;
             }
-            CHECK(war_explosion);
-            CHECK(welt.get_objekte().size() == 1); // Übrig: 1 Sub
+            WARN(war_explosion); // Muss nicht 100% Treffer sein
+            WARN(welt.get_objekte().size() == 1); // Übrig: 1 Sub
+            WARN(welt.abschuesse.size() == 1); // 1 Statistik vorhanden
+            if (!welt.abschuesse.empty()) Log::out() << welt.abschuesse.front().get_as_text() << '\n';
         }
     }
 }

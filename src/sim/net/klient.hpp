@@ -40,7 +40,7 @@ public:
     void kommando(const Kommando& cmd);
 
     /// Fragt Daten vom Server an. @note Vgl. `Net::Request` und `host.cpp` wegen Serialisierung.
-    std::string request(Net::Request request_typ, std::optional<Net::id_t> objekt_id = std::nullopt);
+    std::string request(Net::Request request_typ, std::optional<oid_t> objekt_id = std::nullopt);
 
     /**
      * Liefert den Request direkt als Typ deserialisiert zurück.
@@ -53,7 +53,7 @@ public:
      * @return Deserialisiertes Netzwerkpaket.
      */
     template <typename T>
-    T request(Net::Request request_typ, std::optional<Net::id_t> objekt_id = std::nullopt) {
+    T request(Net::Request request_typ, std::optional<oid_t> objekt_id = std::nullopt) {
         return Net::deserialize<T>(request(request_typ, objekt_id));
     }
 

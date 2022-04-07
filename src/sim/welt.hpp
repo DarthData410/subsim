@@ -1,5 +1,6 @@
 #include "game/team.hpp"
 #include "game/zone.hpp"
+#include "game/abschuss.hpp"
 
 /// Simluierte Welt, die alle Objekte enthält.
 class Welt final {
@@ -36,6 +37,9 @@ public:
     /// Erstellt ein neues Sub via `new` - manueller `delete` notwendig.
     const Sub* add_new_sub(uint8_t team, bool computer_controlled);
 
+    /// Fügt einen Abschuss der Statistik hinzu.
+    void add_abschuss(Abschuss&& abschuss);
+
     /**
      * Lässt `sub` mit `eingestelltes_torpedo` schießen, welches Zielkoordinaten usw. konfiguriert haben muss.
      * @note Hat `sub` keine Torpedos mehr des gewünschten Typs, passiert nichts.
@@ -52,7 +56,10 @@ public:
     size_t get_team_anzahl() const { return teams.size(); }
 
     /// Liefert alle  in der Welt simulierten Objekte.
-    const std::unordered_map<uint32_t, std::unique_ptr<Objekt>>& get_objekte() const { return objekte; }
+    const std::unordered_map<oid_t, std::unique_ptr<Objekt>>& get_objekte() const { return objekte; }
+
+    /// Liefert Objekt mit `id` oder `nullptr`.
+    const Objekt* get_objekt_or_null(oid_t id);
 
     /// Liefert alle eroberbaren Zonen.
     const std::vector<Zone>& get_zonen() const { return zonen; }
@@ -69,9 +76,12 @@ private:
     std::unordered_map<uint8_t, Team> teams;
 
     /// Alle simulierten Objekte, Subs, Spielersubs, KI-Subs, UUVs, Torpedos
-    std::unordered_map<uint32_t, std::unique_ptr<Objekt>> objekte;
+    std::unordered_map<oid_t, std::unique_ptr<Objekt>> objekte;
 
     /// Punktezonen.
     std::vector<Zone> zonen;
+
+    /// Statistik über alle Abschpsse.
+    std::vector<Abschuss> abschuesse;
 
 };

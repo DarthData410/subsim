@@ -1,7 +1,6 @@
 #pragma once
 
 #include "objekte/sub.hpp"
-#include <vector>
 
 /// Ein Team, dem Spieler angehören, das Punkte hat und neue U-Boote erforscht usw.
 class Team final {

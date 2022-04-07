@@ -5,17 +5,25 @@
 
 class Objekt;
 
+/// Führt Statistik über einen Abschuss.
 class Abschuss final {
 
 public:
 
     Abschuss() = default;
 
+    Abschuss(const Abschuss& a);
+
+    Abschuss(Abschuss&& a) = default;
+
+    /// TODO Sicherheit der Ctors wenig getestet
     Abschuss(const Objekt* o_sieger, const Objekt* o_opfer, const Objekt* waffe);
+
+    const std::string& get_as_text() const;
 
     /// Serialisierung via cereal.
     template <class Archive> void serialize(Archive& ar) {
-        ar(o_sieger, o_opfer, waffe);
+        ar(o_sieger, o_opfer, waffe, text);
     }
 
 private:
@@ -23,5 +31,6 @@ private:
     std::unique_ptr<Objekt> o_sieger;
     std::unique_ptr<Objekt> o_opfer;
     std::unique_ptr<Objekt> waffe;
+    mutable std::string text;
 
 };

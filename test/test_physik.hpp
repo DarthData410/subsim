@@ -3,8 +3,10 @@
 #include <doctest.h>
 
 #include "../src/sim/physik.hpp"
+#include "../src/sim/game/objekte/sub.hpp"
 
-TEST_CASE("physik") {
+class Test_Physik {
+TEST_CASE_CLASS("physik") {
 
     SUBCASE("move und get_punkt") {
         const std::vector<Vektor> vektoren {
@@ -65,7 +67,7 @@ TEST_CASE("physik") {
         CHECK(Physik::winkel_diff(270, 180) == doctest::Approx( -90));
     }
 
-    SUBCASE("bearing") {
+    SUBCASE("kurs") {
         CHECK(Physik::kurs(0, 0, 0,  5)  == doctest::Approx(  0));
         CHECK(Physik::kurs(0, 0, 5,  5)  == doctest::Approx( 45));
         CHECK(Physik::kurs(0, 0, 5,  0)  == doctest::Approx( 90));
@@ -82,6 +84,22 @@ TEST_CASE("physik") {
         CHECK(Physik::kurs({0, 0, 87},  {-5, -5, 29}) == doctest::Approx(225));
         CHECK(Physik::kurs({0, 0, 87},  {-5,  0, 29}) == doctest::Approx(270));
         CHECK(Physik::kurs({0, 0, 87},  {-5,  5, 29}) == doctest::Approx(315));
+    }
+
+    SUBCASE("kurs relativ") {
+        Sub s1, s2;
+        s1.pos  = {0,0,-50};
+        s2.pos  = {100, 100, -50};
+        s2.kurs = 0; // egal
+
+        s1.kurs = 0;
+        CHECK(Physik::kurs_relativ(&s1, &s2) == doctest::Approx(45));
+        s1.kurs = 40;
+        CHECK(Physik::kurs_relativ(&s1, &s2) == doctest::Approx(5));
+        s1.kurs = 45;
+        CHECK(Physik::kurs_relativ(&s1, &s2) == doctest::Approx(0));
+        s1.kurs = 90;
+        CHECK(Physik::kurs_relativ(&s1, &s2) == doctest::Approx(-45));
     }
 
     SUBCASE("winkel_tiefe") {
@@ -151,3 +169,4 @@ TEST_CASE("physik") {
     }
 
 }
+};

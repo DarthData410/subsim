@@ -2,6 +2,7 @@
 #include <zufall.hpp>
 #include "torpedo.hpp"
 #include "sub_ai.hpp"
+#include "ping.hpp"
 
 Objekt::Objekt(const Vektor& pos, const float& bearing) :
         pos(pos),
@@ -16,14 +17,15 @@ void Objekt::regenerate_id() {
 }
 
 Objekt* Objekt::copy(const Objekt* o) {
-    Objekt* kopie = nullptr;
+    if (o == nullptr) return nullptr;
     switch (o->get_typ()) {
-        case Typ::OBJEKT: Log::err() << "Objekt::copy Typ::OBJEKT ist nicht kopierbar\n"; break;
-        case Typ::SUB:              kopie = new Sub(*((Sub*)o)); break;
-        case Typ::SUB_AI:           kopie = new Sub_AI(*((Sub_AI*)o)); break;
-        case Typ::TORPEDO:          kopie = new Torpedo(*((Torpedo*)o)); break;
-        case Typ::EXPLOSION:        kopie = new Explosion(*((Explosion*)o)); break;
-        case Typ::OBJEKT_STEUERBAR: kopie = new Objekt_Steuerbar(*((Objekt_Steuerbar*)o)); break;
+        // Sortiert nach Häufigkeit des Vorkommens
+        case Typ::PING:             return new Ping(*((Ping*)o));
+        case Typ::SUB_AI:           return new Sub_AI(*((Sub_AI*)o));
+        case Typ::SUB:              return new Sub(*((Sub*)o));
+        case Typ::TORPEDO:          return new Torpedo(*((Torpedo*)o));
+        case Typ::EXPLOSION:        return new Explosion(*((Explosion*)o));
     }
-    return kopie;
+    Log::err() << "Objekt::copy Typ ist nicht kopierbar: " << (int)o->get_typ() << '\n';
+    return nullptr;
 }

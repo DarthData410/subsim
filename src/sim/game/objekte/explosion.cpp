@@ -2,6 +2,7 @@
 #include "explosion.hpp"
 #include "../../welt.hpp"
 #include "../../physik.hpp"
+#include "../abschuss.hpp"
 
 Explosion::Explosion(dist_t radius, float power, float remaining_time,
                      const Vektor& pos, float bearing, oid_t source)
@@ -29,10 +30,17 @@ bool Explosion::tick(Welt* welt, float s) {
 
             // Schaden anwenden
             const double d = Physik::distanz_xyz(this->get_pos(), o->get_pos());
-            const double range_faktor = 1.0 - (d / radius);
+            const double range_faktor = std::max(1.0 - (d / radius), 0.01);
             const float damage = range_faktor * power;
-            Log::debug() << "Explosion beschaedigt Objekt " << o->get_id() << " Typ=" << (int)o->get_typ() << " Schaden=" << damage << '\n';
-            o->apply_damage(this, damage);
+            Log::debug() << "Explosion beschaedigt Objekt " << o->get_id() << " Typ=" << (int)o->get_typ()
+                         << " Schaden=" << damage << " (Max=" << power << ")\n";
+            if (o->apply_damage(this, damage)) { // Abschuss - Totalschaden?
+                welt->add_abschuss(std::move(Abschuss(
+                        welt->get_objekt_or_null(quelle),
+                        welt->get_objekt_or_null(o->get_id()),
+                        nullptr))
+                );
+            }
         }
         damage_done = true;
     }
@@ -41,4 +49,3 @@ bool Explosion::tick(Welt* welt, float s) {
     remaining_time -= s;
     return remaining_time > 0;
 }
-

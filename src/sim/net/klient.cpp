@@ -108,7 +108,7 @@ std::string Klient::sende_und_empfange(const std::string& paket_daten) {
     }
 }
 
-std::string Klient::request(Net::Request request_typ, std::optional<Net::id_t> objekt_id) {
+std::string Klient::request(Net::Request request_typ, std::optional<oid_t> objekt_id) {
     std::stringstream ss;
     Net::Serializer s(ss);
     s << request_typ;

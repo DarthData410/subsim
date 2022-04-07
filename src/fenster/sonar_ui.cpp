@@ -24,7 +24,7 @@ void Sonar_UI::reset_sonar_data(const Sub* sub) {
     for (const auto& sonar : sub->get_sonars()) {
         // Sonardaten anlegen
         sonar_data.emplace_back();
-        for (auto& vektor : sonar_data.back()) vektor = std::vector<float>(sonar.get_resolution(), 0.f);
+        for (auto& vektor : sonar_data.back()) vektor = std::vector<float>(sonar.get_aufloesung(), 0.f);
         // Updateintervalle zurücksetzen
         intervalle.push_back(500);
         timers.emplace_back();
@@ -41,13 +41,13 @@ void Sonar_UI::update_and_show(const Sub* sub) {
         if (auto& timer = timers[i]; timer.getElapsedTime().asMilliseconds() > intervalle[i]) {
 
             // Zeile mit Rauschen erzeugen
-            std::vector<float> newline(sonar.get_resolution());
-            std::generate(newline.begin(), newline.end(), [&]() { return Zufall::f(0.f, sonar.get_noise()); } );
+            std::vector<float> newline(sonar.get_aufloesung());
+            std::generate(newline.begin(), newline.end(), [&]() { return Zufall::f(0.f, sonar.get_empfindlichkeit()); } );
 
             // Detektionen eintragen
-            for (const Detektion& d : sonar.get_detections()) {
+            for (const Detektion& d : sonar.get_detektionen()) {
                 const unsigned histogram_position = std::clamp<unsigned>(std::round(
-                        d.bearing * (sonar.get_resolution() / 360.f)), 0u, newline.size() - 1u);
+                        d.bearing * (sonar.get_aufloesung() / 360.f)), 0u, newline.size() - 1u);
                 newline[histogram_position] += d.gain;
                 // Verschwimmen mit Nebenkästchen
                 if (histogram_position >= 1) newline[histogram_position-1]               = 0.5f * (newline[histogram_position-1] + newline[histogram_position]);

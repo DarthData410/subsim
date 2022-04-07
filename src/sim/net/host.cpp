@@ -83,12 +83,12 @@ void Host::handle_receive(ENetEvent& event) {
             enet_packet_destroy(event.packet); // Aufräumen
         } break;
         case Net::AKTION_NEUES_UBOOT: {
-            Net::id_t team;
+            oid_t team;
             ds >> team;
             sende_antwort(event, Net::serialize(*welt.add_new_sub(team, false)));
         } break;
         case Net::REQUEST_SUB: {
-            Net::id_t sub_id;
+            oid_t sub_id;
             ds >> sub_id;
             if (welt.objekte.count(sub_id)) sende_antwort(event, Net::serialize(*(const Sub*) welt.objekte[sub_id].get()));
             else sende_antwort(event, "");

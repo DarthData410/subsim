@@ -18,13 +18,22 @@ void Welt::tick() {
     const float s = timelapse * timer.getElapsedTime().asSeconds(); // Sekunden vergangen
     timer.restart();
     tick(s);
+    // Benchmark
+    static unsigned counter = 0;
+    static float counter_seconds = 0.f;
+    counter++;
+    counter_seconds += s;
+    if (counter_seconds > 10) {
+        Log::out() << "Welt::tick @ " << std::round(static_cast<float>(counter) / counter_seconds) << " ticks/s\n";
+        counter = 0;
+        counter_seconds = 0;
+    }
 }
 
 void Welt::tick(float s) {
     std::unordered_set<decltype(objekte)::key_type> tote_objekte;
     for (auto& objekt : objekte) if (objekt.second->tick(this, s) == false) tote_objekte.insert(objekt.first);
     for (const auto key : tote_objekte) objekte.erase(key);
-    // Ticks - Zonen
     for (auto& zone : zonen) zone.tick(this, s);
 }
 
@@ -61,4 +70,14 @@ bool Welt::add_torpedo(Sub* sub, const Torpedo& eingestelltes_torpedo) {
     }
     Log::debug() << "Sub ID=" << sub->get_id() << " out of Ammo name=" << eingestelltes_torpedo.get_name() << '\n';
     return false;
+}
+
+void Welt::add_abschuss(Abschuss&& abschuss) {
+    abschuesse.push_back(std::move(abschuss));
+}
+
+
+const Objekt* Welt::get_objekt_or_null(oid_t id) {
+    if (objekte.count(id) && objekte[id]) return objekte[id].get();
+    return nullptr;
 }

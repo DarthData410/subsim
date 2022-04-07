@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../welt.hpp"
+#include "net.hpp"
 
 #include <enet/enet.h>
 
@@ -10,7 +11,7 @@ class Host final {
 public:
 
     /// Initialisiert (aber startet nicht) den Host am gg. UDP Port.
-    explicit Host(uint16_t port);
+    explicit Host(uint16_t port = Net::PORT);
 
     /// Startet den Server.
     void start();
