@@ -29,9 +29,9 @@ public:
             float distance_to_activate, float target_bearing, float target_depth,
             float target_distance_to_explode);
 
-    Objekt::Typ get_typ() const override final { return Typ::TORPEDO; }
+    Objekt::Typ get_typ() const override { return Typ::TORPEDO; }
 
-    bool tick(Welt* welt, float s) override final;
+    bool tick(Welt* welt, float s) override;
 
     /// Setter: Distanz, nach der der Sucher aktiviert werden soll.
     void set_distance_to_activate(float distance_to_activate) { Torpedo::distance_to_activate = distance_to_activate; }

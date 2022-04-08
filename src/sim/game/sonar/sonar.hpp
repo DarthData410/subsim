@@ -45,16 +45,19 @@ public:
 
 protected:
 
-    /// Grund-Noise-Level. Eigene Sub-Geräusche kommen noch hinzu. 0.0 = Perfekt, 1.0 = Detektionen praktisch unmöglich.
+    /**
+     * Grund-Noise-Level. Eigene Sub-Geräusche kommen noch hinzu. 0.0 = Perfekt, 1.0 = Detektionen praktisch unmöglich.
+     * Ist praktisch auch die Reichweite des Sonars.
+     */
     float noise;
 
     /// Auflösung. Auf wieviel Grad ° genau die Detektion ist.
     float resolution;
 
-    /// Stoppuhr, vor wievielen Sekunden die letzte Detektionsberechnung durchgeführt wurde.
+    /// Stoppuhr bis zur nächsten Erkennungsberechnung (Passiv) / bis zum nächsten Ping (Aktiv).
     float timer;
 
-    /// Alle x Sekunden wird der Detektionsalgorithmus ausgeführt, um detektionen zu aktualisieren.
+    /// Alle x Sekunden wird der Detektionsalgorithmus ausgeführt (Passiv) / ein Ping abgegeben (Aktiv).
     float detection_intervall = 1;
 
     /// Winkelbereiche (min,max), zwischen denen dieses Sonar nichts sieht.

@@ -34,13 +34,12 @@ void Sonar_Passiv::tick(Objekt* parent, Welt* welt, float s) {
 
         // Detektion!
         if (sichtbarkeit >= this->noise) {
-            const Detektion d = {
+            detektionen.push_back(Detektion{
                     .objekt_id = objekt->get_id(),
                     .gain = sichtbarkeit,
                     .bearing = Physik::round(kurs_relativ, this->resolution),
                     .typ = Detektion::Typ::MOVEMENT_SIGNATURE
-            };
-            detektionen.emplace_back(d);
+            });
         }
     }
 }

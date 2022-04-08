@@ -2,7 +2,8 @@
 #include "../../physik.hpp"
 
 Sonar::Sonar(float noise_threshold, float resolution, std::vector<std::tuple<float, float>> blindspots) :
-    timer(0), noise(noise_threshold), resolution(resolution), blindspots(std::move(blindspots))
+    timer(0),
+    noise(noise_threshold), resolution(resolution), blindspots(std::move(blindspots))
 {
     //
 }

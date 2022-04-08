@@ -4,7 +4,7 @@
 struct Detektion final {
 
     enum class Typ : uint8_t {
-        MOVEMENT_SIGNATURE = 1,
+        MOVEMENT_SIGNATURE = 1, // TODO momentan ohne Effekt
     };
 
     uint32_t objekt_id; /// ID des erkannten Objekts. Kann bereits vernichtet sein.

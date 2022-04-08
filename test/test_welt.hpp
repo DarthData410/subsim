@@ -41,6 +41,8 @@ TEST_CASE_CLASS("welt") {
         Sub* sub2;
         CHECK_NOTHROW(sub1 = dynamic_cast<Sub*>(welt.get_objekte().at(sub1_id).get()));
         CHECK_NOTHROW(sub2 = dynamic_cast<Sub*>(welt.get_objekte().at(sub2_id).get()));
+        CHECK(sub1->get_typ() == Objekt::Typ::SUB);
+        CHECK(sub2->get_typ() == Objekt::Typ::SUB);
 
         // sub2 nähert sich auf zieldistanz
         auto distanz = [&]() { return Physik::distanz_xy(sub1->get_pos(), sub2->get_pos()); };
@@ -93,10 +95,19 @@ TEST_CASE_CLASS("welt") {
 
             // Treffer + Explosion erwartet
             bool war_explosion = false;
+            double min_distance = 999999; // kleinste Distanz, die das Torpedo am Ziel war
             for (unsigned i = 0; i < 100'000; ++i) {
                 welt.tick(0.1); // Zeit für Torpedo
-                if (!war_explosion) for (const auto& o: welt.get_objekte()) if (o.second->get_typ() == Objekt::Typ::EXPLOSION) war_explosion = true;
+                if (!war_explosion) for (const auto& o: welt.get_objekte()) {
+                    if (o.second->get_typ() == Objekt::Typ::TORPEDO && sub2) {
+                        const double d = Physik::distanz_xyz(o.second->get_pos(), sub2->get_pos());
+                        min_distance = std::min(min_distance, d);
+                        Log::debug() << "d\n";
+                    }
+                    else if (o.second->get_typ() == Objekt::Typ::EXPLOSION) war_explosion = true;
+                }
             }
+            CAPTURE(min_distance);
             WARN(war_explosion); // Muss nicht 100% Treffer sein
             WARN(welt.get_objekte().size() == 1); // Übrig: 1 Sub
             WARN(welt.abschuesse.size() == 1); // 1 Statistik vorhanden

@@ -21,7 +21,8 @@ Team::Team(uint8_t id) : id(id), punkte(1000) {
     const Torpedo torpedo1(Motor(10, 1),
                            Motor(20, 1),
                            Motor(10, 1),
-                           "T1A", 10'000,
+                           "T1A",
+                           10'000,
                            Explosion(30.f, 50, 10),
                            sonar_passiv1);
     beginner_sub.torpedos[torpedo1] = 6;
