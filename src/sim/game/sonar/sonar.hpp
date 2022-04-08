@@ -18,16 +18,13 @@ public:
     /// Nur für die Serialisierung.
     Sonar() = default;
 
-    Sonar(float noise_threshold, float resolution, std::vector<std::tuple<float, float>> blindspots);
+    Sonar(float resolution, std::vector<std::tuple<float, float>> blindspots);
 
     /// Führt erkennungen durch.
     virtual void tick(Objekt* parent, Welt* welt, float s) = 0;
 
     /// Begindet sich `objekt` in `parent`s totem Winkel (blindspot)?
     bool is_in_toter_winkel(winkel_t kurs_relativ) const;
-
-    /// Getter: Mindestlärmwert (0-1), den ein Objekt haben muss, um erkannt zu werden.
-    float get_empfindlichkeit() const { return noise; }
 
     /// Getter: Auf wieviel Grad genau eine Richtung bestimmt werden kann.
     float get_aufloesung() const { return resolution; }
@@ -40,16 +37,10 @@ public:
 
     /// Serialisierung via cereal.
     template <class Archive> void serialize(Archive& ar) {
-        ar(noise, resolution, timer, detection_intervall, blindspots, detektionen);
+        ar(resolution, timer, detection_intervall, blindspots, detektionen);
     }
 
 protected:
-
-    /**
-     * Grund-Noise-Level. Eigene Sub-Geräusche kommen noch hinzu. 0.0 = Perfekt, 1.0 = Detektionen praktisch unmöglich.
-     * Ist praktisch auch die Reichweite des Sonars.
-     */
-    float noise;
 
     /// Auflösung. Auf wieviel Grad ° genau die Detektion ist.
     float resolution;

@@ -6,31 +6,37 @@ class Sonar_Aktiv final : public Sonar {
 
 public:
 
+    /// Operationsmodus des aktiven Sonars. Aus / Einzelner Ping / Eingeschaltet = wiederholender Ping.
+    enum class Mode : uint8_t { OFF, SINGLE, ON };
+
     /// Nur für Serialisierung.
     Sonar_Aktiv() = default;
 
-    Sonar_Aktiv(float noise_threshold, float resolution, const std::vector<std::tuple<float, float>>& blindspots,
-                float ping_intervall_min);
+    Sonar_Aktiv(float resolution, dist_t max_range, float ping_intervall_min,
+                const std::vector<std::tuple<float, float>>& blindspots);
 
     /// Führt erkennungen durch.
-    void tick(Objekt* parent, Welt* welt, float s) override {}
+    void tick(Objekt* parent, Welt* welt, float s) override;
 
     /// Setter: Ping Intervall.
     void set_ping_intervall(float ping_intervall) { this->detection_intervall = std::max(ping_intervall, ping_intervall_min); }
 
     /// Aktivieren / Deaktivieren.
-    void set_aktiv(bool aktiv) { Sonar_Aktiv::aktiv = aktiv; }
+    void set_mode(Mode mode) { Sonar_Aktiv::mode = mode; }
 
     /// Serialisierung via cereal.
     template <class Archive> void serialize(Archive& ar) {
         ar(cereal::base_class<Sonar>(this),
-                aktiv, ping_intervall_min);
+                mode, ping_intervall_min, max_range);
     }
 
 private:
 
     /// Eingeschaltet?
-    bool aktiv;
+    Mode mode;
+
+    /// Erkennungsreichweite der Pings.
+    dist_t max_range;
 
     /// Schnellstmögliches Intervall für Pings.
     float ping_intervall_min;

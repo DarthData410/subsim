@@ -14,7 +14,7 @@ Team::Team(uint8_t id) : id(id), punkte(1000) {
 
     // Stock Passiver Sonar
     const std::vector<std::tuple<float,float>> blindspots = {{135.f, -135.f}};
-    const Sonar_Passiv sonar_passiv1(0.4f, 5.f, blindspots);
+    const Sonar_Passiv sonar_passiv1(0.4f, 20.f, blindspots);
     beginner_sub.sonars.emplace_back(sonar_passiv1);
 
     // Stock Torpedo
@@ -30,6 +30,5 @@ Team::Team(uint8_t id) : id(id), punkte(1000) {
 }
 
 const Sub& Team::get_new_sub() {
-    assert(!sub_designs.empty());
     return Zufall::wahl(sub_designs);
 }

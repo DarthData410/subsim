@@ -8,3 +8,7 @@
   + Passive Sonar models
   + Motor models
     + Sub models
++ Decoys
++ AI
+  + Evade
+  + fire Torpedos

@@ -9,7 +9,8 @@ public:
 
     Ping() = default;
 
-    Ping(const Objekt*quelle, float dauer);
+    /// TODO: quelle unbenutzt. Reichweite in m, Dauer in s.
+    Ping(const Objekt*quelle, dist_t range, float dauer = 5);
 
     bool tick(Welt* welt, float s) override;
 
@@ -20,13 +21,16 @@ public:
     /// Serialisierung via cereal.
     template <class Archive> void serialize(Archive& ar) {
         ar(cereal::base_class<Objekt>(this),
-            restzeit
+            restzeit, range
         );
     }
 
 private:
 
     float restzeit;
+
+    /// Reichweite, in der der Ping wahrnehmbar ist.
+    dist_t range;
 
 };
 CEREAL_REGISTER_TYPE(Ping)

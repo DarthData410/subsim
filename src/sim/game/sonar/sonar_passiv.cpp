@@ -5,19 +5,19 @@
 
 #include <utility>
 
-Sonar_Passiv::Sonar_Passiv(float noise_threshold, float resolution, std::vector<std::tuple<float, float>> blindspots)
-    : Sonar(noise_threshold, resolution, std::move(blindspots))
+Sonar_Passiv::Sonar_Passiv(float noise_threshold, float resolution, std::vector<std::tuple<float, float>> blindspots) :
+    Sonar(resolution, std::move(blindspots)),
+    noise(noise_threshold)
 {
     //
 }
 
 void Sonar_Passiv::tick(Objekt* parent, Welt* welt, float s) {
     // Zeit, Erkennungen aufzufrischen?
-    timer += s;
-    if (timer < detection_intervall) return;
+    if (timer += s; timer < detection_intervall) return;
+    detektionen.clear();
     timer = 0;
 
-    detektionen.clear();
     for (const auto& objekt_paar : welt->objekte) {
         const Objekt* objekt = objekt_paar.second.get();
 
@@ -35,12 +35,11 @@ void Sonar_Passiv::tick(Objekt* parent, Welt* welt, float s) {
         // Detektion!
         const auto kurs_absolut = Physik::kurs(parent->get_pos(), objekt->get_pos());
         if (sichtbarkeit >= this->noise) {
-            detektionen.push_back(Detektion{
-                    .objekt_id = objekt->get_id(),
-                    .gain = sichtbarkeit,
-                    .bearing = Physik::round(kurs_absolut, this->resolution),
-                    .typ = Detektion::Typ::MOVEMENT_SIGNATURE
-            });
+            detektionen.push_back(Detektion(
+                    objekt->get_id(),
+                    sichtbarkeit,
+                    Physik::round(kurs_absolut, this->resolution)
+            ));
         }
     }
 }
