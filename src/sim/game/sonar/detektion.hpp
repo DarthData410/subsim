@@ -1,4 +1,4 @@
-#include <cstdint>
+#include "../../typedefs.hpp"
 
 /// Einzelne Sichtung.
 struct Detektion final {
@@ -7,9 +7,9 @@ struct Detektion final {
         MOVEMENT_SIGNATURE = 1, // TODO momentan ohne Effekt
     };
 
-    uint32_t objekt_id; /// ID des erkannten Objekts. Kann bereits vernichtet sein.
+    oid_t objekt_id; /// ID des erkannten Objekts. Kann bereits vernichtet sein.
     float gain;         /// Lautstärke der Signatur.
-    float bearing;      /// Kurs.
+    float bearing;      /// Kurs (absolut,d.h. nicht relativ zum Elternobjekt).
     Typ typ;            /// Typ der Signatur.
 
     template <class Archive> void serialize(Archive& ar) {

@@ -24,7 +24,7 @@ void Sonar_Passiv::tick(Objekt* parent, Welt* welt, float s) {
         // Eigenes Sub überspringen.
         if (parent == objekt) continue;
 
-        // Im Sichtbereich?
+        // Im toten Winkel?
         const winkel_t kurs_relativ = Physik::kurs_relativ(parent, objekt);
         if (is_in_toter_winkel(kurs_relativ)) continue;
 
@@ -33,11 +33,12 @@ void Sonar_Passiv::tick(Objekt* parent, Welt* welt, float s) {
         const auto sichtbarkeit = Physik::sichtbarkeit(objekt->get_noise(), objekt->get_speed(), distanz);
 
         // Detektion!
+        const auto kurs_absolut = Physik::kurs(parent->get_pos(), objekt->get_pos());
         if (sichtbarkeit >= this->noise) {
             detektionen.push_back(Detektion{
                     .objekt_id = objekt->get_id(),
                     .gain = sichtbarkeit,
-                    .bearing = Physik::round(kurs_relativ, this->resolution),
+                    .bearing = Physik::round(kurs_absolut, this->resolution),
                     .typ = Detektion::Typ::MOVEMENT_SIGNATURE
             });
         }

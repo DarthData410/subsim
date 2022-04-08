@@ -102,7 +102,6 @@ TEST_CASE_CLASS("welt") {
                     if (o.second->get_typ() == Objekt::Typ::TORPEDO && sub2) {
                         const double d = Physik::distanz_xyz(o.second->get_pos(), sub2->get_pos());
                         min_distance = std::min(min_distance, d);
-                        Log::debug() << "d\n";
                     }
                     else if (o.second->get_typ() == Objekt::Typ::EXPLOSION) war_explosion = true;
                 }
