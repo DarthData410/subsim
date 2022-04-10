@@ -29,14 +29,17 @@ public:
     /// Serialisierung via cereal.
     template <class Archive> void serialize(Archive& ar) {
         ar(cereal::base_class<Objekt>(this),
-           quelle, radius, power, remaining_time, damage_done
+           quelle_sub, quelle_torpedo, radius, power, remaining_time, damage_done
         );
     }
 
 private:
 
     /// Quelle (Sub-Objekt) der Explosion. Wird über Torpedo an die Explosion 'weitergereicht'.
-    oid_t quelle;
+    oid_t quelle_sub;
+
+    /// Quelle (Torpedo), von dem die Explosion stammt. Wird nicht als Kill in die Statistik eingetragen.
+    oid_t quelle_torpedo;
 
     /// Explosionsradius
     dist_t radius;

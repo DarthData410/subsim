@@ -124,9 +124,12 @@ TEST_CASE_CLASS("welt") {
             /// Auf Sub2 schießen, bis weg oder Ammo leer
             bool war_explosion = false;
             double min_distance = 999999;
+            unsigned anzahl_versuche = 0;
             while (welt.get_objekt_or_null(sub1_id) && welt.get_objekt_or_null(sub2_id)) {
+                anzahl_versuche++;
                 if (!shoot_new_torpedo(welt, sub1, sub2, war_explosion, min_distance)) break; // keine Ammo mehr
             }
+            std::cout << "Test_welt Abschussversuche=" << anzahl_versuche << '\n';
             CAPTURE(min_distance);
             CHECK(war_explosion == true);
             CHECK(welt.get_objekte().size() == 1); // Übrig: 1 Sub

@@ -76,7 +76,6 @@ void Welt::add_abschuss(Abschuss&& abschuss) {
     abschuesse.push_back(std::move(abschuss));
 }
 
-
 const Objekt* Welt::get_objekt_or_null(oid_t id) {
     if (objekte.count(id) && objekte[id]) return objekte[id].get();
     return nullptr;

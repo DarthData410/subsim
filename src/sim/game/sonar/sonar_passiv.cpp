@@ -2,6 +2,7 @@
 #include "../objekte/sub.hpp"
 #include "../../welt.hpp"
 #include "../../physik.hpp"
+#include "../objekte/ping.hpp"
 
 #include <utility>
 
@@ -29,14 +30,17 @@ void Sonar_Passiv::tick(Objekt* parent, Welt* welt, float s) {
         if (is_in_toter_winkel(kurs_relativ)) continue;
 
         // Lautstärke bestimmen
+        const auto o_typ = objekt->get_typ();
         const auto distanz = Physik::distanz_xyz(parent->get_pos(), objekt->get_pos());
-        const auto sichtbarkeit = Physik::sichtbarkeit(objekt->get_noise(), objekt->get_speed(), distanz);
+        float sichtbarkeit;
+        if (o_typ == Objekt::Typ::PING) sichtbarkeit = ((const Ping*) objekt)->get_noise_relative(distanz);
+        else sichtbarkeit = Physik::sichtbarkeit(objekt->get_noise(), objekt->get_speed(), distanz);
 
         // Detektion!
         const auto kurs_absolut = Physik::kurs(parent->get_pos(), objekt->get_pos());
         if (sichtbarkeit >= this->noise) {
-            const Detektion::Typ typ = objekt->get_typ() == Objekt::Typ::PING ?
-                    Detektion::Typ::ACTIVE_SONAR_PING : Detektion::Typ::MOVEMENT_SIGNATURE;
+            const Detektion::Typ typ = o_typ == Objekt::Typ::PING ?
+                                       Detektion::Typ::ACTIVE_SONAR_PING : Detektion::Typ::MOVEMENT_SIGNATURE;
             detektionen.push_back(Detektion(
                     objekt->get_id(),
                     typ,

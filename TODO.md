@@ -13,3 +13,4 @@
   + Evade
   + fire Torpedos
 + frei konfigurierbare Abschussrohre
++ Torps. nutzen Aktiven Sonar

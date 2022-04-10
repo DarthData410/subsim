@@ -21,6 +21,12 @@ public:
 
     const std::string& get_as_text() const;
 
+    const std::unique_ptr<Objekt>& get_sieger() const { return o_sieger; }
+
+    const std::unique_ptr<Objekt>& get_opfer() const { return o_opfer; }
+
+    const std::unique_ptr<Objekt>& get_waffe() const { return waffe; }
+
     /// Serialisierung via cereal.
     template <class Archive> void serialize(Archive& ar) {
         ar(o_sieger, o_opfer, waffe, text);
