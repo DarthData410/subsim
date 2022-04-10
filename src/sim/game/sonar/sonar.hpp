@@ -37,7 +37,7 @@ public:
 
     /// Serialisierung via cereal.
     template <class Archive> void serialize(Archive& ar) {
-        ar(resolution, timer, detection_intervall, blindspots, detektionen);
+        ar(resolution, timer, intervall, blindspots, detektionen);
     }
 
 protected:
@@ -49,7 +49,7 @@ protected:
     float timer;
 
     /// Alle x Sekunden wird der Detektionsalgorithmus ausgeführt (Passiv) / ein Ping abgegeben (Aktiv).
-    float detection_intervall = 1;
+    float intervall = 1;
 
     /// Winkelbereiche (min,max), zwischen denen dieses Sonar nichts sieht.
     std::vector<std::tuple<float, float>> blindspots;

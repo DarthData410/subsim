@@ -62,7 +62,7 @@ TEST_CASE_CLASS("welt") {
         CHECK(sub1->get_speed_relativ() == 0.0);
         CHECK(sub2->get_speed()         == sub2->get_speed_max());
         CHECK(sub2->get_speed_relativ() == 1.0);
-        const auto& sonar = sub1->get_sonars().front();
+        const auto& sonar = sub1->get_sonars_passive().front();
         const auto& detektionen = sonar.get_detektionen();
 
         SUBCASE("sonar detektion") {
@@ -82,34 +82,55 @@ TEST_CASE_CLASS("welt") {
             const auto& torpedotyp = sub1->get_torpedos().begin()->first;
             CHECK(sub1->get_torpedos().at(torpedotyp) > 0); // torpedotyp hat Munition
             CHECK(torpedotyp.get_range() * 0.5 >= distanz()); // Ziel in halber Reichweite (zur Sicherheit)
-            Torpedo torpedo(torpedotyp);
-            torpedo.set_target_bearing(detektionen.front().bearing);
-            torpedo.set_target_depth(sub2->get_pos().z());
-            torpedo.set_distance_to_activate(250);
-            torpedo.set_distance_to_explode(50);
-            CHECK(torpedo.get_distance_to_activate() > torpedo.get_distance_to_explode());
 
             // sub1 feuert Torpedo auf sub2
-            welt.add_torpedo(sub1, torpedo);
-            CHECK(welt.get_objekte().size() == 3);
-
-            // Treffer + Explosion erwartet
-            bool war_explosion = false;
-            double min_distance = 999999; // kleinste Distanz, die das Torpedo am Ziel war
-            for (unsigned i = 0; i < 100'000; ++i) {
-                welt.tick(0.1); // Zeit für Torpedo
-                if (!war_explosion) for (const auto& o: welt.get_objekte()) {
-                    if (o.second->get_typ() == Objekt::Typ::TORPEDO && sub2) {
-                        const double d = Physik::distanz_xyz(o.second->get_pos(), sub2->get_pos());
-                        min_distance = std::min(min_distance, d);
-                    }
-                    else if (o.second->get_typ() == Objekt::Typ::EXPLOSION) war_explosion = true;
+            auto shoot_new_torpedo = [](
+                    Welt& welt,
+                    Sub* sub1, Sub* sub2,
+                    bool& war_explosion,
+                    double& min_distance) {
+                // Treffer + Explosion erwartet
+                Torpedo torpedo;
+                /// Torpedo mit Ammo auswählen + einstellen
+                bool torpedo_gefunden = false;
+                for (const auto& torp_paar : sub1->get_torpedos()) if (torp_paar.second > 0) {
+                    torpedo_gefunden = true;
+                    torpedo = torp_paar.first;
+                    break;
                 }
+                if (!torpedo_gefunden) return false;
+                torpedo.set_target_bearing(sub1->get_sonars_passive().front().get_detektionen().front().bearing);
+                torpedo.set_target_depth(sub2->get_pos().z());
+                torpedo.set_distance_to_activate(250);
+                torpedo.set_distance_to_explode(50);
+                CHECK(torpedo.get_distance_to_activate() > torpedo.get_distance_to_explode());
+                int ammo_vorher;
+                REQUIRE_NOTHROW(ammo_vorher = sub1->get_torpedos().at(torpedo));
+                welt.add_torpedo(sub1, torpedo);
+                CHECK(sub1->get_torpedos().at(torpedo) == ammo_vorher - 1); // 1 Torpedo weniger?
+                for (unsigned i = 0; i < 100'000; ++i) {
+                    welt.tick(0.1); // Zeit für Torpedo
+                    if (!war_explosion) for (const auto& o: welt.get_objekte()) {
+                            if (o.second->get_typ() == Objekt::Typ::TORPEDO && sub2) {
+                                const double d = Physik::distanz_xyz(o.second->get_pos(), sub2->get_pos());
+                                min_distance = std::min(min_distance, d);
+                            }
+                            else if (o.second->get_typ() == Objekt::Typ::EXPLOSION) war_explosion = true;
+                        }
+                }
+                return true;
+            };
+
+            /// Auf Sub2 schießen, bis weg oder Ammo leer
+            bool war_explosion = false;
+            double min_distance = 999999;
+            while (welt.get_objekt_or_null(sub1_id) && welt.get_objekt_or_null(sub2_id)) {
+                if (!shoot_new_torpedo(welt, sub1, sub2, war_explosion, min_distance)) break; // keine Ammo mehr
             }
             CAPTURE(min_distance);
-            WARN(war_explosion); // Muss nicht 100% Treffer sein
-            WARN(welt.get_objekte().size() == 1); // Übrig: 1 Sub
-            WARN(welt.abschuesse.size() == 1); // 1 Statistik vorhanden
+            CHECK(war_explosion == true);
+            CHECK(welt.get_objekte().size() == 1); // Übrig: 1 Sub
+            CHECK(welt.abschuesse.size() == 1); // 1 Statistik vorhanden
             if (!welt.abschuesse.empty()) Log::out() << welt.abschuesse.front().get_as_text() << '\n';
         }
     }

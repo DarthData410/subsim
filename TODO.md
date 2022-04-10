@@ -12,3 +12,4 @@
 + AI
   + Evade
   + fire Torpedos
++ frei konfigurierbare Abschussrohre

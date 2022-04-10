@@ -16,12 +16,12 @@ void Sonar_UI::reset_sonar_data(const Sub* sub) {
     sonar_data.clear();
     intervalle.clear();
     timers.clear();
-    sonar_data.reserve(sub->get_sonars().size());
-    intervalle.reserve(sub->get_sonars().size());
-    timers.reserve(sub->get_sonars().size());
+    sonar_data.reserve(sub->get_sonars_passive().size());
+    intervalle.reserve(sub->get_sonars_passive().size());
+    timers.reserve(sub->get_sonars_passive().size());
 
     // Für jeden Sonar...
-    for (const auto& sonar : sub->get_sonars()) {
+    for (const auto& sonar : sub->get_sonars_passive()) {
         // Sonardaten anlegen
         sonar_data.emplace_back();
         for (auto& vektor : sonar_data.back()) vektor = std::vector<float>(sonar.get_aufloesung(), 0.f);
@@ -35,7 +35,7 @@ void Sonar_UI::update_and_show(const Sub* sub) {
     ImGui::Begin("Sonar View");
     for (unsigned i = 0; i < sonar_data.size(); ++i) {
         std::array<std::vector<float>, HISTORY_SIZE>& histogram = sonar_data[i];
-        const Sonar_Passiv& sonar = sub->get_sonars()[i];
+        const Sonar_Passiv& sonar = sub->get_sonars_passive()[i];
 
         // Neue Zeile lesen?
         if (auto& timer = timers[i]; timer.getElapsedTime().asMilliseconds() > intervalle[i]) {

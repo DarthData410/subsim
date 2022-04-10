@@ -15,7 +15,7 @@ Team::Team(uint8_t id) : id(id), punkte(1000) {
     // Stock Passiver Sonar
     const std::vector<std::tuple<float,float>> blindspots = {{135.f, -135.f}};
     const Sonar_Passiv sonar_passiv1(0.4f, 20.f, blindspots);
-    beginner_sub.sonars.emplace_back(sonar_passiv1);
+    beginner_sub.sonars_passive.emplace_back(sonar_passiv1);
 
     // Stock Torpedo
     const Torpedo torpedo1(Motor(10, 1),

@@ -5,11 +5,7 @@
 #include <doctest.h>
 #include <memory>
 
-TEST_CASE("serialisierung") {
-
-    SUBCASE("explosion") {
-        // TODO
-    }
+TEST_CASE("serialisierung") { // TODO test: o == deserialisiert(serialisiert(o))
 
     SUBCASE("OBJEKT_STEUERBAR") {
         const std::unique_ptr<Objekt> o(new Objekt_Steuerbar({0,0,0}, Motor(), Motor(), Motor()));
@@ -17,7 +13,10 @@ TEST_CASE("serialisierung") {
         const auto& s = Net::serialize(o);
         const auto& o_serialisiert = Net::deserialize<std::unique_ptr<Objekt>>(s);
         CHECK(o_serialisiert->get_typ() == Objekt::Typ::OBJEKT_STEUERBAR);
-        CHECK(dynamic_cast<Objekt_Steuerbar*>(o_serialisiert.get()));
+        const auto o_cast = dynamic_cast<Objekt_Steuerbar*>(o_serialisiert.get());
+        CHECK(o_cast != nullptr); // Ist korrekt polymorph serialisiert worden?
+        const auto o_kopie = std::unique_ptr<Objekt>(new Objekt_Steuerbar(*o_cast));
+        CHECK(s == Net::serialize(o_kopie)); // Ist eine serialisierte Kopie identisch mit dem serialisierten Original?
     }
 
     SUBCASE("SUB") {
@@ -26,7 +25,10 @@ TEST_CASE("serialisierung") {
         const auto& s = Net::serialize(o);
         const auto& o_serialisiert = Net::deserialize<std::unique_ptr<Objekt>>(s);
         CHECK(o_serialisiert->get_typ() == Objekt::Typ::SUB);
-        CHECK(dynamic_cast<Sub*>(o_serialisiert.get()));
+        const auto o_cast = dynamic_cast<Sub*>(o_serialisiert.get());
+        CHECK(o_cast != nullptr);
+        const auto o_kopie = std::unique_ptr<Objekt>(new Sub(*o_cast));
+        CHECK(s == Net::serialize(o_kopie));
     }
 
     SUBCASE("SUB_AI") {
@@ -35,7 +37,10 @@ TEST_CASE("serialisierung") {
         const auto& s = Net::serialize(o);
         const auto& o_serialisiert = Net::deserialize<std::unique_ptr<Objekt>>(s);
         CHECK(o_serialisiert->get_typ() == Objekt::Typ::SUB_AI);
-        CHECK(dynamic_cast<Sub_AI*>(o_serialisiert.get()));
+        const auto o_cast = dynamic_cast<Sub_AI*>(o_serialisiert.get());
+        CHECK(o_cast != nullptr);
+        const auto o_kopie = std::unique_ptr<Objekt>(new Sub_AI(*o_cast));
+        CHECK(s == Net::serialize(o_kopie));
     }
 
     SUBCASE("TORPEDO") {
@@ -44,7 +49,18 @@ TEST_CASE("serialisierung") {
         const auto& s = Net::serialize(o);
         const auto& o_serialisiert = Net::deserialize<std::unique_ptr<Objekt>>(s);
         CHECK(o_serialisiert->get_typ() == Objekt::Typ::TORPEDO);
-        CHECK(dynamic_cast<Torpedo*>(o_serialisiert.get()));
+        const auto o_cast = dynamic_cast<Torpedo*>(o_serialisiert.get());
+        CHECK(o_cast != nullptr);
+        const auto o_kopie = std::unique_ptr<Objekt>(new Torpedo(*o_cast));
+        CHECK(s == Net::serialize(o_kopie));
+    }
+
+    SUBCASE("explosion") {
+        // TODO
+    }
+
+    SUBCASE("ping") {
+        // TODO
     }
 
 }

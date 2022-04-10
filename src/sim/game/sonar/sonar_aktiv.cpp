@@ -14,7 +14,7 @@ Sonar_Aktiv::Sonar_Aktiv(float resolution, dist_t max_range, float ping_interval
 void Sonar_Aktiv::tick(Objekt* parent, Welt* welt, float s) {
     // Detektionen überhaupt durchführen?
     if (this->mode == Mode::OFF) return; // Eingeschaltet?
-    if (timer += s; timer < detection_intervall) return; // Ist es an der Zeit?
+    if (timer += s; timer < intervall) return; // Ist es an der Zeit?
     if (this->mode == Mode::SINGLE) mode == Mode::OFF; // nur 1x
     detektionen.clear();
     timer = 0;
@@ -39,6 +39,7 @@ void Sonar_Aktiv::tick(Objekt* parent, Welt* welt, float s) {
         const dist_t entfernung = Physik::distanz_xyz(parent->get_pos(), o->get_pos());
         detektionen.push_back(Detektion(
                 o->get_id(),
+                Detektion::Typ::ACTIVE_SONAR_ECHO,
                 1.0, // Aktiver Sonar: immer voll Sichtbar
                 Physik::round(kurs, this->resolution),
                 entfernung)

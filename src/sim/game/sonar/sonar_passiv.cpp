@@ -14,7 +14,7 @@ Sonar_Passiv::Sonar_Passiv(float noise_threshold, float resolution, std::vector<
 
 void Sonar_Passiv::tick(Objekt* parent, Welt* welt, float s) {
     // Zeit, Erkennungen aufzufrischen?
-    if (timer += s; timer < detection_intervall) return;
+    if (timer += s; timer < intervall) return;
     detektionen.clear();
     timer = 0;
 
@@ -35,8 +35,11 @@ void Sonar_Passiv::tick(Objekt* parent, Welt* welt, float s) {
         // Detektion!
         const auto kurs_absolut = Physik::kurs(parent->get_pos(), objekt->get_pos());
         if (sichtbarkeit >= this->noise) {
+            const Detektion::Typ typ = objekt->get_typ() == Objekt::Typ::PING ?
+                    Detektion::Typ::ACTIVE_SONAR_PING : Detektion::Typ::MOVEMENT_SIGNATURE;
             detektionen.push_back(Detektion(
                     objekt->get_id(),
+                    typ,
                     sichtbarkeit,
                     Physik::round(kurs_absolut, this->resolution)
             ));
