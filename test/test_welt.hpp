@@ -62,18 +62,18 @@ TEST_CASE_CLASS("welt") {
         CHECK(sub1->get_speed_relativ() == 0.0);
         CHECK(sub2->get_speed()         == sub2->get_speed_max());
         CHECK(sub2->get_speed_relativ() == 1.0);
-        const auto& sonar = sub1->get_sonars_passive().front();
-        const auto& detektionen = sonar.get_detektionen();
+        const auto& sonar_passiv = sub1->get_sonars_passive().front();
+        const auto& detektionen = sonar_passiv.get_detektionen();
 
-        SUBCASE("sonar detektion") {
+        SUBCASE("sonar_passiv passiv detektion") {
             // sub1 Sonar sieht sub2
             const auto kurs_relativ = Physik::kurs_relativ(sub1, sub2);
             CAPTURE(sub1->get_bearing());
             CAPTURE(Physik::kurs(sub1->get_pos(), sub2->get_pos()));
             CAPTURE(kurs_relativ);
-            CHECK(sonar.is_in_toter_winkel(Physik::kurs_relativ(sub1, sub2)) == false);
+            CHECK(sonar_passiv.is_in_toter_winkel(Physik::kurs_relativ(sub1, sub2)) == false);
             REQUIRE(detektionen.size() == 1);
-            CHECK(detektionen.front().bearing == doctest::Approx(Physik::round(kurs_relativ, sonar.get_aufloesung())));
+            CHECK(detektionen.front().bearing == doctest::Approx(Physik::round(kurs_relativ, sonar_passiv.get_aufloesung())));
         }
 
         SUBCASE("torpedo abschuss") {
@@ -84,7 +84,8 @@ TEST_CASE_CLASS("welt") {
             CHECK(torpedotyp.get_range() * 0.5 >= distanz()); // Ziel in halber Reichweite (zur Sicherheit)
 
             // sub1 feuert Torpedo auf sub2
-            auto shoot_new_torpedo = [](
+            static std::set<oid_t> ping_ids;
+            auto shoot_new_torpedo = [&](
                     Welt& welt,
                     Sub* sub1, Sub* sub2,
                     bool& war_explosion,
@@ -111,12 +112,13 @@ TEST_CASE_CLASS("welt") {
                 for (unsigned i = 0; i < 100'000; ++i) {
                     welt.tick(0.1); // Zeit für Torpedo
                     if (!war_explosion) for (const auto& o: welt.get_objekte()) {
-                            if (o.second->get_typ() == Objekt::Typ::TORPEDO && sub2) {
-                                const double d = Physik::distanz_xyz(o.second->get_pos(), sub2->get_pos());
-                                min_distance = std::min(min_distance, d);
-                            }
-                            else if (o.second->get_typ() == Objekt::Typ::EXPLOSION) war_explosion = true;
+                        if (o.second->get_typ() == Objekt::Typ::TORPEDO && sub2) {
+                            const double d = Physik::distanz_xyz(o.second->get_pos(), sub2->get_pos());
+                            min_distance = std::min(min_distance, d);
                         }
+                        else if (o.second->get_typ() == Objekt::Typ::EXPLOSION) war_explosion = true;
+                        else if (o.second->get_typ() == Objekt::Typ::PING) ping_ids.insert(o.second->get_id());
+                    }
                 }
                 return true;
             };
@@ -130,7 +132,9 @@ TEST_CASE_CLASS("welt") {
                 if (!shoot_new_torpedo(welt, sub1, sub2, war_explosion, min_distance)) break; // keine Ammo mehr
             }
             std::cout << "Test_welt Abschussversuche=" << anzahl_versuche << '\n';
+            std::cout << "Test_welt Sonar Pings=" << ping_ids.size() << '\n';
             CAPTURE(min_distance);
+            CHECK(ping_ids.size() > 0);
             CHECK(war_explosion == true);
             CHECK(welt.get_objekte().size() == 1); // Übrig: 1 Sub
             CHECK(welt.abschuesse.size() == 1); // 1 Statistik vorhanden

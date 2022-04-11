@@ -29,6 +29,7 @@ Torpedo::Torpedo(const Torpedo& torpedo_typ, const Sub* sub,
     set_target_depth(target_depth);
     Torpedo::distance_to_activate = distance_to_activate;
     Torpedo::distance_to_fuse = target_distance_to_explode;
+    if (sonar_aktiv) sonar_aktiv->set_mode(Sonar_Aktiv::Mode::ON);
 }
 
 bool Torpedo::tick(Welt* welt, float s) {
@@ -37,20 +38,27 @@ bool Torpedo::tick(Welt* welt, float s) {
     travelled += Physik::distanz(pos_alt.x(), pos_alt.y(), pos.x(), pos.y());
     if (travelled < distance_to_activate) return true; // noch nichts aktiv zu tun
     if (travelled > range) return false;
-    // Nach gültigen Zielen suchen: Sonar-Passiv
-    if (sonar_passiv) {
-        sonar_passiv->tick(this, welt, s);
-        if (const auto& ziel = get_beste_detektion(); ziel) {
-            // Kurs auf Ziel stellen
-            set_target_bearing(ziel->bearing);
-        }
+
+    // Sonars arbeiten lassen
+    if (sonar_aktiv)  sonar_aktiv->tick(this, welt, s);
+    if (sonar_passiv) sonar_passiv->tick(this, welt, s);
+
+    // Nach gültigen Zielen suchen:
+    if (const auto& ziel = get_beste_detektion(); ziel) {
+        // Kurs auf Ziel stellen
+        set_target_bearing(ziel->bearing);
     }
+
     // Hit detection
     for (auto& o_paar : welt->objekte) {
         if (o_paar.second.get() == this) continue;
-        if (!Physik::in_reichweite_xyz(this->pos, o_paar.second->get_pos(), distance_to_fuse)) continue; // zu weit
+
+        // Ungültige Ziele überspringen
+        if (o_paar.second.get()->get_typ() == Objekt::Typ::PING)      continue;
+        if (o_paar.second.get()->get_typ() == Objekt::Typ::EXPLOSION) continue;
 
         // Noch näher möglich?
+        if (!Physik::in_reichweite_xyz(this->pos, o_paar.second->get_pos(), distance_to_fuse)) continue; // zu weit
         const auto& o = o_paar.second;
         const auto distanz = Physik::distanz_xyz(this->pos, o->get_pos());
         if (distanz <= letzte_zielnaehe) { // noch näher
@@ -68,24 +76,26 @@ bool Torpedo::tick(Welt* welt, float s) {
 }
 
 const Detektion* Torpedo::get_beste_detektion() const {
-    auto get_detektion = [this](const auto& sonar) {
-        const auto& ziel = std::min_element(sonar.get_detektionen().begin(),
-                                            sonar.get_detektionen().end(),
-                            // Sortierung, die über die Zielpriorisierung entscheidet
-                            [this](const Detektion& d1, const Detektion& d2) {
-                                return std::abs(Physik::winkel_diff(this->kurs, d1.bearing)) <
-                                       std::abs(Physik::winkel_diff(this->kurs, d2.bearing));
-        });
-        if (ziel != sonar.get_detektionen().end()) return &(*ziel);
-        return (const Detektion*) nullptr;
-    };
-    // Priorität hat Detektion vom aktiven Sonar, dann vom passivem Sonar, wenn keine Detektionen: nullptr.
-    const Detektion* beste_vom_aktiven  = nullptr;
-    const Detektion* beste_vom_passiven = nullptr;
-    if (sonar_aktiv)  beste_vom_aktiven  = get_detektion(sonar_aktiv.value());
-    if (sonar_passiv) beste_vom_passiven = get_detektion(sonar_passiv.value());
-    if (beste_vom_aktiven) return  beste_vom_aktiven;
-    return beste_vom_passiven;
+    std::vector<const Detektion*> detektionen; // alle Detektionen aller Sonars sammeln
+    if (sonar_aktiv)  for (const auto& d :  sonar_aktiv->get_detektionen()) detektionen.push_back(&d);
+    if (sonar_passiv) for (const auto& d : sonar_passiv->get_detektionen()) detektionen.push_back(&d);
+
+    // Bestes Ziel Auswahl
+    const auto& ziel = std::min_element(detektionen.begin(),
+                                        detektionen.end(),
+                        // Sortierung, die über die Zielpriorisierung entscheidet // TODO besser testen
+                        [this](const Detektion* d1, const Detektion* d2) {
+                            // MOVEMENT_SIGNATURE bevorzugen
+                            if (d1->typ == Detektion::Typ::MOVEMENT_SIGNATURE && d2->typ != Detektion::Typ::MOVEMENT_SIGNATURE) return true;
+                            if (d1->typ != Detektion::Typ::MOVEMENT_SIGNATURE && d2->typ == Detektion::Typ::MOVEMENT_SIGNATURE) return false;
+                            // ACTIVE_SONAR_ECHO bevorzugen
+                            if (d1->typ == Detektion::Typ::ACTIVE_SONAR_ECHO && d2->typ != Detektion::Typ::ACTIVE_SONAR_ECHO) return true;
+                            if (d1->typ != Detektion::Typ::ACTIVE_SONAR_ECHO && d2->typ == Detektion::Typ::ACTIVE_SONAR_ECHO) return false;
+                            return std::abs(Physik::winkel_diff(this->kurs, d1->bearing)) <
+                                   std::abs(Physik::winkel_diff(this->kurs, d2->bearing));
+    });
+    if (ziel != detektionen.end()) return *ziel;
+    return (const Detektion*) nullptr;
 }
 
 bool operator<(const Torpedo& lhs, const Torpedo& rhs) {

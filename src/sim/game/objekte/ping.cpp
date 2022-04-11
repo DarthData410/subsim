@@ -2,7 +2,7 @@
 
 Ping::Ping(const Objekt* quelle, dist_t range, float dauer) :
     Objekt(quelle->get_pos()),
-    range(range), restzeit(dauer)
+    range(range), restzeit(dauer), quelle(quelle->get_id())
 {
     //
 }

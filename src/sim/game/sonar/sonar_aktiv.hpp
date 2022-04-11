@@ -12,6 +12,7 @@ public:
     /// Nur für Serialisierung.
     Sonar_Aktiv() = default;
 
+    /// Ctor. @note Aktive Sonars sind standardmäßig ausgeschaltet.
     Sonar_Aktiv(float resolution, dist_t max_range, float ping_intervall_min,
                 const std::vector<std::tuple<float, float>>& blindspots);
 

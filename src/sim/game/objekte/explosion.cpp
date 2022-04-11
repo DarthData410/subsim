@@ -27,6 +27,7 @@ bool Explosion::tick(Welt* welt, float s) {
             Objekt* o = paar.second.get();
             if (this == o) continue;
             if (o->get_typ() == Typ::EXPLOSION) continue;
+            if (o->get_typ() == Typ::PING)      continue;
             if (!Physik::in_reichweite_xyz(this->get_pos(), o->get_pos(), radius)) continue;
 
             // Schaden anwenden

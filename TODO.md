@@ -2,7 +2,6 @@
 + Navmap transfer from imgui to SFML
 + Teambase: Repair/Resupply/Change sub
 + Replace Player's sub on death
-+ Active Sonar
 + Research new
   + Torpedo models
   + Passive Sonar models
@@ -13,4 +12,4 @@
   + Evade
   + fire Torpedos
 + frei konfigurierbare Abschussrohre
-+ Torps. nutzen Aktiven Sonar
++ AS Pings temporär skalieren

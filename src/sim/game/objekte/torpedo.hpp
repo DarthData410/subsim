@@ -26,7 +26,7 @@ public:
             const std::optional<Sonar_Aktiv>& sonar_aktiv = std::nullopt,
             const std::optional<Sonar_Passiv>& sonar_passiv = std::nullopt);
 
-    /// Ctor zur Erzeugung aus einem Torpedotypen heraus, der von einem Sub verschossen wird.
+    /// Ctor für Torpedos, die abgeschossen werden.
     Torpedo(const Torpedo& torpedo_typ, const Sub* sub,
             float distance_to_activate, float target_bearing, float target_depth,
             float target_distance_to_explode);

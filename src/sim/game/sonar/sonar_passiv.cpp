@@ -33,7 +33,11 @@ void Sonar_Passiv::tick(Objekt* parent, Welt* welt, float s) {
         const auto o_typ = objekt->get_typ();
         const auto distanz = Physik::distanz_xyz(parent->get_pos(), objekt->get_pos());
         float sichtbarkeit;
-        if (o_typ == Objekt::Typ::PING) sichtbarkeit = ((const Ping*) objekt)->get_noise_relative(distanz);
+        if (o_typ == Objekt::Typ::PING) {
+            const Ping* ping = (const Ping*)objekt;
+            if (ping->get_quelle() == parent->get_id()) continue; // Ping aus eigener Quelle
+            sichtbarkeit = ping->get_noise_relative(distanz);
+        }
         else sichtbarkeit = Physik::sichtbarkeit(objekt->get_noise(), objekt->get_speed(), distanz);
 
         // Detektion!
