@@ -6,11 +6,12 @@
 
 Torpedo::Torpedo(const Motor& motor_linear, const Motor& motor_rot, const Motor& motor_tauch,
                  const std::string& name, float range, const Explosion& explosion,
+                 const std::optional<Sonar_Aktiv>& sonar_aktiv,
                  const std::optional<Sonar_Passiv>& sonar_passiv)
         : Objekt_Steuerbar({0,0,0}, // unwichtig, wird überschrieben bei Kopie
                            motor_linear, motor_rot, motor_tauch,
                            1.0),
-          name(name), range(range), sonar_passiv(sonar_passiv), explosion(explosion)
+          name(name), range(range), sonar_aktiv(sonar_aktiv), sonar_passiv(sonar_passiv), explosion(explosion)
 {
     //
 }
@@ -27,7 +28,7 @@ Torpedo::Torpedo(const Torpedo& torpedo_typ, const Sub* sub,
     set_target_bearing(target_bearing);
     set_target_depth(target_depth);
     Torpedo::distance_to_activate = distance_to_activate;
-    Torpedo::distance_to_fuse  = target_distance_to_explode;
+    Torpedo::distance_to_fuse = target_distance_to_explode;
 }
 
 bool Torpedo::tick(Welt* welt, float s) {
@@ -67,15 +68,24 @@ bool Torpedo::tick(Welt* welt, float s) {
 }
 
 const Detektion* Torpedo::get_beste_detektion() const {
-    const auto& ziel = std::min_element(sonar_passiv->get_detektionen().begin(), sonar_passiv->get_detektionen().end(),
-                                        [](const Detektion& d1, const Detektion& d2) {
-                                            return std::abs(Physik::winkel_norm(d1.bearing)) <
-                                                   std::abs(Physik::winkel_norm(d2.bearing));
-                                        });
-    if (ziel != sonar_passiv->get_detektionen().end()) {
-        return &(*ziel);
-    }
-    return nullptr;
+    auto get_detektion = [this](const auto& sonar) {
+        const auto& ziel = std::min_element(sonar.get_detektionen().begin(),
+                                            sonar.get_detektionen().end(),
+                            // Sortierung, die über die Zielpriorisierung entscheidet
+                            [this](const Detektion& d1, const Detektion& d2) {
+                                return std::abs(Physik::winkel_diff(this->kurs, d1.bearing)) <
+                                       std::abs(Physik::winkel_diff(this->kurs, d2.bearing));
+        });
+        if (ziel != sonar.get_detektionen().end()) return &(*ziel);
+        return (const Detektion*) nullptr;
+    };
+    // Priorität hat Detektion vom aktiven Sonar, dann vom passivem Sonar, wenn keine Detektionen: nullptr.
+    const Detektion* beste_vom_aktiven  = nullptr;
+    const Detektion* beste_vom_passiven = nullptr;
+    if (sonar_aktiv)  beste_vom_aktiven  = get_detektion(sonar_aktiv.value());
+    if (sonar_passiv) beste_vom_passiven = get_detektion(sonar_passiv.value());
+    if (beste_vom_aktiven) return  beste_vom_aktiven;
+    return beste_vom_passiven;
 }
 
 bool operator<(const Torpedo& lhs, const Torpedo& rhs) {

@@ -72,7 +72,7 @@ TEST_CASE_CLASS("welt") {
             CAPTURE(Physik::kurs(sub1->get_pos(), sub2->get_pos()));
             CAPTURE(kurs_relativ);
             CHECK(sonar.is_in_toter_winkel(Physik::kurs_relativ(sub1, sub2)) == false);
-            CHECK(detektionen.size() == 1);
+            REQUIRE(detektionen.size() == 1);
             CHECK(detektionen.front().bearing == doctest::Approx(Physik::round(kurs_relativ, sonar.get_aufloesung())));
         }
 

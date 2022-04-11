@@ -108,17 +108,21 @@ TEST_CASE_CLASS("physik") {
     }
 
     SUBCASE("winkel_zwischen") {
-        CHECK(Physik::is_winkel_zwischen(  0, -10,  10) == true);
-        CHECK(Physik::is_winkel_zwischen(-10, -15,  15) == true);
-        CHECK(Physik::is_winkel_zwischen( 10, -15,  15) == true);
-        CHECK(Physik::is_winkel_zwischen(359, -10,  10) == true);
-        CHECK(Physik::is_winkel_zwischen(360, -10,  10) == true);
-        CHECK(Physik::is_winkel_zwischen(361, -10,  10) == true);
-        CHECK(Physik::is_winkel_zwischen( 90,  45, 135) == true);
-        CHECK(Physik::is_winkel_zwischen( 90, -45,-135) == false);
-        CHECK(Physik::is_winkel_zwischen(270, -45,-135) == true);
-        CHECK(Physik::is_winkel_zwischen(170, 135,-135) == true);
-        CHECK(Physik::is_winkel_zwischen(190, 135,-135) == true);
+        CHECK(Physik::is_winkel_im_bereich(0, 0, 10) == true);
+        CHECK(Physik::is_winkel_im_bereich(-10, 0, 15) == true);
+        CHECK(Physik::is_winkel_im_bereich(10, 0, 15) == true);
+        CHECK(Physik::is_winkel_im_bereich(359, 0, 10) == true);
+        CHECK(Physik::is_winkel_im_bereich(360, 0, 10) == true);
+        CHECK(Physik::is_winkel_im_bereich(361, 0, 10) == true);
+        CHECK(Physik::is_winkel_im_bereich(90, 90, 45) == true);
+        CHECK(Physik::is_winkel_im_bereich(90, -90, 45) == false);
+        CHECK(Physik::is_winkel_im_bereich(270, -90, 45) == true);
+        CHECK(Physik::is_winkel_im_bereich(170, 180, 45) == true);
+        CHECK(Physik::is_winkel_im_bereich(190, 180, 45) == true);
+        CHECK(Physik::is_winkel_im_bereich(15, 180, 160) == false);
+        CHECK(Physik::is_winkel_im_bereich(-15, 180, 160) == false);
+        CHECK(Physik::is_winkel_im_bereich(90, 180, 120) == true);
+        CHECK(Physik::is_winkel_im_bereich(-90, 180, 120) == true);
     }
 
     SUBCASE("distanz") {

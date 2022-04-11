@@ -40,10 +40,10 @@ namespace Physik {
     winkel_t winkel_diff(winkel_t winkel1, winkel_t winkel2);
     /// Liefert den Winkel in der y-Ebene (d.h. Höhe/Tiefe) zwischen zwei 3D-Punkten.
     winkel_t winkel_tiefe(const Vektor& pos, const Vektor& target_pos);
-    /// Normalisiert gegebenen Winkel, sodass -180 <= winkel <= +180.
-    winkel_t winkel_norm(winkel_t winkel);
-    /// Prüft, ob `winkel` innerhalb von `min` und `max` liegt (einschließend).
-    bool is_winkel_zwischen(winkel_t winkel, winkel_t min, winkel_t max);
+    /// Normalisiert gegebenen Winkel, sodass -180 <= winkel <= +180. // TODO test? / deprecated?
+    [[deprecated]] winkel_t winkel_norm(winkel_t winkel);
+    /// Prüft, ob `test_winkel` maximal `winkelbereich` Grad (°) abweicht von winkel.
+    bool is_winkel_im_bereich(winkel_t test_winkel, winkel_t ziel_winkel, winkel_t bereich);
 
     /**
      * Liefert die Geräuschverringung nach Distanz (0.0 - kein Schall übrig - 1.0).

@@ -3,6 +3,7 @@
 #include "explosion.hpp"
 #include "objekt_steuerbar.hpp"
 #include "../sonar/sonar_passiv.hpp"
+#include "../sonar/sonar_aktiv.hpp"
 
 #include <cereal/types/string.hpp>
 #include <cereal/types/optional.hpp>
@@ -22,6 +23,7 @@ public:
     /// Ctor zur Erstellung eines neuen Torpedotypen (= Vorlage).
     Torpedo(const Motor& motor_linear, const Motor& motor_rot, const Motor& motor_tauch,
             const std::string& name, float range, const Explosion& explosion,
+            const std::optional<Sonar_Aktiv>& sonar_aktiv = std::nullopt,
             const std::optional<Sonar_Passiv>& sonar_passiv = std::nullopt);
 
     /// Ctor zur Erzeugung aus einem Torpedotypen heraus, der von einem Sub verschossen wird.
@@ -58,7 +60,7 @@ public:
     template <class Archive> void serialize(Archive& ar) {
         ar(cereal::base_class<Objekt_Steuerbar>(this),
            name, range, travelled, distance_to_activate, distance_to_fuse, letzte_zielnaehe, quelle,
-           explosion, sonar_passiv
+           explosion, sonar_aktiv, sonar_passiv
         );
     }
 
@@ -91,6 +93,9 @@ private:
 
     /// Explosion, die dieses Torpedo verursacht.
     Explosion explosion;
+
+    /// Aktiver Sonar (optional).
+    std::optional<Sonar_Aktiv> sonar_aktiv;
 
     /// Passiver Sonar (optional).
     std::optional<Sonar_Passiv> sonar_passiv;

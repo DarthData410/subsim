@@ -11,7 +11,7 @@ void Physik::move(Vektor& pos, winkel_t kurs, dist_t weite) {
 
 winkel_t Physik::winkel_diff(winkel_t winkel1, winkel_t winkel2) {
     const auto diff = winkel2 - winkel1;
-    auto modulo = [](winkel_t a, winkel_t m) { return fmodf((fmodf(a, m) + m), m); };
+    auto modulo = [](winkel_t a, winkel_t m) { return std::fmod((std::fmod(a, m) + m), m); };
     return modulo(diff + 180.f, 360.f) - 180.f;
 }
 
@@ -36,7 +36,7 @@ dist_t Physik::distanz_xy(const Vektor& v1, const Vektor& v2) {
 }
 
 dist_t Physik::distanz_xyz(const Vektor& v1, const Vektor& v2) {
-    return hypot(v1.x()-v2.x(), hypot(v1.y()-v2.y(), v1.z()-v2.z()));
+    return std::hypot(v1.x()-v2.x(), std::hypot(v1.y()-v2.y(), v1.z()-v2.z()));
 }
 
 dist_t Physik::bremsweg(dist_t v, dist_t a) {
@@ -61,13 +61,8 @@ winkel_t Physik::kurs(const Vektor& v, const Vektor& v_target) {
     return kurs(v.x(), v.y(), v_target.x(), v_target.y());
 }
 
-bool Physik::is_winkel_zwischen(winkel_t winkel, winkel_t min, winkel_t max) {
-    min -= winkel;
-    max -= winkel;
-    min = winkel_norm(min);
-    max = winkel_norm(max);
-    if (min * max >= 0 ) return false;
-    return std::fabs(min - max) < 180;
+bool Physik::is_winkel_im_bereich(winkel_t test_winkel, winkel_t winkel, winkel_t winkelbereich) {
+    return std::abs(winkel_diff(test_winkel, winkel)) <= winkelbereich;
 }
 
 winkel_t Physik::winkel_norm(winkel_t w) {
