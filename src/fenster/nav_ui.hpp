@@ -7,7 +7,9 @@
 #include "../sim/game/team.hpp"
 
 class Welt;
+namespace sf { class RenderWindow; }
 
+/// UI mit der Übersichtskarte und Bedienung zur Navigation.
 class Nav_UI final : public Standard_UI {
 
     /// Netzwerk-Synchronisationsintervall in ms.
@@ -21,14 +23,16 @@ public:
 
     void update_and_show(const Sub* sub) override;
 
+    void draw_gfx(const Sub* sub, sf::RenderWindow* window);
+
     /// Fog of War an/aus.
     void set_fow(bool fow) { Nav_UI::fow = fow; }
-
-    void draw_gfx();
 
 private:
 
     void sync(bool force = false);
+
+    void handle_imgui_events();
 
     void show_minimap(const Sub* sub) const;
 
@@ -37,11 +41,15 @@ private:
     /// Zeichnet 1 Graph für sub's Signaturkurve. Optional: mark_v Markierung setzen bei gegebener Geschwindigkeit.
     void show_noise_signature(const Sub* sub, std::optional<float> mark_v = std::nullopt) const;
 
-    bool fow = false;
-
     /// SimDaten
+    bool fow = false;
     std::vector<std::unique_ptr<Objekt>> objekte;
     std::vector<Zone> zonen;
     std::unordered_map<uint8_t, Team> teams;
+
+    /// Karteneinstellungen
+    mutable float scale = 0.1f;
+    mutable float shift_x = 0;
+    mutable float shift_y = 0;
 
 };

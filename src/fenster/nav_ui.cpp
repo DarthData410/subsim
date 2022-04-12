@@ -4,18 +4,18 @@
 #include "../sim/physik.hpp"
 
 #include <log.hpp>
-#include <SFML/System/Clock.hpp>
 #include <implot.h>
 #include <cmath>
 #include <cereal/types/memory.hpp>
+#include <SFML/System/Clock.hpp>
+#include <SFML/Window/Event.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Graphics/CircleShape.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 
-Nav_UI::Nav_UI() : Standard_UI(nullptr) {
+Nav_UI::Nav_UI() : Standard_UI(nullptr) {}
 
-}
-
-Nav_UI::Nav_UI(Klient* klient) : Standard_UI(klient) {
-
-}
+Nav_UI::Nav_UI(Klient* klient) : Standard_UI(klient) {}
 
 void Nav_UI::sync(bool force) {
     if (static sf::Clock timer; timer.getElapsedTime().asMilliseconds() > SYNC_INTERVALL || force) {
@@ -35,70 +35,12 @@ void Nav_UI::sync(bool force) {
 
 void Nav_UI::update_and_show(const Sub* sub) {
     sync(objekte.empty());
+    handle_imgui_events();
     show_navigation(sub);
     show_minimap(sub);
 
     ImGui::Begin("Noise signature");
     show_noise_signature(sub, sub->get_speed());
-    ImGui::End();
-}
-
-void Nav_UI::show_minimap(const Sub* sub) const {
-    ImGui::Begin("Minimap");
-    const ImVec2 pos_ui = ImGui::GetCursorScreenPos();
-    const auto& pos_sub = sub->get_pos();
-    const float size_x = 400.f;
-    const float size_y = 400.f;
-    const float center_x = pos_ui.x + 0.5f*size_x;
-    const float center_y = pos_ui.y + 0.5f*size_y;
-    static float scale = 0.1f;
-
-    const auto world2ui = [&] (float x, float y) {
-        return std::array<float, 2> {
-                static_cast<float>(center_x + scale * x),
-                static_cast<float>(center_y - scale * y)
-        };
-    };
-
-    // Ozean zeichnen
-    ImDrawList* draw_list = ImGui::GetWindowDrawList();
-    draw_list->AddRectFilled(pos_ui, {pos_ui.x + size_x, pos_ui.y + size_y},
-                             ImColor(0x00, 0x50, 0xB0), 0.0f);
-
-    // Objekte zeichnen
-    for (const auto& o : objekte) {
-        //if (fow && o.get_team() != sub->get_team()) continue; // fremdes Team TODO
-        //if (x < 0 || x > size_x || y < 0 || y > size_y) continue; // außerhalb des Bildes
-        const auto pos = world2ui(o->get_pos().x(), o->get_pos().y());
-        auto color = ImColor(0xFF, 0xFF, 0xFF);
-        if      (o->get_id()   == sub->get_id())        color = ImColor(0, 0xFF, 0); // eigenes Sub
-        else if (o->get_team() != sub->get_team())      color = ImColor(0xFF, 0, 0); // Feindliches Objekt
-        else if (o->get_typ()  == Objekt::Typ::TORPEDO) color = ImColor(0xFF, 0xFF, 0); // Torpedo
-        draw_list->AddNgonFilled({pos[0], pos[1]}, 4.f, color, 4);
-    }
-
-    // Zonen zeichnen
-    for (const Zone& zone : zonen) {
-        const auto& pos = world2ui(std::get<0>(zone.get_pos()), std::get<1>(zone.get_pos()));
-        const ImColor color = zone.get_team() == 0 ? ImColor(0xFF, 0xFF, 0xFF) :
-                zone.get_team() == sub->get_team() ? ImColor(0x00,0xFF,0x00) : ImColor(0xFF, 0x00, 0x00);
-        draw_list->AddRect({pos[0] - 0.5f * zone.get_groesse() * scale, pos[1] - 0.5f * zone.get_groesse() * scale},
-                           {pos[0] + 0.5f * zone.get_groesse() * scale, pos[1] + 0.5f * zone.get_groesse() * scale},
-                           color);
-    }
-
-    // Karteneinstellungen
-    ImGui::SetCursorPosY(size_y + 32);
-    ImGui::SliderFloat("Scale", &scale, 0.01, 0.2);
-
-    for (const auto& team : teams) {
-        ImGui::Text("Team %u: %u Points", team.first, team.second.get_punkte());
-    }
-    for (const auto& zone : zonen) {
-        ImGui::Text("Zone @ x=%.0f, y=%.0f, owned by Team %u",
-                    std::get<0>(zone.get_pos()), std::get<1>(zone.get_pos()), zone.get_team());
-    }
-
     ImGui::End();
 }
 
@@ -172,6 +114,86 @@ void Nav_UI::show_noise_signature(const Sub* sub, std::optional<float> mark_v) c
     }
 }
 
-void Nav_UI::draw_gfx() {
+void Nav_UI::show_minimap(const Sub* sub) const {
+    ImGui::Begin("Map Settings");
+    if (ImGui::Button("Center on Sub")) { shift_x = 0; shift_y = 0; }
+    ImGui::SliderFloat("Scale", &scale, 0.001, 0.5);
 
+    for (const auto& team : teams) {
+        ImGui::Text("Team %u: %u Points", team.first, team.second.get_punkte());
+    }
+    for (const auto& zone : zonen) {
+        ImGui::Text("Zone @ x=%.0f, y=%.0f, owned by Team %u",
+                    std::get<0>(zone.get_pos()), std::get<1>(zone.get_pos()), zone.get_team());
+    }
+    ImGui::End();
+}
+
+void Nav_UI::draw_gfx(const Sub* sub, sf::RenderWindow* window) {
+    const auto& pos_sub = sub->get_pos();
+    const float size_x = window->getSize().x;
+    const float size_y = window->getSize().y;
+    const float center_x = 0.5f * size_x;
+    const float center_y = 0.5f * size_y;
+
+    const auto world2ui = [&] (float x, float y) {
+        return sf::Vector2<float> {
+                static_cast<float>(center_x + shift_x + (scale * (x - pos_sub.x()))),
+                static_cast<float>(center_y + shift_y - (scale * (y - pos_sub.y())))
+        };
+    };
+
+    // Ozean zeichnen
+
+    // Zonen zeichnen
+    for (const Zone& zone : zonen) {
+        const auto& pos = world2ui(std::get<0>(zone.get_pos()), std::get<1>(zone.get_pos()));
+        const sf::Color color = zone.get_team() == 0 ?             sf::Color(0xFF, 0xFF, 0xFF) : // Kein Besitzer: Weiß
+                              zone.get_team() == sub->get_team() ? sf::Color(0x00, 0xFF, 0x00) :   // Eigenes Team: Grün
+                                                                   sf::Color(0xFF, 0x00, 0x00);  // Feindlich: Rot
+        /*draw_list->AddRect({pos[0] - 0.5f * zone.get_groesse() * scale, pos[1] - 0.5f * zone.get_groesse() * scale},
+                           {pos[0] + 0.5f * zone.get_groesse() * scale, pos[1] + 0.5f * zone.get_groesse() * scale},
+                           color);*/
+        const float r = 0.5f * zone.get_groesse() * scale;
+        sf::RectangleShape zone_rect({2 * r, 2 * r});
+        zone_rect.setPosition(pos.x - r, pos.y - r);
+        zone_rect.setOutlineThickness(2);
+        zone_rect.setOutlineColor(color);
+        zone_rect.setFillColor(sf::Color::Transparent);
+        window->draw(zone_rect);
+    }
+
+    // Objekte zeichnen
+    unsigned i = 0;
+    for (const auto& o : objekte) {
+        //if (fow && o.get_team() != sub->get_team()) continue; // fremdes Team TODO
+        //if (x < 0 || x > size_x || y < 0 || y > size_y) continue; // außerhalb des Bildes
+        sf::Color color(0xFF, 0xFF, 0xFF);
+        if      (o->get_id()   == sub->get_id())        color = sf::Color(0, 0xFF, 0); // eigenes Sub
+        else if (o->get_team() != sub->get_team())      color = sf::Color(0xFF, 0, 0); // Feindliches Objekt
+        else if (o->get_typ()  == Objekt::Typ::TORPEDO) color = sf::Color(0xFF, 0xFF, 0); // Torpedo
+        sf::CircleShape shape(8.f, 4);
+        const auto& o_map_pos = world2ui(o->get_pos().x(), o->get_pos().y());
+        shape.setPosition(o_map_pos);
+        shape.setFillColor(sf::Color::Transparent);
+        shape.setOutlineColor(color);
+        shape.setOutlineThickness(2);
+        window->draw(shape);
+    }
+}
+
+void Nav_UI::handle_imgui_events() {
+    const auto& io = ImGui::GetIO();
+    /// Karte verschieben
+    if (ImGui::IsMouseDragging(ImGuiMouseButton_Middle)) {
+        const auto& delta = ImGui::GetMouseDragDelta(ImGuiMouseButton_Middle);
+        shift_x += 0.5f * delta.x;
+        shift_y += 0.5f * delta.y;
+        ImGui::ResetMouseDragDelta(ImGuiMouseButton_Middle);
+    }
+    /// Zoom via Mausrad
+    if (std::abs(io.MouseWheel) > 0) {
+        scale += (0.25f * scale * io.MouseWheel);
+        scale = std::clamp(scale, 0.001f, 1.f);
+    }
 }

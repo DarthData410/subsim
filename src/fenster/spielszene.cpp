@@ -68,10 +68,14 @@ void Spielszene::show() {
         sync();
         sf::Event event;
         while (window->pollEvent(event)) {
-            ImGui::SFML::ProcessEvent(event);
+            ImGui::SFML::ProcessEvent(*window, event);
             switch (event.type) {
                 case sf::Event::KeyReleased: key_pressed(event.key.code); break;
                 case sf::Event::Closed: window->close(); break;
+            }
+            switch (tab) {
+                case NAV: nav_ui.handle(&event); break;
+                default: break;
             }
         }
         if (!player_sub) tab = MAINMENU; // Kein Sub? -> Hauptmenü
@@ -83,8 +87,8 @@ void Spielszene::show() {
         }
 
         draw_imgui();
-        draw_gfx();
         window->clear();
+        draw_gfx();
 
         ImGui::SFML::Render(*window);
         window->display();
@@ -109,7 +113,7 @@ void Spielszene::draw_imgui() {
 
 void Spielszene::draw_gfx() {
     switch (tab) {
-        case NAV: nav_ui.draw_gfx(); break;
+        case NAV: nav_ui.draw_gfx(&player_sub.value(), window); break;
         default: break;
     }
 }
