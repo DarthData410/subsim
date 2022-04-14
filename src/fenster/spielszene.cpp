@@ -55,11 +55,14 @@ void Spielszene::key_pressed(const sf::Keyboard::Key& key) {
 }
 
 void Spielszene::draw_menu() {
-    float timelapse = klient->get_timelapse();
-    if (ImGui::SliderFloat("Timelapse", &timelapse, 0, 10)) {
+    // Timelapse
+    ImGui::Text("Server Timelapse = %.1f", klient->get_timelapse());
+    static float timelapse = 1;
+    ImGui::SliderFloat("Timelapse", &timelapse, 0, 20, "%.1f");
+    if (ImGui::SameLine(); ImGui::Button("Set")) {
         Log::debug() << "Timelapse sollte jetzt sein: " << timelapse << '\n';
         const Kommando neue_zeit_kommando(Kommando::TIMELAPSE, 0, timelapse);
-        klient->kommando(neue_zeit_kommando); // TODO nicht so oft an den server senden
+        klient->kommando(neue_zeit_kommando);
     }
 }
 
@@ -82,7 +85,7 @@ void Spielszene::show() {
 
         // Gfx Interpolieren (nur eigenes Sub)
         if (static sf::Clock timer_interpol; player_sub.has_value()) {
-            player_sub->tick(nullptr, timer_interpol.getElapsedTime().asSeconds());
+            player_sub->tick(nullptr, timer_interpol.getElapsedTime().asSeconds() * klient->get_timelapse());
             timer_interpol.restart();
         }
 

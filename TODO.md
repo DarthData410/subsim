@@ -12,3 +12,7 @@
   + fire Torpedos
 + frei konfigurierbare Abschussrohre
 + AS Pings temporär skalieren
++ Nav Screen
+  + Show scale px : km
++ Speed -> knots?
++ 
