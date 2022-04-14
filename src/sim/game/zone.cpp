@@ -29,7 +29,8 @@ void Zone::tick(Welt* welt, float s) {
             if (o->get_typ() == Objekt::Typ::SUB_AI || o->get_typ() == Objekt::Typ::SUB) {
                 const auto diff_x = std::abs(o->get_pos().x() - std::get<0>(pos));
                 const auto diff_y = std::abs(o->get_pos().y() - std::get<1>(pos));
-                if (diff_x <= groesse && diff_y <= groesse) {
+                const auto halbe_groesse = 0.5 * groesse;
+                if (diff_x <= halbe_groesse && diff_y <= halbe_groesse) {
                     team_subs[o->get_team()] += 1; // 1 Sub vom Team in der Zone gezählt
                 }
             }
