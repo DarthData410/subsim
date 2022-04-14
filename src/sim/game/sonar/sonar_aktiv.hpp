@@ -13,7 +13,7 @@ public:
     Sonar_Aktiv() = default;
 
     /// Ctor. @note Aktive Sonars sind standardmäßig ausgeschaltet.
-    Sonar_Aktiv(float resolution, dist_t max_range, float ping_intervall_min,
+    Sonar_Aktiv(Groesse groesse, float resolution, dist_t max_range, float ping_intervall_min,
                 const std::vector<std::tuple<float, float>>& blindspots);
 
     /// Führt erkennungen durch.
@@ -24,6 +24,9 @@ public:
 
     /// Aktivieren / Deaktivieren.
     void set_mode(Mode mode) { Sonar_Aktiv::mode = mode; }
+
+    /// Getter: Maximale Reichweite in m.
+    dist_t get_max_range() const { return max_range; }
 
     /// Serialisierung via cereal.
     template <class Archive> void serialize(Archive& ar) {

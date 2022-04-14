@@ -15,10 +15,16 @@ class Sonar {
 
 public:
 
+    // Sonar-Größe: Klein nur für Torpedos; Groß für Subs
+    enum class Groesse : uint8_t {
+        KLEIN,
+        GROSS,
+    };
+
     /// Nur für die Serialisierung.
     Sonar() = default;
 
-    Sonar(float resolution, std::vector<std::tuple<float, float>> blindspots);
+    Sonar(Groesse groesse, float resolution, std::vector<std::tuple<float, float>> blindspots);
 
     /// Führt erkennungen durch.
     virtual void tick(Objekt* parent, Welt* welt, float s) = 0;
@@ -37,7 +43,7 @@ public:
 
     /// Serialisierung via cereal.
     template <class Archive> void serialize(Archive& ar) {
-        ar(resolution, timer, intervall, blindspots, detektionen);
+        ar(resolution, timer, intervall, blindspots, detektionen, groesse);
     }
 
 protected:
@@ -50,6 +56,9 @@ protected:
 
     /// Alle x Sekunden wird der Detektionsalgorithmus ausgeführt (Passiv) / ein Ping abgegeben (Aktiv).
     float intervall = 1;
+
+    /// Passt der Sonar nur in Torpedos oder nur in Subs?
+    Groesse groesse;
 
     /// Winkelbereiche (min,max), zwischen denen dieses Sonar nichts sieht.
     std::vector<std::tuple<float, float>> blindspots;

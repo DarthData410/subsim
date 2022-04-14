@@ -32,23 +32,31 @@ public:
     /// Simulationstick in Sekunden. @note Lebt noch? Liefert false, wenn `schaeden` ZERSTÖRT enthält.
     bool tick(Welt* welt, float s) override;
 
+    /// Fügt dem Objekt schaden zu.
     bool apply_damage(Explosion* explosion, float damage) override;
 
-    /// Startet den Bremsvorgang, leitet kompletten Stilltstand ein.
+    /// Getter: Objektname.
+    const std::string& get_name() const override { return "Invalid Object [B]"; }
+
+    /// Startet den Bremsvorgang. Leitet kompletten Stilltstand ein.
     void stop();
 
     /// Zielgeschwindigkeit als Faktor der Höchstgeschwindigkeit von -1.0 bis +1.0.
     void set_target_v(float v) { motor_linear.v_target = v * motor_linear.v_max; }
 
+    /// Setzt die Tiefenruderzielposition fest (in m/s).
     void set_target_pitch(float v) { motor_tauch.v_target = v; }
 
+    /// Setzt die Seitenruderzielposition fest (in m/s).
     void set_target_rudder(float v) { motor_rot.v_target = v; }
 
+    /// Setzt die Zielkoordinaten zur automatischen Navigation fest (in x/y).
     void set_target_pos(double x, double y) { target_pos = {x,y}; }
 
+    /// Setzt den Zielkurs fest (in °).
     void set_target_bearing(float degree) { target_bearing = degree; }
 
-    /// TODO
+    /// Setzt die Zieltiefe fest. Tiefenangaben sind negativ. Positive Zahlen bedeuten oberhalb der Wasseroberfläche.
     void set_target_depth(dist_t depth) { target_depth = depth; }
 
     /// Getter: Aktuelle x/y-Geschwindigkeit (absolut).
@@ -57,8 +65,14 @@ public:
     /// Liefert die relative x/y-Geschwindigkeit zur Höchstgeschwindigkeit (negativ, wenn Rückwärts).
     float get_speed_relativ() const { return motor_linear.v / motor_linear.v_max; }
 
-    /// Getter: Maximale x/y-Geschwindigkeit (absolut).
+    /// Getter: Maximale x/y-Geschwindigkeit (absolut in m/s).
     float get_speed_max() const { return motor_linear.v_max; }
+
+    /// Getter: Maximale z-Geschwindigkeit (absolut in m/s).
+    float get_speed_max_rot() const { return motor_rot.v_max; }
+
+    /// Getter: Maximale Drehgeschwindigkeit (absolut in °/s).
+    float get_speed_max_tauch() const { return motor_tauch.v_max; }
 
     /// Liefert die gewünschte absolute x/y-Geschwindigkeit.
     float get_target_speed() const { return motor_linear.v_target; }

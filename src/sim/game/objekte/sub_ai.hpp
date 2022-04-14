@@ -6,12 +6,13 @@
 /// Ein Computergesteuertes U-B
 class Sub_AI final : public Sub {
 
-    static constexpr float SPEED_TRAVEL = 0.75f;
-    static constexpr float DEPTH_TRAVEL = -50.f;
+    static constexpr float SPEED_TRAVEL = 0.75;
+    static constexpr float DEPTH_TRAVEL = -50;
+    static constexpr float TARGET_DISTANCE = 1000;
 
     enum Status : uint8_t { // nicht vergessen: größeren Typen bei wachsender Zahl Status
         DONE    = 0,        // Keine Aufgabe (mehr).
-        TRAVEL = 1 << 0,    // Reisen zu bestimmter Position.    
+        TRAVEL  = 1 << 0,    // Reisen zu bestimmter Position.
         SEARCH  = 1 << 1,   // Nach Feinden suchen.
         HIDE    = 1 << 2,   // Verstecken vor Feinden.
         EVADE   = 1 << 3,   // Torpedos / Waffen ausweichen.

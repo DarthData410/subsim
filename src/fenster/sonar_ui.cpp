@@ -42,7 +42,9 @@ void Sonar_UI::update_and_show(const Sub* sub) {
 
             // Zeile mit Rauschen erzeugen
             std::vector<float> newline(sonar.get_aufloesung());
-            std::generate(newline.begin(), newline.end(), [&]() { return Zufall::f(0.f, sonar.get_empfindlichkeit()); } );
+            std::generate(newline.begin(), newline.end(), [&]() {
+                return Zufall::f(0.f, sonar.get_empfindlichkeit()); }
+            );
 
             // Detektionen eintragen
             for (const Detektion& d : sonar.get_detektionen()) {

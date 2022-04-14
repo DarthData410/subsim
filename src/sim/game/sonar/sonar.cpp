@@ -1,9 +1,11 @@
 #include "sonar.hpp"
 #include "../../physik.hpp"
 
-Sonar::Sonar(float resolution, std::vector<std::tuple<float, float>> blindspots) :
+Sonar::Sonar(Groesse groesse, float resolution, std::vector<std::tuple<float, float>> blindspots) :
     timer(0),
-    resolution(resolution), blindspots(std::move(blindspots))
+    groesse(groesse),
+    resolution(resolution),
+    blindspots(std::move(blindspots))
 {
     //
 }

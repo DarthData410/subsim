@@ -6,8 +6,8 @@
 
 #include <utility>
 
-Sonar_Passiv::Sonar_Passiv(float noise_threshold, float resolution, std::vector<std::tuple<float, float>> blindspots) :
-    Sonar(resolution, std::move(blindspots)),
+Sonar_Passiv::Sonar_Passiv(Groesse groesse, float noise_threshold, float resolution, std::vector<std::tuple<float, float>> blindspots) :
+    Sonar(groesse, resolution, std::move(blindspots)),
     noise(noise_threshold)
 {
     //

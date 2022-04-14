@@ -60,6 +60,9 @@ public:
     /// Getter: Aktuelle Geräuschentwicklung [0.0 bis 1.0].
     virtual float get_noise() const = 0;
 
+    /// Getter: Objektname.
+    virtual const std::string& get_name() const { return "Invalid Object [A]"; }
+
     /// Getter: Einmalige ID, global gültig für alle Objekte und vererbte Klassen.
     uint32_t get_id() const { return id; }
 

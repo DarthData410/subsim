@@ -20,7 +20,7 @@ TEST_CASE("serialisierung") {
     }
 
     SUBCASE("SUB") {
-        const std::unique_ptr<Objekt> o(new Sub({0,0,0}, Motor(), Motor(), Motor()));
+        const std::unique_ptr<Objekt> o(new Sub("Test Sub", {0,0,0}, Motor(), Motor(), Motor()));
         CHECK(o->get_typ() == Objekt::Typ::SUB);
         const auto& s = Net::serialize(o);
         const auto& o_serialisiert = Net::deserialize<std::unique_ptr<Objekt>>(s);
@@ -32,7 +32,7 @@ TEST_CASE("serialisierung") {
     }
 
     SUBCASE("SUB_AI") {
-        const std::unique_ptr<Objekt> o(new Sub_AI(Sub({0,0,0}, Motor(), Motor(), Motor())));
+        const std::unique_ptr<Objekt> o(new Sub_AI(Sub("Test AI-Sub", {0,0,0}, Motor(), Motor(), Motor())));
         CHECK(o->get_typ() == Objekt::Typ::SUB_AI);
         const auto& s = Net::serialize(o);
         const auto& o_serialisiert = Net::deserialize<std::unique_ptr<Objekt>>(s);
@@ -68,7 +68,7 @@ TEST_CASE("serialisierung") {
     }
 
     SUBCASE("ping") {
-        const std::unique_ptr<Objekt> sub(new Sub({0,0,0}, Motor(), Motor(), Motor()));
+        const std::unique_ptr<Objekt> sub(new Sub("Test Sub", {0,0,0}, Motor(), Motor(), Motor()));
         const std::unique_ptr<Objekt> o(new Ping(sub.get(), 20, 30));
         CHECK(o->get_typ() == Objekt::Typ::PING);
         const auto& s = Net::serialize(o);

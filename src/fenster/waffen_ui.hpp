@@ -12,4 +12,10 @@ public:
 
     void update_and_show(const Sub* sub) override;
 
+private:
+
+    void show_intelligence() const;
+
+    void show_weapons(const Sub* sub) const;
+
 };

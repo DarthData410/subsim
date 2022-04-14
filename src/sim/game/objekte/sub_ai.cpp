@@ -4,7 +4,7 @@
 
 #include <zufall.hpp>
 
-Sub_AI::Sub_AI(const Sub& sub) : Sub(sub){
+Sub_AI::Sub_AI(const Sub& sub) : Sub(sub), timer(0) {
 
 }
 
@@ -38,7 +38,7 @@ bool Sub_AI::tick(Welt* welt, float s) {
         else set_target_v(SPEED_TRAVEL);
 
         // Ziel erreicht?
-        if (Physik::distanz(pos.x(), pos.y(), ziel.x(), ziel.y()) < 1000.f) {
+        if (Physik::distanz(pos.x(), pos.y(), ziel.x(), ziel.y()) <= TARGET_DISTANCE) {
             Log::debug() << "Sub_AI " << id << " target reached" << Log::endl;
             remove_status(TRAVEL);
             add_status(SEARCH);

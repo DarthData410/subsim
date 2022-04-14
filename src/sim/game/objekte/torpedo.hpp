@@ -42,7 +42,7 @@ public:
     void set_distance_to_explode(float distance_to_explode) { Torpedo::distance_to_fuse = distance_to_explode; }
 
     /// Getter: Torpedoname / Typname.
-    const std::string& get_name() const { return name; }
+    const std::string& get_name() const override { return name; }
 
     /// Getter: Verbleibende Reichweite.
     float get_range() const { return range; }

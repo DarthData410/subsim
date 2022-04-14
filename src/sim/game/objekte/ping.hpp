@@ -11,7 +11,7 @@ public:
 
     Ping() = default;
 
-    /// TODO: quelle_sub unbenutzt. Reichweite in m, Dauer in s.
+    /// Ctor. Reichweite in m, Dauer in s.
     Ping(const Objekt* quelle, dist_t range, float dauer = 5);
 
     bool tick(Welt* welt, float s) override;
@@ -21,6 +21,9 @@ public:
     Typ get_typ() const override { return Typ::PING; }
 
     float get_noise() const override { return 1.0f; }
+
+    /// Getter: Objektname.
+    const std::string& get_name() const override { return "Sonar Ping"; }
 
     dist_t get_range() const { return range; }
 

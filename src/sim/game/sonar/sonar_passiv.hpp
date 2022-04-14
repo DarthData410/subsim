@@ -11,7 +11,7 @@ public:
     Sonar_Passiv() = default;
 
     /// Ctor.
-    Sonar_Passiv(float noise_threshold, float resolution, std::vector<std::tuple<float, float>> blindspots);
+    Sonar_Passiv(Groesse groesse, float noise_threshold, float resolution, std::vector<std::tuple<float, float>> blindspots);
 
     /// Führt erkennungen durch.
     void tick(Objekt* parent, Welt* welt, float s) override;
