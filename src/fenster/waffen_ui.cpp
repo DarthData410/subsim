@@ -74,12 +74,13 @@ void Waffen_UI::show_intelligence() const {
     ImGui::Begin("Intelligence");
 
     /// Übersicht: Submarine Designs
+    ImGui::TextUnformatted("Submarine Designs");
     if (ImGui::BeginTable("Submarine Designs", 7)) {
         ImGui::TableSetupColumn("Team");
         ImGui::TableSetupColumn("Name");
         ImGui::TableSetupColumn("Max Speed (in m/s)");
         ImGui::TableSetupColumn("Noise Level");
-        ImGui::TableSetupColumn("Active Sonar Range");
+        ImGui::TableSetupColumn("Active Sonar Range in km");
         ImGui::TableSetupColumn("Passive Sonar Sensitivity");
         ImGui::TableSetupColumn("Sonar Resolution (in °)");
         ImGui::TableHeadersRow();
@@ -90,8 +91,8 @@ void Waffen_UI::show_intelligence() const {
                 ImGui::TableSetColumnIndex(1); ImGui::TextUnformatted(subdesign.get_name().c_str());
                 ImGui::TableSetColumnIndex(2); ImGui::Text("%.1f", subdesign.get_speed_max());
                 ImGui::TableSetColumnIndex(3); ImGui::Text("%.1f", subdesign.get_noise());
-                ImGui::TableSetColumnIndex(4); ImGui::Text("%.0f", subdesign.get_max_reichweite_as());
-                ImGui::TableSetColumnIndex(5); ImGui::Text("%.0f", subdesign.get_beste_empfindlichkeit_ps());
+                ImGui::TableSetColumnIndex(4); ImGui::Text("%.1f", 0.001 * subdesign.get_max_reichweite_as());
+                ImGui::TableSetColumnIndex(5); ImGui::Text("%.1f", subdesign.get_beste_empfindlichkeit_ps());
                 ImGui::TableSetColumnIndex(6); ImGui::Text("%.1f", subdesign.get_best_aufloesung_sonar());
             }
         }
@@ -99,17 +100,32 @@ void Waffen_UI::show_intelligence() const {
     }
 
     /// Torpedos
-    if (ImGui::BeginTable("Torpedoes", 3)) {
-        ImGui::TableSetupColumn("One");
-        ImGui::TableSetupColumn("Two");
-        ImGui::TableSetupColumn("Three");
+    ImGui::NewLine();
+    ImGui::TextUnformatted("Torpedoes");
+    if (ImGui::BeginTable("Torpedoes", 5)) {
+        ImGui::TableSetupColumn("Team");
+        ImGui::TableSetupColumn("Name");
+        ImGui::TableSetupColumn("Speed (m/s)");
+        ImGui::TableSetupColumn("Range in< km");
+        ImGui::TableSetupColumn("Manoeuvrability (°/s)");
         ImGui::TableHeadersRow();
         for (const auto&[team_id, team]: klient->get_teams()) {
-            ImGui::TableNextRow();
-            ImGui::NextColumn();
+            for (const auto& t : team.get_torp_designs()) {
+                ImGui::TableNextRow();
+                ImGui::TableSetColumnIndex(0); ImGui::Text("%d", (int)team_id);
+                ImGui::TableSetColumnIndex(1); ImGui::TextUnformatted(t.get_name().c_str());
+                ImGui::TableSetColumnIndex(2); ImGui::Text("%.1f", t.get_speed_max());
+                ImGui::TableSetColumnIndex(3); ImGui::Text("%.1f", 0.001 * t.get_range());
+                ImGui::TableSetColumnIndex(4); ImGui::Text("%.1f", t.get_speed_max_rot());
+            }
+
         }
         ImGui::EndTable();
     }
+
+    // Todo Sonare
+    ImGui::NewLine();
+
 
     ImGui::End();
 }

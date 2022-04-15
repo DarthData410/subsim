@@ -1,5 +1,5 @@
 # CMake Datei zur Erzeugung von ImGui als Library mit SFML im Backend.
-cmake_minimum_required(VERSION 3.18)
+cmake_minimum_required(VERSION 3.9)
 
 project(bibliotheken)
 
