@@ -15,7 +15,7 @@ class Sonar {
 
 public:
 
-    // Sonar-Größe: Klein nur für Torpedos; Groß für Subs
+    /// Sonar-Größe: Klein nur für Torpedos; Groß für Subs
     enum class Groesse : uint8_t {
         KLEIN,
         GROSS,
@@ -24,7 +24,7 @@ public:
     /// Nur für die Serialisierung.
     Sonar() = default;
 
-    Sonar(Groesse groesse, float resolution, std::vector<std::tuple<float, float>> blindspots);
+    Sonar(const std::string& name, Groesse groesse, float resolution, std::vector<std::tuple<float, float>> blindspots);
 
     /// Führt erkennungen durch.
     virtual void tick(Objekt* parent, Welt* welt, float s) = 0;
@@ -35,18 +35,27 @@ public:
     /// Getter: Auf wieviel Grad genau eine Richtung bestimmt werden kann.
     float get_aufloesung() const { return resolution; }
 
+    const std::string& get_name() const { return name; }
+
+    float get_resolution() const { return resolution; }
+
+    Groesse get_groesse() const { return groesse; }
+
     /// Getter: Sichtbereich(e) des Sonars, relativ zum sub.
-    const std::optional<std::vector<std::tuple<float, float>>>& get_blindspots() const { return blindspots; }
+    const std::vector<std::tuple<float, float>>& get_blindspots() const { return blindspots; }
 
     /// Getter: Aktuelle erkannte Signaturen.
     const auto& get_detektionen() const { return detektionen; }
 
     /// Serialisierung via cereal.
     template <class Archive> void serialize(Archive& ar) {
-        ar(resolution, timer, intervall, blindspots, detektionen, groesse);
+        ar(name, resolution, timer, intervall, blindspots, detektionen, groesse);
     }
 
 protected:
+
+    /// Name des Sonars.
+    std::string name;
 
     /// Auflösung. Auf wieviel Grad ° genau die Detektion ist.
     float resolution;

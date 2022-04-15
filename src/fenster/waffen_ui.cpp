@@ -73,7 +73,7 @@ void Waffen_UI::show_weapons(const Sub* sub) const {
 void Waffen_UI::show_intelligence() const {
     ImGui::Begin("Intelligence");
 
-    /// Übersicht: Submarine Designs
+    // Übersicht: Submarine Designs
     ImGui::TextUnformatted("Submarine Designs");
     if (ImGui::BeginTable("Submarine Designs", 7)) {
         ImGui::TableSetupColumn("Team");
@@ -84,7 +84,7 @@ void Waffen_UI::show_intelligence() const {
         ImGui::TableSetupColumn("Passive Sonar Sensitivity");
         ImGui::TableSetupColumn("Sonar Resolution (in °)");
         ImGui::TableHeadersRow();
-        for (const auto&[team_id, team]: klient->get_teams()) {
+        for (const auto& [team_id, team]: klient->get_teams()) {
             for (const auto& subdesign : team.get_sub_designs()) {
                 ImGui::TableNextRow();
                 ImGui::TableSetColumnIndex(0); ImGui::Text("%d", (int)team_id);
@@ -99,17 +99,17 @@ void Waffen_UI::show_intelligence() const {
         ImGui::EndTable();
     }
 
-    /// Torpedos
+    // Torpedos
     ImGui::NewLine();
     ImGui::TextUnformatted("Torpedoes");
     if (ImGui::BeginTable("Torpedoes", 5)) {
         ImGui::TableSetupColumn("Team");
         ImGui::TableSetupColumn("Name");
         ImGui::TableSetupColumn("Speed (m/s)");
-        ImGui::TableSetupColumn("Range in< km");
+        ImGui::TableSetupColumn("Range in km");
         ImGui::TableSetupColumn("Manoeuvrability (°/s)");
         ImGui::TableHeadersRow();
-        for (const auto&[team_id, team]: klient->get_teams()) {
+        for (const auto& [team_id, team]: klient->get_teams()) {
             for (const auto& t : team.get_torp_designs()) {
                 ImGui::TableNextRow();
                 ImGui::TableSetColumnIndex(0); ImGui::Text("%d", (int)team_id);
@@ -123,9 +123,57 @@ void Waffen_UI::show_intelligence() const {
         ImGui::EndTable();
     }
 
-    // Todo Sonare
+    // Aktive Sonars
     ImGui::NewLine();
+    ImGui::TextUnformatted("Active Sonars");
+    if (ImGui::BeginTable("Active Sonars", 6)) {
+        ImGui::TableSetupColumn("Team");
+        ImGui::TableSetupColumn("Name");
+        ImGui::TableSetupColumn("Size");
+        ImGui::TableSetupColumn("Range in km");
+        ImGui::TableSetupColumn("Resolution in °");
+        ImGui::TableSetupColumn("Blindspots in °");
+        ImGui::TableHeadersRow();
+        for (const auto& [team_id, team]: klient->get_teams()) {
+            for (const auto& s: team.get_sonars_a()) {
+                ImGui::TableNextRow();
+                ImGui::TableSetColumnIndex(0); ImGui::Text("%d", (int)team_id);
+                ImGui::TableSetColumnIndex(1); ImGui::TextUnformatted(s.get_name().c_str());
+                ImGui::TableSetColumnIndex(2); ImGui::Text("%.1f", (int)s.get_groesse());
+                ImGui::TableSetColumnIndex(3); ImGui::Text("%.1f", 0.001 * s.get_max_range());
+                ImGui::TableSetColumnIndex(4); ImGui::Text("%.1f", s.get_aufloesung());
+                ImGui::TableSetColumnIndex(5);
+                for (const auto& tuple : s.get_blindspots()) ImGui::Text("@%.0f°,  +/-%.0f°", std::get<0>(tuple), std::get<1>(tuple));
+            }
+        }
+        ImGui::EndTable();
+    }
 
+    // Aktive Sonars
+    ImGui::NewLine();
+    ImGui::TextUnformatted("Passive Sonars");
+    if (ImGui::BeginTable("Passive Sonars", 6)) {
+        ImGui::TableSetupColumn("Team");
+        ImGui::TableSetupColumn("Name");
+        ImGui::TableSetupColumn("Size");
+        ImGui::TableSetupColumn("Sensitivity");
+        ImGui::TableSetupColumn("Resolution in °");
+        ImGui::TableSetupColumn("Blindspots in °");
+        ImGui::TableHeadersRow();
+        for (const auto& [team_id, team]: klient->get_teams()) {
+            for (const auto& s: team.get_sonars_p()) {
+                ImGui::TableNextRow();
+                ImGui::TableSetColumnIndex(0); ImGui::Text("%d", (int)team_id);
+                ImGui::TableSetColumnIndex(1); ImGui::TextUnformatted(s.get_name().c_str());
+                ImGui::TableSetColumnIndex(2); ImGui::Text("%.1f", (int)s.get_groesse());
+                ImGui::TableSetColumnIndex(3); ImGui::Text("%.1f", s.get_empfindlichkeit());
+                ImGui::TableSetColumnIndex(4); ImGui::Text("%.1f", s.get_aufloesung());
+                ImGui::TableSetColumnIndex(5);
+                for (const auto& tuple : s.get_blindspots()) ImGui::Text("@%.0f°,  +/-%.0f°", std::get<0>(tuple), std::get<1>(tuple));
+            }
+        }
+        ImGui::EndTable();
+    }
 
     ImGui::End();
 }

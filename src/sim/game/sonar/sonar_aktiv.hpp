@@ -13,7 +13,7 @@ public:
     Sonar_Aktiv() = default;
 
     /// Ctor. @note Aktive Sonars sind standardmäßig ausgeschaltet.
-    Sonar_Aktiv(Groesse groesse, float resolution, dist_t max_range, float ping_intervall_min,
+    Sonar_Aktiv(const std::string& name, Groesse groesse, float resolution, dist_t max_range, float ping_intervall_min,
                 const std::vector<std::tuple<float, float>>& blindspots);
 
     /// Führt erkennungen durch.

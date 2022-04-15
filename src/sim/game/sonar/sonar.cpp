@@ -1,7 +1,8 @@
 #include "sonar.hpp"
 #include "../../physik.hpp"
 
-Sonar::Sonar(Groesse groesse, float resolution, std::vector<std::tuple<float, float>> blindspots) :
+Sonar::Sonar(const std::string& name, Groesse groesse, float resolution, std::vector<std::tuple<float, float>> blindspots) :
+    name(name),
     timer(0),
     groesse(groesse),
     resolution(resolution),

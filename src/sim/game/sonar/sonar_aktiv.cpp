@@ -3,9 +3,9 @@
 #include "../../welt.hpp"
 #include "../../physik.hpp"
 
-Sonar_Aktiv::Sonar_Aktiv(Groesse groesse, float resolution, dist_t max_range, float ping_intervall_min,
+Sonar_Aktiv::Sonar_Aktiv(const std::string& name, Groesse groesse, float resolution, dist_t max_range, float ping_intervall_min,
                          const std::vector<std::tuple<float, float>>& blindspots) :
-    Sonar(groesse, resolution, blindspots),
+    Sonar(name, groesse, resolution, blindspots),
     mode(Mode::OFF), max_range(max_range), ping_intervall_min(ping_intervall_min)
 {
 
