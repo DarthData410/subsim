@@ -139,7 +139,7 @@ void Waffen_UI::show_intelligence() const {
                 ImGui::TableNextRow();
                 ImGui::TableSetColumnIndex(0); ImGui::Text("%d", (int)team_id);
                 ImGui::TableSetColumnIndex(1); ImGui::TextUnformatted(s.get_name().c_str());
-                ImGui::TableSetColumnIndex(2); ImGui::Text("%.1f", (int)s.get_groesse());
+                ImGui::TableSetColumnIndex(2); ImGui::Text("%d", (int)s.get_groesse());
                 ImGui::TableSetColumnIndex(3); ImGui::Text("%.1f", 0.001 * s.get_max_range());
                 ImGui::TableSetColumnIndex(4); ImGui::Text("%.1f", s.get_aufloesung());
                 ImGui::TableSetColumnIndex(5);
@@ -165,7 +165,7 @@ void Waffen_UI::show_intelligence() const {
                 ImGui::TableNextRow();
                 ImGui::TableSetColumnIndex(0); ImGui::Text("%d", (int)team_id);
                 ImGui::TableSetColumnIndex(1); ImGui::TextUnformatted(s.get_name().c_str());
-                ImGui::TableSetColumnIndex(2); ImGui::Text("%.1f", (int)s.get_groesse());
+                ImGui::TableSetColumnIndex(2); ImGui::Text("%d", (int)s.get_groesse());
                 ImGui::TableSetColumnIndex(3); ImGui::Text("%.1f", s.get_empfindlichkeit());
                 ImGui::TableSetColumnIndex(4); ImGui::Text("%.1f", s.get_aufloesung());
                 ImGui::TableSetColumnIndex(5);
