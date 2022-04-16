@@ -23,7 +23,7 @@ public:
 
     void update_and_show(const Sub* sub) override;
 
-    void draw_gfx(const Sub* sub, sf::RenderWindow* window);
+    void draw_gfx(const Sub* sub, sf::RenderWindow* window) override;
 
     /// Fog of War an/aus.
     void set_fow(bool fow) { Nav_UI::fow = fow; }

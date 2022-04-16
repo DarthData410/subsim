@@ -1,17 +1,13 @@
 #pragma once
 
 #include "standard_ui.hpp"
-
 #include <vector>
-#include <array>
-#include <SFML/System/Clock.hpp>
+#include <cstdint>
 
 /// UI zur Anzeige vom Passiven Sonar.
 class Sonar_UI final : public Standard_UI {
 
 public:
-
-    static constexpr unsigned HISTORY_SIZE = 40;
 
     Sonar_UI();
 
@@ -19,16 +15,14 @@ public:
 
     void update_and_show(const Sub* sub) override;
 
+    void draw_gfx(const Sub* sub, sf::RenderWindow* window) override;
+
 private:
 
-    void reset_sonar_data(const Sub* sub);
+    void draw_ps(const Sub*, sf::RenderWindow* window);
 
-    void show(const std::array<std::vector<float>, HISTORY_SIZE>& histogram) const;
+private:
 
-    std::vector<std::array<std::vector<float>, HISTORY_SIZE>> sonar_data;
-
-    /// Updateintervall (Echtzeit) in ms.
-    std::vector<unsigned> intervalle;
-    std::vector<sf::Clock> timers;
+    std::vector<uint8_t> ps_pic;
 
 };

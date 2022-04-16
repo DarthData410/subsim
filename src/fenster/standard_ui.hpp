@@ -3,7 +3,10 @@
 /// Prädeklarationen.
 class Sub;
 class Klient;
-namespace sf { class Event; }
+namespace sf {
+    class Event;
+    class RenderWindow;
+}
 
 /// Mutterklasse für Standard-UI-Fenster.
 class Standard_UI {
@@ -19,6 +22,8 @@ public:
     virtual void update_and_show(const Sub* sub) = 0;
 
     virtual void handle(sf::Event* event) {};
+
+    virtual void draw_gfx(const Sub* sub, sf::RenderWindow* window) {};
 
 protected:
 

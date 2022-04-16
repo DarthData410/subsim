@@ -116,7 +116,11 @@ void Spielszene::draw_imgui() {
 
 void Spielszene::draw_gfx() {
     switch (tab) {
-        case NAV: nav_ui.draw_gfx(&player_sub.value(), window); break;
+        case MAINMENU: break;
+        case NAV:      nav_ui.draw_gfx(&player_sub.value(), window); break;
+        case SONAR:    sonar_ui.draw_gfx(&player_sub.value(), window); break;
+        case WEAPONS:  waffen_ui.draw_gfx(&player_sub.value(), window); break;
+        case THREE_D:  break;
         default: break;
     }
 }
