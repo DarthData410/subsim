@@ -57,6 +57,7 @@ namespace Physik {
      * @param v Geschwindigkeit
      * @param d Entfernung
      * @note Verhältnismäßig teuer. Sollte nicht jeden Tick für jedes Objekt berechnet werden.
+     * @note Bei sehr kleinen v (<1/128) wird der halbe Wert zurückgegeben, wodurch "Motor aus" simuliert wird.
      * @return 0.1 und weniger bedeutet quasi unsichtbar. Absolut 0 wird praktisch nie erreicht.
      */
     float sichtbarkeit(float sichtbarkeitsfaktor, float v, dist_t d);

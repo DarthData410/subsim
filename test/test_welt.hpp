@@ -31,6 +31,19 @@ TEST_CASE_CLASS("welt") {
         CHECK(zone_eingenommen == true);
         CHECK(welt.get_team(team).get_punkte() > 0);
     }
+    SUBCASE("sonar passiv keine detektion") {
+        CHECK(welt.get_objekte().size() == 0);
+        const uint8_t team = 1;
+        for (unsigned i = 0; i < 10; ++i) welt.add_new_sub(team, false);
+        CHECK(welt.get_objekte().size() == 10);
+        for (unsigned i = 0; i < 1'200; ++i) welt.tick(0.1); // 2 min warten
+        for (const auto& [id, o]  : welt.get_objekte()) {
+            CHECK(o->get_speed() == doctest::Approx(0));
+            Sub* sub = dynamic_cast<Sub*>(o.get());
+            CHECK(sub != nullptr);
+            CHECK(sub->get_sonars_passive().at(0).get_detektionen().size() == 0);
+        }
+    }
     SUBCASE("szenario test 1vs1") {
         // 2 zueinander feindliche Subs erzeugen
         CHECK(welt.get_objekte().size() == 0); // Welt leer
@@ -41,6 +54,8 @@ TEST_CASE_CLASS("welt") {
         Sub* sub2;
         CHECK_NOTHROW(sub1 = dynamic_cast<Sub*>(welt.get_objekte().at(sub1_id).get()));
         CHECK_NOTHROW(sub2 = dynamic_cast<Sub*>(welt.get_objekte().at(sub2_id).get()));
+        CHECK(sub1 != nullptr);
+        CHECK(sub2 != nullptr);
         CHECK(sub1->get_typ() == Objekt::Typ::SUB);
         CHECK(sub2->get_typ() == Objekt::Typ::SUB);
 

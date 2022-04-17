@@ -167,7 +167,7 @@ TEST_CASE_CLASS("physik") {
         CHECK(Physik::sichtbarkeit(1.0,  7.5,    500) == doctest::Approx(0.90486));
         CHECK(Physik::sichtbarkeit(0.75, 7.5,  10000) == doctest::Approx(0.68046));
         CHECK(Physik::sichtbarkeit(0.5,  7.5,    500) == doctest::Approx(0.63422));
-        CHECK(Physik::sichtbarkeit(0.5,    0, 100000) == doctest::Approx(0.00626));
+        CHECK(Physik::sichtbarkeit(0.5,    0, 100000) == doctest::Approx(0.00313)); // "Motor aus"
         CHECK(Physik::sichtbarkeit(0.25,  10,   5000) == doctest::Approx(0.56368));
         CHECK(Physik::sichtbarkeit(0.25, -10,   5000) == doctest::Approx(0.56368));
     }

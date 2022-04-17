@@ -47,7 +47,6 @@ public:
     /// Liefert die beste Auflösung aller Sonars (AS & PS).
     float get_best_aufloesung_sonar() const;
 
-
     /// Serialisierung via cereal.
     template <class Archive> void serialize(Archive& ar) {
         ar(cereal::base_class<Objekt_Steuerbar>(this),

@@ -78,6 +78,7 @@ float Physik::schallfaktor(dist_t d) {
 }
 
 float Physik::sichtbarkeit(float s, float v, dist_t d) {
+    v = std::abs(v);
     const auto entfernungsfaktor = schallfaktor(d);
     const float sichtbarkeitseinfluss = 3;
     const float x_verschiebung = -3;
@@ -87,7 +88,8 @@ float Physik::sichtbarkeit(float s, float v, dist_t d) {
     const float steigungsglaettung = 0.15;
     const float sichtbarkeit = entfernungsfaktor * y_streckung *
           (y_verschibung + (steigungsglaettung *
-          std::atan(((x_faktor * std::abs(v)) + x_verschiebung) + (sichtbarkeitseinfluss * s))));
+          std::atan(((x_faktor * v) + x_verschiebung) + (sichtbarkeitseinfluss * s))));
+    if (v < (1.f/128.f)) return sichtbarkeit * 0.5f; // "Motor ausgeschaltet"
     return sichtbarkeit;
 }
 
