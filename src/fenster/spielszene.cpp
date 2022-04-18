@@ -37,7 +37,7 @@ void Spielszene::key_pressed(const sf::Keyboard::Key& key) {
             if (!antwort.empty()) {
                 player_sub = Net::deserialize<Sub>(antwort);
                 nav_ui     = Nav_UI(klient.get());
-                sonar_ui   = Sonar_UI(&player_sub.value());
+                sonar_ui   = Sonar_UI(klient.get());
                 waffen_ui  = Waffen_UI(klient.get());
                 Log::debug() << "New player_sub id=" << player_sub->get_id() << '\n';
             }

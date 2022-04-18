@@ -13,10 +13,9 @@ class Sonar_UI final : public Standard_UI {
 
 public:
 
-    /// Haupt-Ctor.
     Sonar_UI();
 
-    explicit Sonar_UI(const Sub* sub);
+    explicit Sonar_UI(Klient* klient);
 
     void update_and_show(const Sub* sub) override;
 
@@ -24,15 +23,20 @@ public:
 
 private:
 
+    void draw_as(const Sub*, sf::RenderWindow* window);
+
     void draw_ps(const Sub*, sf::RenderWindow* window);
 
 private:
 
+    std::unique_ptr<sf::Texture> as_tex;
     std::unique_ptr<sf::Texture> ps_tex;
+    std::vector<uint8_t> as_data;
     std::vector<uint8_t> ps_data;
 
     /* Einstellungen */
     float ps_intervall = 0.5f;
     int ps_array_select = 1;
+    int as_array_select = 1;
 
 };

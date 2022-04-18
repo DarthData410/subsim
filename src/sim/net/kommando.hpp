@@ -1,6 +1,7 @@
 #pragma once
 
 #include "net.hpp"
+#include "../typedefs.hpp"
 #include <cereal/types/string.hpp>
 #include <cereal/types/tuple.hpp>
 
@@ -21,20 +22,19 @@ public:
         AUTO_KURS,      // Automatisches Drehen zu einem Kurs.
         AUTO_TIEFE,     // Automatisches Tauchen zu einer Tiefe.
         TORP_LAUNCH,    // Torpedo starten.
-        TIMELAPSE       // Simulationszeit Ändern
+        TIMELAPSE,      // Simulationszeit Ändern
+        SONAR_A_MODE,   // Aktiven Sonarmodus setzen
     };
 
     /// Ctor.
     Kommando() = default;
 
     /// Ctor für Kommandos ohne Daten.
-    Kommando(Typ typ, uint32_t sub_id) : typ(typ), sub_id(sub_id) {}
+    Kommando(Typ typ, oid_t sub_id) : typ(typ), sub_id(sub_id) {}
 
     /// Ctor mit optionalen Daten.
     template<typename T>
-    Kommando(Typ typ, uint32_t sub_id, const T& daten) : Kommando(typ, sub_id) {
-        data = as_string(daten);
-    }
+    Kommando(Typ typ, oid_t sub_id, const T& daten) : Kommando(typ, sub_id) { data = as_string(daten); }
 
     /// Wendet dieses Kommando auf `welt` an.
     void apply(Welt* welt);
@@ -69,9 +69,11 @@ private:
 
 private:
 
+    /// Welches Kommando soll ausgeführt werden?
     Typ typ;
 
-    uint32_t sub_id;
+    /// ID des Subs, auf das das Kommando angewandt werden soll.
+    oid_t sub_id;
 
     /// Enthält evtl. zusätzliche Daten zum senden in einem Netzwerkpaket.
     std::string data;

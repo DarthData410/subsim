@@ -4,6 +4,8 @@
 
 class Sonar_Aktiv final : public Sonar {
 
+    friend class Kommando;
+
 public:
 
     /// Operationsmodus des aktiven Sonars. Aus / Einzelner Ping / Eingeschaltet = wiederholender Ping.
@@ -24,6 +26,12 @@ public:
 
     /// Aktivieren / Deaktivieren.
     void set_mode(Mode mode) { Sonar_Aktiv::mode = mode; }
+
+    /// Getter: Aktueller Operationsmodus.
+    Mode get_mode() const { return mode; }
+
+    /// Getter: Schnellstmöglicher Ping-Intervall.
+    float get_ping_intervall_min() const { return ping_intervall_min; }
 
     /// Getter: Maximale Reichweite in m.
     dist_t get_max_range() const { return max_range; }

@@ -12,6 +12,7 @@ class Sub : public Objekt_Steuerbar {
 
     friend class Team;
     friend class Test_Physik;
+    friend class Kommando;
 
 public:
 

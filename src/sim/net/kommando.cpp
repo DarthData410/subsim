@@ -40,6 +40,10 @@ void Kommando::apply(Welt* welt) {
             welt->timelapse = as<float>();
             Log::debug() << "Welt hat jetzt Timelapse = " << welt->timelapse << '\n';
             break;
+        case SONAR_A_MODE: {
+            const auto neuer_modus = as<std::tuple<uint8_t, Sonar_Aktiv::Mode>>();
+            sub->sonars_active.at(std::get<0>(neuer_modus)).set_mode(std::get<1>(neuer_modus));
+        }   break;
         default:
             Log::err() << "Kommando::apply typ not implemented: " << (unsigned)typ << '\n';
             break;
