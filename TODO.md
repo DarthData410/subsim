@@ -1,4 +1,6 @@
 # TODOs
+
+## Gameplay / Meta / Strategy
 + Teambase: Repair/Resupply/Change sub
 + Replace Player's sub on death
 + Research new
@@ -6,13 +8,24 @@
   + Passive Sonar models
   + Motor models
     + Sub models
-+ Decoys
-+ AI
-  + Evade
-  + fire Torpedos
+
+## AI
++ Evade
++ fire Torpedos
+
+## Armamanets
 + frei konfigurierbare Abschussrohre
 + AS Pings temporär skalieren
++ Decoys
+
+## UI
++ Sonar Screen
+  + Active Sonar Display
+  + Background
 + Nav Screen
   + Show scale px : km
 + Speed -> knots?
-+ 
+
+## Simulation
+  + Terrain
+    + Depth from Heightmap

@@ -1,6 +1,7 @@
 #include "sonar_ui.hpp"
 #include "../sim/game/objekte/sub.hpp"
 #include "imgui_addons.hpp"
+#include "../gfx/grafik.hpp"
 
 #include <zufall.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
@@ -9,17 +10,27 @@
 
 namespace {
     const unsigned RGB_PX = 4; // RGBA
-    const unsigned PS_SIZE_Y = 800;
-    const unsigned PS_SIZE_X = 500;
+    const uint8_t  BG_COL = 0x40;
+    const unsigned PS_SIZE_X = 432;
+    const unsigned PS_SIZE_Y = 660;
+    const unsigned PS_POS_X  = 112;
+    const unsigned PS_POS_Y  =  80;
     const unsigned PS_LINE_WIDTH = PS_SIZE_X * RGB_PX;
+    sf::RectangleShape ps_rect;
+    Grafik bg("data/gfx/bg_sonar.png");
 }
 
 Sonar_UI::Sonar_UI() : Standard_UI(nullptr),
-    ps_data(PS_SIZE_X * PS_SIZE_Y * RGB_PX, 0x40), // TODO set to 0 (?)
+    ps_data(PS_SIZE_X * PS_SIZE_Y * RGB_PX, BG_COL),
     ps_tex(new sf::Texture())
 {
+    // Setup Passive Sonar Texture + Render-Rect
     ps_tex->create(PS_SIZE_X, PS_SIZE_Y);
     ps_tex->update(ps_data.data());
+    ps_rect.setSize({static_cast<float>(ps_tex->getSize().x), static_cast<float>(ps_tex->getSize().y)});
+    ps_rect.setPosition(PS_POS_X, PS_POS_Y);
+    ps_rect.setTexture(ps_tex.get(), true);
+
 }
 
 Sonar_UI::Sonar_UI(const Sub* sub) : Sonar_UI() {
@@ -27,30 +38,34 @@ Sonar_UI::Sonar_UI(const Sub* sub) : Sonar_UI() {
 }
 
 void Sonar_UI::update_and_show(const Sub* sub) {
-    // ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize ImGuiWindowFlags_AlwaysAutoResize
-    const auto flags = 0; // ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground;
-    ImGui::Begin("Sonar Config", nullptr, flags);
-    ImGui::Button("Blub");
-    static float ps_intervall = 1.0f;
-    ImGui::SliderFloat("Intervall", &ps_intervall, 0.2f, 10.f, "%.1f");
+    // Passive Sonar Config
+    const auto flags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground;
+    ImGui::SetNextWindowPos({130, 836});
+    ImGui::SetNextWindowSize({405,215});
+    ImGui::Begin("Sonar_Passive_Config", nullptr, flags);
+    ImGui::SliderFloat("Update Intervall", &ps_intervall, 0.2f, 10.f, "%.1fs");
+    ImGui::SliderInt("Array Select", &ps_array_select, 1, sub->get_sonars_passive().size(), "#%d");
+    if (ImGui::Button("Clear")) {
+        ps_data.assign(PS_SIZE_X * PS_SIZE_Y * RGB_PX, BG_COL);
+        ps_tex->update(ps_data.data());
+    }
     ImGui::End();
+
+    // AS Select
+    // AS Mode (off - single - on)
+    // AS Single Ping Fire
 }
 
 void Sonar_UI::draw_gfx(const Sub* sub, sf::RenderWindow* window) {
+    bg.draw(window);
     draw_ps(sub, window);
 }
 
 void Sonar_UI::draw_ps(const Sub* sub, sf::RenderWindow* window) {
-    static sf::RectangleShape r;
-    r.setSize({static_cast<float>(ps_tex->getSize().x), static_cast<float>(ps_tex->getSize().y)});
-    r.setPosition(50, 50);
-    r.setTexture(ps_tex.get(), true);
-    window->draw(r);
-
     /// 1 Line Update
-    if (static sf::Clock timer; timer.getElapsedTime().asSeconds() > 0.5f) {
+    if (static sf::Clock timer; timer.getElapsedTime().asSeconds() > ps_intervall) {
         timer.restart();
-        const auto& sonar = sub->get_sonars_passive().at(0);
+        const auto& sonar = sub->get_sonars_passive().at(ps_array_select-1);
 
         /// Konvertiert 0°-360°-Kurs-Koordinaten zu x-Koordinaten der Sonar-Anzeige
         auto convert = [](float degree) {
@@ -88,8 +103,5 @@ void Sonar_UI::draw_ps(const Sub* sub, sf::RenderWindow* window) {
         }
         ps_tex->update(ps_data.data()); // In Textur übernehmen
     }
-        // Pixel 1 Reihe nach oben schieben
-        // Unterste Reihe: Aktuelle Detektionen zeichnen
-        // textur .update
-    // Aktuelles ps_pic anzeigen
+    window->draw(ps_rect);
 }

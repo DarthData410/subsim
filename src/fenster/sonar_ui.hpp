@@ -31,4 +31,8 @@ private:
     std::unique_ptr<sf::Texture> ps_tex;
     std::vector<uint8_t> ps_data;
 
+    /* Einstellungen */
+    float ps_intervall = 0.5f;
+    int ps_array_select = 1;
+
 };
