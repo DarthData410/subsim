@@ -1,12 +1,10 @@
 #pragma once
 
 #include "standard_ui.hpp"
-#include <SFML/Graphics/Texture.hpp>
 #include <vector>
 #include <cstdint>
 #include <memory>
-
-namespace sf { class Texture; }
+#include <SFML/Graphics/RenderTexture.hpp>
 
 /// UI zur Anzeige vom Passiven Sonar.
 class Sonar_UI final : public Standard_UI {
@@ -24,19 +22,19 @@ public:
 private:
 
     void draw_as(const Sub*, sf::RenderWindow* window);
-
     void draw_ps(const Sub*, sf::RenderWindow* window);
 
 private:
 
-    std::unique_ptr<sf::Texture> as_tex;
+    std::unique_ptr<sf::RenderTexture> as_tex;
     std::unique_ptr<sf::Texture> ps_tex;
-    std::vector<uint8_t> as_data;
     std::vector<uint8_t> ps_data;
 
     /* Einstellungen */
+    float as_intervall = 15.f;
+    int   as_array_select = 1;
+    float as_scale = 0.1f;
     float ps_intervall = 0.5f;
-    int ps_array_select = 1;
-    int as_array_select = 1;
+    int   ps_array_select = 1;
 
 };

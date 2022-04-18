@@ -59,6 +59,10 @@ TEST_CASE_CLASS("welt") {
         CHECK(sub1->get_typ() == Objekt::Typ::SUB);
         CHECK(sub2->get_typ() == Objekt::Typ::SUB);
 
+        // AS einschalten
+        sub1->sonars_active.begin()->set_mode(Sonar_Aktiv::Mode::ON);
+        sub2->sonars_active.begin()->set_mode(Sonar_Aktiv::Mode::ON);
+
         // sub2 nähert sich auf zieldistanz
         auto distanz = [&]() { return Physik::distanz_xy(sub1->get_pos(), sub2->get_pos()); };
         const double zieldistanz = 2000.0;
@@ -67,6 +71,13 @@ TEST_CASE_CLASS("welt") {
         for (unsigned i = 0; i < 100'000; ++i) welt.tick(1); // Zeit um sich zu naehern
         CHECK(distanz() < zieldistanz * 1.1); // Distanz + Toleranz voneinander entfernt (kann bei großen ticks ungenauer werden)
         CHECK(sub2->get_speed() == doctest::Approx(0.f));
+
+        SUBCASE("sonar_aktiv detektion") {
+            CHECK(sub1->sonars_active.begin()->get_detektionen().size() == 1);
+            CHECK(sub2->sonars_active.begin()->get_detektionen().size() == 1);
+        }
+        sub1->sonars_active.begin()->set_mode(Sonar_Aktiv::Mode::OFF);
+        sub2->sonars_active.begin()->set_mode(Sonar_Aktiv::Mode::OFF);
 
         // sub2 im Kreis herum im Uhrzeigersinn fahren lassen
         sub2->set_target_rudder(1.0);

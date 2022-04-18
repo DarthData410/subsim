@@ -8,7 +8,7 @@ Sonar_Aktiv::Sonar_Aktiv(const std::string& name, Groesse groesse, float resolut
     Sonar(name, groesse, resolution, blindspots),
     mode(Mode::OFF), max_range(max_range), ping_intervall_min(ping_intervall_min)
 {
-
+    intervall = std::max(ping_intervall_min, 10.f); // Standardeinstellung: x oder Min-Intervall
 }
 
 void Sonar_Aktiv::tick(Objekt* parent, Welt* welt, float s) {

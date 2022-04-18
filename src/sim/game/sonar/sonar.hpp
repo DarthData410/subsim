@@ -47,6 +47,9 @@ public:
     /// Getter: Aktuelle erkannte Signaturen.
     const auto& get_detektionen() const { return detektionen; }
 
+    /// Getter: Detektionsintervall. Bei AS auch Ping-Intervall.
+    float get_intervall() const { return intervall; }
+
     /// Serialisierung via cereal.
     template <class Archive> void serialize(Archive& ar) {
         ar(name, resolution, timer, intervall, blindspots, detektionen, groesse);

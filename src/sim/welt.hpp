@@ -17,7 +17,7 @@ class Welt final {
 public:
 
     /// Erstellt eine nutzbare Welt. Teams, Zonen und Computergegner werden auch generiert.
-    explicit Welt(unsigned npcs_pro_team = 4);
+    explicit Welt(unsigned npcs_pro_team = 1);
 
     /** 
      * Führt einen Simulationsschritt durch. Die Methode misst selbst die Zeit, wann sie davor zuletzt

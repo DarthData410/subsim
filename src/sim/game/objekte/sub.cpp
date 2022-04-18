@@ -11,7 +11,8 @@ Sub::Sub(const std::string& name, const Vektor& pos,
 bool Sub::tick(Welt* welt, float s) {
     if (!Objekt_Steuerbar::tick(welt, s)) return false;
     if (!welt) return true; // alles weitere nur Host
-    for (Sonar_Passiv& sonar_passiv : sonars_passive) sonar_passiv.tick(this, welt, s);
+    for (Sonar_Aktiv&  as : sonars_active)  as.tick(this, welt, s);
+    for (Sonar_Passiv& ps : sonars_passive) ps.tick(this, welt, s);
     return true;
 }
 

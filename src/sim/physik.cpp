@@ -110,3 +110,8 @@ template<> double Physik::round<double>(double wert, double faktor) {
     if (faktor == 0) return wert;
     return static_cast<double>(std::round(static_cast<double>(wert) / static_cast<double>(faktor)) * static_cast<double>(faktor));
 }
+
+template<> int Physik::round<int>(int wert, int faktor) {
+    if ((wert % faktor) <= (faktor / 2)) return wert - (wert % faktor);
+    return wert - (wert % faktor) + faktor;
+}

@@ -10,7 +10,7 @@ class Objekt;
 /// Mathematische/Physikalische Hilfsfunktionen.
 namespace Physik {
 
-    /// Rundet `wert` auf `faktor`. (18, 5) ergibt bspw. 20. @note Nur für Gleitkommazahlen geeignet.
+    /// Rundet `wert` auf `faktor`. (18, 5) ergibt bspw. 20.
     template<typename T> T round(T wert, T faktor);
 
     /// Bewegt `pos` in Richtung `q` um `amount`.
