@@ -4,7 +4,7 @@
 
 #include <SFML/Graphics/RenderWindow.hpp>
 
-class Szene {
+class Szene final {
 
 public:
 
@@ -15,6 +15,9 @@ public:
     ~Szene();
 
 private:
+
+    void load_fonts();
+    void load_theme();
 
     sf::RenderWindow window;
 

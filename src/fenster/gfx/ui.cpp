@@ -4,6 +4,25 @@
 #include <algorithm>
 #include <zufall.hpp>
 #include <imgui.h>
+#include <imgui_internal.h>
+
+
+ui::Font::Font(ui::FONT typ, const ImVec4& color) {
+    int s = static_cast<int>(typ);
+    if (const auto verfuegbar = ImGui::GetIO().Fonts->Fonts.size(); s > verfuegbar) {
+        std::cerr << "[Fehler] Ungueltiger Schrifttyp: " << (int)typ << ", max = " << verfuegbar << std::endl;
+        return;
+    }
+    ImFont* font = ImGui::GetIO().Fonts->Fonts[static_cast<int>(s)];
+    ImGui::PushFont(font);
+    this->old_color = ImGui::GetStyle().Colors[ImGuiCol_Text];
+    ImGui::GetStyle().Colors[ImGuiCol_Text] = color;
+}
+
+ui::Font::~Font() {
+    ImGui::PopFont();
+    ImGui::GetStyle().Colors[ImGuiCol_Text] = old_color;
+}
 
 bool ui::KnobDegree(const char* label, float* p_value, float v_min, float v_max, float v_step, float radius, float thickness, const char* fmt, const std::optional<float>& value2) {
     /// Modified from Source: https://github.com/Flix01/imgui
@@ -18,7 +37,7 @@ bool ui::KnobDegree(const char* label, float* p_value, float v_min, float v_max,
     const ImVec2 center = ImVec2(pos.x + radius_outer, pos.y + radius_outer);
     const float line_height = ImGui::GetTextLineHeight();
 
-    // Value manipulation
+    // Wert anpassen
     ImGui::InvisibleButton(label, ImVec2(radius_outer*2, radius_outer*2 + line_height + style.ItemInnerSpacing.y));
     bool value_changed = true;
     const bool is_active = ImGui::IsItemActive();
@@ -42,7 +61,7 @@ bool ui::KnobDegree(const char* label, float* p_value, float v_min, float v_max,
     draw_list->AddLine(ImVec2(center.x + angle_cos*radius_inner, center.y + angle_sin*radius_inner),
                        ImVec2(center.x + angle_cos*(radius_outer-2), center.y + angle_sin*(radius_outer-2)),
                        ImGui::GetColorU32(ImGuiCol_SliderGrabActive), thickness);
-    draw_list->AddCircleFilled(center, radius_inner, ImGui::GetColorU32(is_active ? ImGuiCol_FrameBgActive : is_hovered ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg), 16);
+    draw_list->AddCircleFilled(center, radius_inner, ImGui::GetColorU32(is_active ? ImGuiCol_FrameBgActive : ImGuiCol_FrameBgHovered), 16);
     draw_list->AddText(ImVec2(pos.x, pos.y + radius_outer * 2 + style.ItemInnerSpacing.y), ImGui::GetColorU32(ImGuiCol_Text), label);
     if (value2) { // Optionaler 2ter Wert
         const float t2 = (value2.value() - v_min) / (v_max - v_min);
@@ -75,14 +94,17 @@ void ui::Text(const char* fmt, ...) {
 }
 
 bool ui::SliderFloat(const char* label, float* v, float v_min, float v_max, const char* format, ImGuiSliderFlags flags) {
+    ImGui::SetNextItemWidth(100.f);
     return ImGui::SliderFloat(label, v, v_min, v_max, format, flags);
 }
 
 bool ui::SliderInt(const char* label, int* v, int v_min, int v_max, const char* format, ImGuiSliderFlags flags) {
+    ImGui::SetNextItemWidth(100.f);
     return ImGui::SliderInt(label, v, v_min, v_max, format, flags);
 }
 
 bool ui::InputInt(const char* label, int* v, int step, int step_fast, ImGuiInputTextFlags flags) {
+    ImGui::SetNextItemWidth(100.f);
     return ImGui::InputInt(label, v, step, step_fast, flags);
 }
 
@@ -92,3 +114,20 @@ bool ui::Button(const char* label, const ImVec2& size) { return ImGui::Button(la
 bool ui::Checkbox(const char* label, bool* v) { return ImGui::Checkbox(label, v); }
 bool ui::RadioButton(const char* label, bool active) { return ImGui::RadioButton(label, active); }
 bool ui::RadioButton(const char* label, int* v, int v_button) { return ImGui::RadioButton(label, v, v_button); }
+
+template void ui::MouseWheel<float>(float& value, float increment, float min, float max);
+template void ui::MouseWheel<int>(int& value, int increment, int min, int max);
+template<typename T> void ui::MouseWheel(T& value, T increment, T min, T max) {
+    ImGui::SetItemUsingMouseWheel();
+    if (ImGui::IsItemHovered()) {
+        const auto wheel = ImGui::GetIO().MouseWheel;
+        if (std::abs(wheel) > 0.f) {
+            if (ImGui::IsItemActive()) ImGui::ClearActiveID();
+            else {
+                if      (wheel > 0.f) value += increment;
+                else if (wheel < 0.f) value -= increment;
+                value = std::clamp(value, min, max);
+            }
+        }
+    }
+}

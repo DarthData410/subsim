@@ -5,6 +5,7 @@
 #include "gfx/ui.hpp"
 #include "../sim/net/klient.hpp"
 
+#include <selbaward/Ring.hpp>
 #include <zufall.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
@@ -25,6 +26,7 @@ namespace {
     const unsigned PS_POS_Y  =   80;
     const unsigned PS_LINE_WIDTH = PS_SIZE_X * RGB_PX;
     sf::CircleShape    as_circ;
+    sw::Ring           as_ring; // Aufdeckend
     sf::RectangleShape ps_rect;
     Grafik bg("data/gfx/bg_sonar.png");
 }
@@ -41,6 +43,10 @@ Sonar_UI::Sonar_UI(Klient* klient) : Standard_UI(klient),
     as_circ.setRadius(AS_RADIUS);
     as_circ.setPosition(AS_POS_X, AS_POS_Y);
     as_circ.setTexture(&as_tex->getTexture());
+    as_ring.setRadius(AS_RADIUS);
+    as_ring.setPosition(AS_POS_X, AS_POS_Y);
+    as_ring.setColor(sf::Color::Black);
+    as_ring.setHole(0);
 
     // Setup Passive Sonar Texture + Render-Rect
     ps_tex->create(PS_SIZE_X, PS_SIZE_Y);
@@ -51,8 +57,11 @@ Sonar_UI::Sonar_UI(Klient* klient) : Standard_UI(klient),
 }
 
 void Sonar_UI::update_and_show(const Sub* sub) {
+    const ui::Font font(ui::FONT::MONO_20, ImColor(0.f, 1.0f, 0.f));
+    const auto flags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize |
+                 ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground;
+
     // Passive Sonar Config
-    const auto flags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground;
     ImGui::SetNextWindowPos({130, 836});
     ImGui::SetNextWindowSize({405,215});
     const Sonar_Passiv& ps = sub->get_sonars_passive().at(ps_array_select-1);
@@ -60,6 +69,7 @@ void Sonar_UI::update_and_show(const Sub* sub) {
     ui::SliderInt("Array Select", &ps_array_select, 1, sub->get_sonars_passive().size(), "#%d");
     ui::Text("Selected Sonar Model: %s", ps.get_name().c_str());
     ui::SliderFloat("Update Intervall", &ps_intervall, 0.2f, 10.f, "%.1fs");
+    ui::MouseWheel(ps_intervall, 0.1f, 0.2f, 10.f);
     if (ui::Button("Clear")) {
         std::memset(ps_data.data(), BG_COL, ps_data.size());
         ps_tex->update(ps_data.data());
@@ -68,7 +78,9 @@ void Sonar_UI::update_and_show(const Sub* sub) {
 
     // AS Select
     const Sonar_Aktiv& as = sub->get_sonars_active().at(as_array_select-1);
-    ImGui::Begin("Sonar_Active_Config", nullptr);
+    ImGui::SetNextWindowPos({1309, 788});
+    ImGui::SetNextWindowSize({489, 259});
+    ImGui::Begin("Sonar_Active_Config", nullptr, flags);
     ui::SliderInt("Array Select", &as_array_select, 1, sub->get_sonars_active().size(), "#%d");
     ui::Text("Selected Sonar Model: %s", as.get_name().c_str());
     ui::Text("Ping Mode");
@@ -145,16 +157,33 @@ void Sonar_UI::draw_ps(const Sub* sub, sf::RenderWindow* window) {
 
 void Sonar_UI::draw_as(const Sub* sub, sf::RenderWindow* window) {
     const Sonar_Aktiv& as = sub->get_sonars_active().at(as_array_select-1);
-    if (as.get_ping_counter() != as_last_ping) {
+    if (as.get_ping_counter() != as_last_ping) { // Refresh ausführen?
+        as_ring.setHole(0); // Verdecken
         as_last_ping = as.get_ping_counter();
         as_last_ping_timer = sf::Clock();
-
         as_tex->clear({BG_COL, BG_COL, BG_COL, BG_COL});
+
+        // Rauschen generieren
+        sf::Texture tex_rauschen;
+        tex_rauschen.create(AS_SIZE_X, AS_SIZE_Y);
+        std::vector<uint8_t> v_rauschen(AS_SIZE_X * AS_SIZE_Y * RGB_PX);
+        for (unsigned i = 0; i < v_rauschen.size(); i += RGB_PX) {
+            v_rauschen[i]   = 0x00; // R
+            v_rauschen[i+1] = Zufall::i(0, 0x20); // G
+            v_rauschen[i+2] = 0x00; // B
+            v_rauschen[i+3] = 0xFF; // A
+        }
+        tex_rauschen.update(v_rauschen.data());
+        sf::RectangleShape rect_rauschen({AS_SIZE_X, AS_SIZE_Y});
+        rect_rauschen.setTexture(&tex_rauschen);
+        as_tex->draw(rect_rauschen);
+
+        // Detektionen eintragen
         for (const auto& d : as.get_detektionen()) {
             if (!d.range) throw std::runtime_error("Active Sonar detection without range is invalid.\n");
             auto punkt = Physik::get_punkt(0, 0, d.bearing, d.range.value() * as_scale);
-            sf::RectangleShape rect({4.f, 4.f});
-            rect.setFillColor({0x00, 0xFF, 0x00, 0xFF});
+            sf::RectangleShape rect({2.f, 2.f});
+            rect.setFillColor({0x00, 0xFF, 0x00, static_cast<uint8_t>(0xFF * d.gain)});
             rect.setPosition(0.5f * AS_SIZE_X + punkt.first, 0.5f * AS_SIZE_Y - punkt.second);
             as_tex->draw(rect);
         }
@@ -166,4 +195,11 @@ void Sonar_UI::draw_as(const Sub* sub, sf::RenderWindow* window) {
         as_circ.setTexture(&as_tex->getTexture());
     }
     window->draw(as_circ);
+
+    /// Per Ring aufdecken
+    if (static sf::Clock ring_clock; as_last_ping_timer && ring_clock.getElapsedTime().asSeconds() > 1) {
+        ring_clock.restart();
+        as_ring.setHole(std::min(as_ring.getHole() + 0.025f, 1.0f));
+    }
+    window->draw(as_ring);
 }

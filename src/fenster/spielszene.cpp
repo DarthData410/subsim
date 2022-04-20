@@ -57,6 +57,7 @@ void Spielszene::key_pressed(const sf::Keyboard::Key& key) {
 
 void Spielszene::draw_menu() {
     // Timelapse
+    ImGui::Begin("Mainmenu");
     ui::Text("Server Timelapse = %.1f", klient->get_timelapse());
     static float timelapse = 1;
     ui::SliderFloat("Timelapse", &timelapse, 0, 20, "%.1f");
@@ -65,6 +66,7 @@ void Spielszene::draw_menu() {
         const Kommando neue_zeit_kommando(Kommando::TIMELAPSE, 0, timelapse);
         klient->kommando(neue_zeit_kommando);
     }
+    ImGui::End();
 }
 
 void Spielszene::show() {
@@ -104,7 +106,6 @@ void Spielszene::draw_imgui() {
     static sf::Clock fps_clock;
     ImGui::SFML::Update(*window, fps_clock.restart());
     // Welches Menü rendern?
-    ImGui::Begin("Spielszene");
     switch (tab) {
         case MAINMENU: draw_menu(); break;
         case NAV:      nav_ui.update_and_show(&player_sub.value());    break;
@@ -113,7 +114,6 @@ void Spielszene::draw_imgui() {
         case THREE_D:  break;
         default:       tab = MAINMENU; break;
     }
-    ImGui::End();
 }
 
 void Spielszene::draw_gfx() {

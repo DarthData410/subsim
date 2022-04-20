@@ -16,11 +16,11 @@ public:
     Detektion() = default;
 
     Detektion(oid_t objekt_id, Detektion::Typ typ, float gain, float bearing, const std::optional<dist_t>& range = std::nullopt) :
-        objekt_id(objekt_id), gain(gain), bearing(bearing), range(range), typ(typ) {}
+        objekt_id(objekt_id), gain(std::clamp(gain, 0.f, 1.0f)), bearing(bearing), range(range), typ(typ) {}
 
     oid_t objekt_id;             /// ID des erkannten Objekts. Kann bereits vernichtet sein.
-    float gain;                  /// Lautstärke der Signatur.
-    float bearing;               /// Kurs (absolut,d.h. nicht relativ zum Elternobjekt).
+    float gain;                  /// Lautstärke der Signatur. Garantiert im Bereich [0,1].
+    float bearing;               /// Kurs (absolut; d.h. nicht relativ zum Elternobjekt).
     std::optional<dist_t> range; /// Entfernung in m.
     Typ typ;                     /// Typ der Signatur.
 

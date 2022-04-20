@@ -69,7 +69,8 @@ void Nav_UI::show_navigation(const Sub* sub) const {
     ui::Separator();
 
     static float target_speed = 0;
-    ui::SliderFloat("target_speed", &target_speed, -sub->get_speed_max(), sub->get_speed_max(), "%.1f");
+    ui::SliderFloat("Set Speed", &target_speed, -sub->get_speed_max(), sub->get_speed_max(), "%.1f");
+    ui::MouseWheel(target_speed, 0.5f, -sub->get_speed_max(), sub->get_speed_max());
     if (ui::Button("Set##set_speed")) {
         klient->kommando({Kommando::MOTOR_LINEAR, sub->get_id(), target_speed / sub->get_speed_max()});
     }
@@ -194,7 +195,7 @@ void Nav_UI::handle_imgui_events() {
         ImGui::ResetMouseDragDelta(ImGuiMouseButton_Middle);
     }
     /// Zoom via Mausrad
-    if (std::abs(io.MouseWheel) > 0) {
+    if (!ImGui::IsAnyItemHovered() && std::abs(io.MouseWheel) > 0) {
         scale += (0.25f * scale * io.MouseWheel);
         scale = std::clamp(scale, 0.001f, 1.f);
     }

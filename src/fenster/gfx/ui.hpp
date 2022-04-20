@@ -6,6 +6,25 @@
 /// ImGui-Wrapper & Addons.
 namespace ui {
 
+    /// Verfügbare Schriftarten.
+    enum class FONT {
+        MONO_12=0,
+        MONO_14=1,
+        MONO_16=2,
+        MONO_18=3,
+        MONO_20=4,
+        MONO_22=5,
+        MONO_24=6,
+    };
+
+    /// Zum festlegen einer Schriftart via RAII.
+    class Font final {
+    public:
+        Font(FONT typ, const ImVec4& color = ImGui::GetStyle().Colors[ImGuiCol_Text]); /// Setzt gegebene Schriftart.
+        ~Font(); /// Hebt die Schriftartänderung auf.
+    private: ImVec4 old_color;
+    };
+
     /**
      * Modifiziert vom Original: https://github.com/Flix01/imgui
      * @param label
@@ -29,6 +48,9 @@ namespace ui {
      * wenn die Maus sich über diesem befindet.
      */
     void Tooltip(const char* text);
+
+    /// Mausrad kann über dem vorigen ImGui-Element verwendet werden, um einen Wert zu erhöhen/verringern.
+    template <typename T> void MouseWheel(T& value, T increment, T min, T max);
 
     /* Wrapper für ImGui::XXX */
     void Text(const char* fmt, ...);

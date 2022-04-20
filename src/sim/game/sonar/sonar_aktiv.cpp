@@ -44,7 +44,7 @@ void Sonar_Aktiv::tick(Objekt* parent, Welt* welt, float s) {
         detektionen.push_back(Detektion(
                 o->get_id(),
                 Detektion::Typ::ACTIVE_SONAR_ECHO,
-                1.0, // Aktiver Sonar: immer voll Sichtbar
+                o->get_noise(), // TODO gut so oder immer 1.0f einfach?
                 Physik::round(kurs, this->resolution),
                 entfernung)
         );
