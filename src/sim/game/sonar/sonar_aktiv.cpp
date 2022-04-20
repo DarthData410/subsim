@@ -6,7 +6,8 @@
 Sonar_Aktiv::Sonar_Aktiv(const std::string& name, Groesse groesse, float resolution, dist_t max_range, float ping_intervall_min,
                          const std::vector<std::tuple<float, float>>& blindspots) :
     Sonar(name, groesse, resolution, blindspots),
-    mode(Mode::OFF), max_range(max_range), ping_intervall_min(ping_intervall_min)
+    mode(Mode::OFF), max_range(max_range),
+    ping_intervall_min(ping_intervall_min), ping_counter(0)
 {
     intervall = std::max(ping_intervall_min, 10.f); // Standardeinstellung: x oder Min-Intervall
 }
@@ -14,7 +15,8 @@ Sonar_Aktiv::Sonar_Aktiv(const std::string& name, Groesse groesse, float resolut
 void Sonar_Aktiv::tick(Objekt* parent, Welt* welt, float s) {
     // Detektionen überhaupt durchführen?
     if (this->mode == Mode::OFF) return; // Eingeschaltet?
-    if (timer += s; timer < intervall) return; // Ist es an der Zeit?
+    timer += s;
+    if (timer < intervall) return; // Ist es an der Zeit?
     if (this->mode == Mode::SINGLE) mode = Mode::OFF; // nur 1x
     detektionen.clear();
     timer = 0;
@@ -22,6 +24,7 @@ void Sonar_Aktiv::tick(Objekt* parent, Welt* welt, float s) {
     // Ping!
     Ping* ping = new Ping(parent, max_range);
     welt->add(ping);
+    ++ping_counter;
 
     // Detektionen berechnen
     static const std::unordered_set<Objekt::Typ> erkennbare_typen = {

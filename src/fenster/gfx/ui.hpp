@@ -3,8 +3,8 @@
 #include <optional>
 #include <imgui.h>
 
+/// ImGui-Wrapper & Addons.
 namespace ui {
-
 
     /**
      * Modifiziert vom Original: https://github.com/Flix01/imgui
@@ -30,7 +30,7 @@ namespace ui {
      */
     void Tooltip(const char* text);
 
-    /// Wrapper für ImGui::XXX
+    /* Wrapper für ImGui::XXX */
     void Text(const char* fmt, ...);
     void TextUnformatted(const char* text);
     void Separator();

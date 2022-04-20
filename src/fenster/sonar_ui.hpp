@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <memory>
 #include <SFML/Graphics/RenderTexture.hpp>
+#include <SFML/System/Clock.hpp>
 
 /// UI zur Anzeige vom Passiven Sonar.
 class Sonar_UI final : public Standard_UI {
@@ -31,6 +32,8 @@ private:
     std::unique_ptr<sf::RenderTexture> as_tex;
     std::unique_ptr<sf::Texture> ps_tex;
     std::vector<uint8_t> ps_data;
+    std::optional<sf::Clock> as_last_ping_timer;
+    uint32_t as_last_ping = 0;
 
     /* Einstellungen */
     float as_intervall = 15.f;

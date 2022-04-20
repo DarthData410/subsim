@@ -80,9 +80,13 @@ void Sonar_UI::update_and_show(const Sub* sub) {
     if (ui::RadioButton("ON", as.get_mode() == Sonar_Aktiv::Mode::ON)) modus = Sonar_Aktiv::Mode::ON;
     if (modus != as.get_mode()) klient->kommando(Kommando(Kommando::SONAR_A_MODE, sub->get_id(),
                                                           std::tuple<uint8_t, Sonar_Aktiv::Mode>(as_array_select-1, modus)));
-    ui::Text("Ping Intervall: %.1fs", as.get_intervall()); // TODO
+    ui::Text("Ping Intervall: %.1fs", as.get_intervall()); // TODO Kommando
+    if (as_last_ping_timer.has_value()) ui::Text("Last Ping: %.1fs", as_last_ping_timer->getElapsedTime().asSeconds());
+    else ui::TextUnformatted("Last Ping: -");
+    ui::Text("Total Pings: %d", as.get_ping_counter());
     if (ui::Button("Clear")) {
         as_tex->clear({BG_COL, BG_COL, BG_COL, BG_COL});
+        as_last_ping_timer.reset();
     }
     // ui::Text("Range Rings");
     ImGui::End();
@@ -140,10 +144,12 @@ void Sonar_UI::draw_ps(const Sub* sub, sf::RenderWindow* window) {
 }
 
 void Sonar_UI::draw_as(const Sub* sub, sf::RenderWindow* window) {
-    if (static sf::Clock timer; timer.getElapsedTime().asSeconds() > 3) {
-        timer.restart();
+    const Sonar_Aktiv& as = sub->get_sonars_active().at(as_array_select-1);
+    if (as.get_ping_counter() != as_last_ping) {
+        as_last_ping = as.get_ping_counter();
+        as_last_ping_timer = sf::Clock();
+
         as_tex->clear({BG_COL, BG_COL, BG_COL, BG_COL});
-        const Sonar_Aktiv& as = sub->get_sonars_active().at(as_array_select-1);
         for (const auto& d : as.get_detektionen()) {
             if (!d.range) throw std::runtime_error("Active Sonar detection without range is invalid.\n");
             auto punkt = Physik::get_punkt(0, 0, d.bearing, d.range.value() * as_scale);
@@ -156,7 +162,6 @@ void Sonar_UI::draw_as(const Sub* sub, sf::RenderWindow* window) {
         rect.setFillColor({0xFF, 0xFF, 0xFF, 0xFF});
         rect.setPosition(0.5 * AS_SIZE_X, 0.5 * AS_SIZE_Y);
         as_tex->draw(rect);
-
         as_tex->display();
         as_circ.setTexture(&as_tex->getTexture());
     }

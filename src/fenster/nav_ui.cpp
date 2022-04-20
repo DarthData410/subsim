@@ -169,9 +169,11 @@ void Nav_UI::draw_gfx(const Sub* sub, sf::RenderWindow* window) {
         //if (fow && o.get_team() != sub->get_team()) continue; // fremdes Team TODO
         //if (x < 0 || x > size_x || y < 0 || y > size_y) continue; // außerhalb des Bildes
         sf::Color color(0xFF, 0xFF, 0xFF);
-        if      (o->get_id()   == sub->get_id())        color = sf::Color(0, 0xFF, 0); // eigenes Sub
+        if      (o->get_id()   == sub->get_id())        color = sf::Color(0xFF, 0xFF, 0xFF); // eigenes Sub
         else if (o->get_team() != sub->get_team())      color = sf::Color(0xFF, 0, 0); // Feindliches Objekt
         else if (o->get_typ()  == Objekt::Typ::TORPEDO) color = sf::Color(0xFF, 0xFF, 0); // Torpedo
+        else if (o->get_typ()  == Objekt::Typ::PING)    color = sf::Color(0, 0, 0xFF); // Sonar Ping
+        else if (o->get_team() == sub->get_team())      color = sf::Color(0, 0xFF, 0); // freundliches Objekt
         sf::CircleShape shape(8.f, 4);
         const auto& o_map_pos = world2ui(o->get_pos().x(), o->get_pos().y());
         shape.setPosition(o_map_pos);

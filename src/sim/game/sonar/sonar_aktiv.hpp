@@ -27,19 +27,22 @@ public:
     /// Aktivieren / Deaktivieren.
     void set_mode(Mode mode) { Sonar_Aktiv::mode = mode; }
 
-    /// Getter: Aktueller Operationsmodus.
+    /// Aktueller Operationsmodus.
     Mode get_mode() const { return mode; }
 
-    /// Getter: Schnellstmöglicher Ping-Intervall.
+    /// Schnellstmöglicher Ping-Intervall.
     float get_ping_intervall_min() const { return ping_intervall_min; }
 
-    /// Getter: Maximale Reichweite in m.
+    /// Zähler, wieviele Pings abgegeben wurden
+    uint32_t get_ping_counter() const { return ping_counter; }
+
+    /// Maximale Reichweite in m.
     dist_t get_max_range() const { return max_range; }
 
     /// Serialisierung via cereal.
     template <class Archive> void serialize(Archive& ar) {
         ar(cereal::base_class<Sonar>(this),
-                mode, ping_intervall_min, max_range);
+                mode, ping_intervall_min, max_range, ping_counter);
     }
 
 private:
@@ -52,6 +55,9 @@ private:
 
     /// Schnellstmögliches Intervall für Pings.
     float ping_intervall_min;
+
+    /// Zählt wieviele Pings abgegeben wurden.
+    uint32_t ping_counter;
 
 };
 CEREAL_REGISTER_TYPE(Sonar_Aktiv)

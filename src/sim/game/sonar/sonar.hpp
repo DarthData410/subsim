@@ -29,26 +29,32 @@ public:
     /// Führt erkennungen durch.
     virtual void tick(Objekt* parent, Welt* welt, float s) = 0;
 
-    /// Begindet sich `objekt` in `parent`s totem Winkel (blindspot)?
+    /// Begindet sich `objekt` in `parent`s totem Winkel (blindspot)? // TODO testen + reaktivieren
     bool is_in_toter_winkel(winkel_t kurs_relativ) const;
 
     /// Getter: Auf wieviel Grad genau eine Richtung bestimmt werden kann.
     float get_aufloesung() const { return resolution; }
 
+    /// Typenname dieses Sonars.
     const std::string& get_name() const { return name; }
 
+    /// Auf wieviel ° genau sind erkennungen?
     float get_resolution() const { return resolution; }
 
+    /// Große Sonars passen bspw. nicht in Torpedos.
     Groesse get_groesse() const { return groesse; }
 
     /// Getter: Sichtbereich(e) des Sonars, relativ zum sub.
     const std::vector<std::tuple<float, float>>& get_blindspots() const { return blindspots; }
 
     /// Getter: Aktuelle erkannte Signaturen.
-    const auto& get_detektionen() const { return detektionen; }
+    const std::vector<Detektion>& get_detektionen() const { return detektionen; }
 
     /// Getter: Detektionsintervall. Bei AS auch Ping-Intervall.
     float get_intervall() const { return intervall; }
+
+    /// Getter: Letzte Detektion.
+    float get_timer() const { return timer; }
 
     /// Serialisierung via cereal.
     template <class Archive> void serialize(Archive& ar) {
