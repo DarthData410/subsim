@@ -54,3 +54,8 @@ bool Explosion::tick(Welt* welt, float s) {
     remaining_time -= s;
     return remaining_time > 0;
 }
+
+const std::string& Explosion::get_name() const {
+    static const std::string s("Explosion");
+    return s;
+}

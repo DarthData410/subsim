@@ -12,6 +12,13 @@ public:
 
     void update_and_show(const Sub* sub) override;
 
+    void handle(sf::Event* event) override { (void)event; }
+
+    void draw_gfx(const Sub* sub, sf::RenderWindow* window) override {
+        (void) sub;
+        (void) window;
+    }
+
 private:
 
     void show_intelligence() const;

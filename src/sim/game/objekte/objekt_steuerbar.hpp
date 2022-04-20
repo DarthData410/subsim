@@ -36,7 +36,7 @@ public:
     bool apply_damage(Explosion* explosion, float damage) override;
 
     /// Getter: Objektname.
-    const std::string& get_name() const override { return "Invalid Object [B]"; }
+    const std::string& get_name() const override;
 
     /// Startet den Bremsvorgang. Leitet kompletten Stilltstand ein.
     void stop();

@@ -27,7 +27,7 @@ public:
     float get_noise() const override { return 1.0; };
 
     /// Getter: Objektname.
-    const std::string& get_name() const override { return "Explosion"; }
+    const std::string& get_name() const override;
 
     /// Serialisierung via cereal.
     template <class Archive> void serialize(Archive& ar) {

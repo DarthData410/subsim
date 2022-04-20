@@ -131,7 +131,7 @@ TEST_CASE_CLASS("welt") {
                 torpedo.set_distance_to_activate(250);
                 torpedo.set_distance_to_explode(50);
                 CHECK(torpedo.get_distance_to_activate() > torpedo.get_distance_to_explode());
-                int ammo_vorher;
+                int ammo_vorher = -1;
                 REQUIRE_NOTHROW(ammo_vorher = sub1->get_torpedos().at(torpedo));
                 welt.add_torpedo(sub1, torpedo);
                 CHECK(sub1->get_torpedos().at(torpedo) == ammo_vorher - 1); // 1 Torpedo weniger?

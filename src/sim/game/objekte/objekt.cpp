@@ -25,7 +25,20 @@ Objekt* Objekt::copy(const Objekt* o) {
         case Typ::SUB:              return new Sub(*((Sub*)o));
         case Typ::TORPEDO:          return new Torpedo(*((Torpedo*)o));
         case Typ::EXPLOSION:        return new Explosion(*((Explosion*)o));
+        case Typ::OBJEKT:           return nullptr;
+        case Typ::OBJEKT_STEUERBAR: return nullptr;
     }
     Log::err() << "Objekt::copy Typ ist nicht kopierbar: " << (int)o->get_typ() << '\n';
     return nullptr;
+}
+
+bool Objekt::apply_damage(Explosion* explosion, float damage) {
+    (void) explosion;
+    (void) damage;
+    return false;
+}
+
+const std::string& Objekt::get_name() const {
+    static const std::string s("Invalid Object [A]");
+    return s;
 }

@@ -1,0 +1,36 @@
+# use the official gcc image, based on debian
+# can use versions as well, like gcc:5.2
+# see https://hub.docker.com/_/gcc/
+
+image: gcc
+
+before_script:
+  - apt-get update && apt-get install -y --no-install-recommends make cmake g++ libsfml-dev
+
+stages :
+  - build
+  - test
+
+build:
+  stage : build
+  script:
+    - cd libs
+    - sh download_libraries.sh
+    - cd ..
+    - mkdir -p build
+    - cd build
+    - cmake -DCMAKE_BUILD_TYPE=Release --target nada_sub .. && cmake --build . --target nada_sub && make
+  artifacts:
+    paths:
+      - build/nada_sub
+
+test:
+  stage : test
+  script:
+    - cd libs
+    - sh download_libraries.sh
+    - cd ..
+    - mkdir -p build
+    - cd build
+    - cmake -DCMAKE_BUILD_TYPE=Debug --target nada_sub_test .. && cmake --build . --target nada_sub_test && make
+    - ./nada_sub_test

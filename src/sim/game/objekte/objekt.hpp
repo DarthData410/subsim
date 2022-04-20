@@ -46,10 +46,10 @@ public:
      * @note Man kann 'false' zurückgeben, um das Objekt zu zerstören.
      *       Zerstören = wird aus der Welt entfernt.
      */
-    virtual bool tick(Welt* welt, float s) {};
+    virtual bool tick(Welt* welt, float s) = 0;
 
     /// Fügt diesem Objekt Explosionsschaden zu. Liefert `true`, wenn es durch die Explosion zerstört wurde.
-    virtual bool apply_damage(Explosion* explosion, float damage) { return false; }
+    virtual bool apply_damage(Explosion* explosion, float damage);
 
     /// Liefert den Objekttypen zur Polymorphieauflösung.
     virtual Typ get_typ() const { return Typ::OBJEKT; };
@@ -61,7 +61,7 @@ public:
     virtual float get_noise() const = 0;
 
     /// Getter: Objektname.
-    virtual const std::string& get_name() const { return "Invalid Object [A]"; }
+    virtual const std::string& get_name() const;
 
     /// Getter: Einmalige ID, global gültig für alle Objekte und vererbte Klassen.
     uint32_t get_id() const { return id; }

@@ -19,6 +19,8 @@ public:
 
     void draw_gfx(const Sub* sub, sf::RenderWindow* window) override;
 
+    void handle(sf::Event* event) override { (void)event; }
+
 private:
 
     void draw_as(const Sub*, sf::RenderWindow* window);

@@ -16,14 +16,14 @@ public:
 
     bool tick(Welt* welt, float s) override;
 
-    bool apply_damage(Explosion* explosion, float damage) override { return false; }
+    bool apply_damage(Explosion* explosion, float damage) override { (void)explosion; (void)damage; return false; }
 
     Typ get_typ() const override { return Typ::PING; }
 
     float get_noise() const override { return 1.0f; }
 
     /// Getter: Objektname.
-    const std::string& get_name() const override { return "Sonar Ping"; }
+    const std::string& get_name() const override;
 
     dist_t get_range() const { return range; }
 

@@ -38,10 +38,12 @@ void Host::start() {
                 handle_receive(event);
                 break;
             case ENET_EVENT_TYPE_DISCONNECT:
-                printf("%s disconnected.\n", event.peer->data);
+                printf("%u disconnected.\n", event.peer->address.host);
                 event.peer->data = nullptr; // delete wenn nötig
                 break;
+            case ENET_EVENT_TYPE_NONE: break;
         }
+
         // Broadcast
         if (static sf::Clock timer; timer.getElapsedTime().asMilliseconds() > 1000) {
             std::stringstream ss;

@@ -25,6 +25,8 @@ void Objekt_Steuerbar::stop() {
 }
 
 bool Objekt_Steuerbar::tick(Welt* welt, float s) {
+    (void) welt;
+
     // Automatisches Pfadfinden
     if (target_pos) auto_path();
 
@@ -76,10 +78,16 @@ void Objekt_Steuerbar::auto_path() {
 }
 
 bool Objekt_Steuerbar::apply_damage(Explosion* explosion, float damage) {
+    (void) explosion;
     if (damage <= 0) return false;
     // Totalschaden
     if (schaeden.count(Schaden::ZERSTOERT)) return false; // war bereits zerstört
     Log::debug() << "Objekt " << this->get_id() << " Typ=" << (int)this->get_typ() << " zerstoert.\n";
     schaeden.insert(Schaden::ZERSTOERT); // TODO - momentan immer Zerstörung
     return true;
+}
+
+const std::string& Objekt_Steuerbar::get_name() const {
+    static const std::string s("Invalid Object [B]");
+    return s;
 }

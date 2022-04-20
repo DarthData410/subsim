@@ -3,9 +3,9 @@
 
 Sonar::Sonar(const std::string& name, Groesse groesse, float resolution, std::vector<std::tuple<float, float>> blindspots) :
     name(name),
+    resolution(resolution),
     timer(0),
     groesse(groesse),
-    resolution(resolution),
     blindspots(std::move(blindspots))
 {
     //

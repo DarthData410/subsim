@@ -115,6 +115,7 @@ void Nav_UI::show_noise_signature(const Sub* sub, std::optional<float> mark_v) c
 }
 
 void Nav_UI::show_minimap(const Sub* sub) const {
+    (void) sub;
     ImGui::Begin("Map Settings");
     if (ImGui::Button("Center on Sub")) { shift_x = 0; shift_y = 0; }
     ImGui::SliderFloat("Scale", &scale, 0.001, 0.5);
@@ -164,7 +165,6 @@ void Nav_UI::draw_gfx(const Sub* sub, sf::RenderWindow* window) {
     }
 
     // Objekte zeichnen
-    unsigned i = 0;
     for (const auto& o : objekte) {
         //if (fow && o.get_team() != sub->get_team()) continue; // fremdes Team TODO
         //if (x < 0 || x > size_x || y < 0 || y > size_y) continue; // außerhalb des Bildes

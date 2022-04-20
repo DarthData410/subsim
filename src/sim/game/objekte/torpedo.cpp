@@ -11,7 +11,7 @@ Torpedo::Torpedo(const Motor& motor_linear, const Motor& motor_rot, const Motor&
         : Objekt_Steuerbar({0,0,0}, // unwichtig, wird überschrieben bei Kopie
                            motor_linear, motor_rot, motor_tauch,
                            1.0),
-          name(name), range(range), sonar_aktiv(sonar_aktiv), sonar_passiv(sonar_passiv), explosion(explosion)
+          name(name), range(range), explosion(explosion), sonar_aktiv(sonar_aktiv), sonar_passiv(sonar_passiv)
 {
     //
 }

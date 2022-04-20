@@ -15,7 +15,7 @@ void Sonar_Aktiv::tick(Objekt* parent, Welt* welt, float s) {
     // Detektionen überhaupt durchführen?
     if (this->mode == Mode::OFF) return; // Eingeschaltet?
     if (timer += s; timer < intervall) return; // Ist es an der Zeit?
-    if (this->mode == Mode::SINGLE) mode == Mode::OFF; // nur 1x
+    if (this->mode == Mode::SINGLE) mode = Mode::OFF; // nur 1x
     detektionen.clear();
     timer = 0;
 
@@ -33,6 +33,7 @@ void Sonar_Aktiv::tick(Objekt* parent, Welt* welt, float s) {
         if (o == parent) continue; // eigenes Sub ignorieren
         if (erkennbare_typen.count(o->get_typ()) == 0) continue; // nicht erkennbarer Typ
         if (!Physik::in_reichweite_xyz(parent->get_pos(), o->get_pos(), this->max_range)) continue; // zu weit
+        if (is_in_toter_winkel(Physik::kurs_relativ(parent, o))) continue; // im toten Winkel
 
         // Erkannt!
         const winkel_t kurs = Physik::kurs(parent->get_pos(), o->get_pos());

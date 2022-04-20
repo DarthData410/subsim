@@ -21,9 +21,9 @@ public:
     /// Rendert die UI. In jedem Renderschritt aufzurufen.
     virtual void update_and_show(const Sub* sub) = 0;
 
-    virtual void handle(sf::Event* event) {};
+    virtual void handle(sf::Event* event) = 0;
 
-    virtual void draw_gfx(const Sub* sub, sf::RenderWindow* window) {};
+    virtual void draw_gfx(const Sub* sub, sf::RenderWindow* window) = 0;
 
 protected:
 

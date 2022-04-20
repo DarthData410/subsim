@@ -28,6 +28,8 @@ public:
     /// Fog of War an/aus.
     void set_fow(bool fow) { Nav_UI::fow = fow; }
 
+    void handle(sf::Event* event) override { (void)event; }
+
 private:
 
     void sync(bool force = false);

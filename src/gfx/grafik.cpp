@@ -8,6 +8,7 @@ Grafik::Grafik(const std::string& textur_pfad, bool is_shared) :
         is_flipped(false),
         textur_pfad(textur_pfad)
 {
+#ifndef UNITTEST // Damit Unittests auch ohne z.B. X11 laufen
     // Textur noch nicht vorhanden
     textur = new sf::Texture;
     if (textur->loadFromFile(textur_pfad)) std::cout << "\t\tGrafik erzeugt: " << textur_pfad << '\n';
@@ -19,6 +20,9 @@ Grafik::Grafik(const std::string& textur_pfad, bool is_shared) :
 
     // Textur setzen
     if (textur) sprite.setTexture(*textur);
+#else
+    textur = nullptr;
+#endif
 }
 
 Grafik::~Grafik() {

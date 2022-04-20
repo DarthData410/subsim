@@ -22,14 +22,14 @@ void Waffen_UI::show_weapons(const Sub* sub) const {
 
     // Torpedoauswahl
     static int torpedo_index = 0;
-    for (int i = 0; i < sub->get_torpedos().size(); ++i) {
+    for (int i = 0; i < (int)sub->get_torpedos().size(); ++i) {
         auto it = sub->get_torpedos().begin();
         std::advance(it, i);
         ImGui::RadioButton(it->first.get_name().c_str(), &torpedo_index, i);
     }
 
     // Ausgewähltes Torpedo bestimmen
-    if (torpedo_index > sub->get_torpedos().size()) torpedo_index = 0;
+    if (torpedo_index > (int)sub->get_torpedos().size()) torpedo_index = 0;
     auto it = sub->get_torpedos().begin();
     std::advance(it, torpedo_index);
     const Torpedo& torp = it->first;

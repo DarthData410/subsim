@@ -75,6 +75,7 @@ void Spielszene::show() {
             switch (event.type) {
                 case sf::Event::KeyReleased: key_pressed(event.key.code); break;
                 case sf::Event::Closed: window->close(); break;
+                default: break;
             }
             switch (tab) {
                 case NAV: nav_ui.handle(&event); break;
