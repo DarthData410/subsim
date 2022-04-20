@@ -1,7 +1,7 @@
 #include "nav_ui.hpp"
-#include "imgui_addons.hpp"
 #include "../sim/net/klient.hpp"
 #include "../sim/physik.hpp"
+#include "gfx/ui.hpp"
 
 #include <log.hpp>
 #include <implot.h>
@@ -47,10 +47,10 @@ void Nav_UI::update_and_show(const Sub* sub) {
 void Nav_UI::show_navigation(const Sub* sub) const {
     ImGui::SetNextWindowSize({300,0});
     ImGui::Begin("Nav View");
-    ImGui::Text("Sub: %.1f %.1f Depth: %.1f", sub->get_pos().x(), sub->get_pos().y(), sub->get_pos().z());
-    ImGui::Text("Pitch:   %.1f", sub->get_pitch());
-    ImGui::Text("Bearing: %.1f (Target: %.f)", sub->get_bearing(), sub->get_target_bearing());
-    ImGui::Text("Speed:   %.1f (Target: %.f)", sub->get_speed(), sub->get_target_speed());
+    ui::Text("Sub: %.1f %.1f Depth: %.1f", sub->get_pos().x(), sub->get_pos().y(), sub->get_pos().z());
+    ui::Text("Pitch:   %.1f", sub->get_pitch());
+    ui::Text("Bearing: %.1f (Target: %.f)", sub->get_bearing(), sub->get_target_bearing());
+    ui::Text("Speed:   %.1f (Target: %.f)", sub->get_speed(), sub->get_target_speed());
 
 /*    static float target_x = 0, target_z = 0; // - ohne auto-pos mehr immersion?
     ImGui::InputFloat("Target_x", &target_x);
@@ -61,27 +61,27 @@ void Nav_UI::show_navigation(const Sub* sub) const {
     }*/
 
     static float target_bearing = 0;
-    ImGui::Nada::KnobDegree("target_bearing", &target_bearing,
+    ui::KnobDegree("target_bearing", &target_bearing,
                             0.f, 360.f, 1.f, 40.f, 2.f, "%.0f°", std::make_optional(sub->get_bearing()));
-    if (ImGui::Button("Set##set_bearing")) {
+    if (ui::Button("Set##set_bearing")) {
         klient->kommando({Kommando::AUTO_KURS, sub->get_id(), target_bearing});
     }
-    ImGui::Separator();
+    ui::Separator();
 
     static float target_speed = 0;
-    ImGui::SliderFloat("target_speed", &target_speed, -sub->get_speed_max(), sub->get_speed_max(), "%.1f");
-    if (ImGui::Button("Set##set_speed")) {
+    ui::SliderFloat("target_speed", &target_speed, -sub->get_speed_max(), sub->get_speed_max(), "%.1f");
+    if (ui::Button("Set##set_speed")) {
         klient->kommando({Kommando::MOTOR_LINEAR, sub->get_id(), target_speed / sub->get_speed_max()});
     }
-    ImGui::Separator();
+    ui::Separator();
 
-    if (ImGui::Button("stop")) {
+    if (ui::Button("stop")) {
         klient->kommando({Kommando::STOP, sub->get_id()});
     }
-    if (ImGui::Button("rechts")) {
+    if (ui::Button("rechts")) {
         klient->kommando({Kommando::MOTOR_ROT, sub->get_id(), 100.f});
     }
-    if (ImGui::Button("links")) {
+    if (ui::Button("links")) {
         klient->kommando({Kommando::MOTOR_ROT, sub->get_id(), -100.f});
     }
     ImGui::End();
@@ -117,14 +117,14 @@ void Nav_UI::show_noise_signature(const Sub* sub, std::optional<float> mark_v) c
 void Nav_UI::show_minimap(const Sub* sub) const {
     (void) sub;
     ImGui::Begin("Map Settings");
-    if (ImGui::Button("Center on Sub")) { shift_x = 0; shift_y = 0; }
-    ImGui::SliderFloat("Scale", &scale, 0.001, 0.5);
+    if (ui::Button("Center on Sub")) { shift_x = 0; shift_y = 0; }
+    ui::SliderFloat("Scale", &scale, 0.001, 0.5);
 
     for (const auto& team : teams) {
-        ImGui::Text("Team %u: %u Points", team.first, team.second.get_punkte());
+        ui::Text("Team %u: %u Points", team.first, team.second.get_punkte());
     }
     for (const auto& zone : zonen) {
-        ImGui::Text("Zone @ x=%.0f, y=%.0f, owned by Team %u",
+        ui::Text("Zone @ x=%.0f, y=%.0f, owned by Team %u",
                     std::get<0>(zone.get_pos()), std::get<1>(zone.get_pos()), zone.get_team());
     }
     ImGui::End();

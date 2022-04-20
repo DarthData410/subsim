@@ -1,4 +1,5 @@
 #include "spielszene.hpp"
+#include "gfx/ui.hpp"
 
 #include <log.hpp>
 #include <imgui.h>
@@ -56,10 +57,10 @@ void Spielszene::key_pressed(const sf::Keyboard::Key& key) {
 
 void Spielszene::draw_menu() {
     // Timelapse
-    ImGui::Text("Server Timelapse = %.1f", klient->get_timelapse());
+    ui::Text("Server Timelapse = %.1f", klient->get_timelapse());
     static float timelapse = 1;
-    ImGui::SliderFloat("Timelapse", &timelapse, 0, 20, "%.1f");
-    if (ImGui::SameLine(); ImGui::Button("Set")) {
+    ui::SliderFloat("Timelapse", &timelapse, 0, 20, "%.1f");
+    if (ImGui::SameLine(); ui::Button("Set")) {
         Log::debug() << "Timelapse sollte jetzt sein: " << timelapse << '\n';
         const Kommando neue_zeit_kommando(Kommando::TIMELAPSE, 0, timelapse);
         klient->kommando(neue_zeit_kommando);

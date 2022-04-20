@@ -1,9 +1,11 @@
-#include "imgui_addons.hpp"
+#include "ui.hpp"
+
 #include <cmath>
 #include <algorithm>
 #include <zufall.hpp>
+#include <imgui.h>
 
-bool ImGui::Nada::KnobDegree(const char* label, float* p_value, float v_min, float v_max, float v_step, float radius, float thickness, const char* fmt, const std::optional<float>& value2) {
+bool ui::KnobDegree(const char* label, float* p_value, float v_min, float v_max, float v_step, float radius, float thickness, const char* fmt, const std::optional<float>& value2) {
     /// Modified from Source: https://github.com/Flix01/imgui
     ImGuiIO& io = ImGui::GetIO();
     ImGuiStyle& style = ImGui::GetStyle();
@@ -61,6 +63,49 @@ bool ImGui::Nada::KnobDegree(const char* label, float* p_value, float v_min, flo
     return value_changed;
 }
 
-void ImGui::Nada::Tooltip(const char* text) {
-    if (ImGui::IsItemHovered()) ImGui::SetTooltip(text);
+void ui::Tooltip(const char* text) {
+    if (ImGui::IsItemHovered()) ImGui::SetTooltip("%s", text);
+}
+
+bool ui::Button(const char* label, const ImVec2& size) {
+    return ImGui::Button(label, size);
+}
+
+void ui::Text(const char* fmt, ...) {
+    va_list argp;
+    va_start(argp, fmt);
+    ImGui::TextV(fmt, argp);
+    va_end(argp);
+}
+
+bool ui::SliderFloat(const char* label, float* v, float v_min, float v_max, const char* format, ImGuiSliderFlags flags) {
+    return ImGui::SliderFloat(label, v, v_min, v_max, format, flags);
+}
+
+bool ui::SliderInt(const char* label, int* v, int v_min, int v_max, const char* format, ImGuiSliderFlags flags) {
+    return ImGui::SliderInt(label, v, v_min, v_max, format, flags);
+}
+
+bool ui::RadioButton(const char* label, bool active) {
+    return ImGui::RadioButton(label, active);
+}
+
+bool ui::RadioButton(const char* label, int* v, int v_button) {
+    return ImGui::RadioButton(label, v, v_button);
+}
+
+void ui::Separator() {
+    ImGui::Separator();
+}
+
+bool ui::InputInt(const char* label, int* v, int step, int step_fast, ImGuiInputTextFlags flags) {
+    return ImGui::InputInt(label, v, step, step_fast, flags);
+}
+
+bool ui::Checkbox(const char* label, bool* v) {
+    return ImGui::Checkbox(label, v);
+}
+
+void ui::TextUnformatted(const char* text) {
+    ImGui::TextUnformatted(text);
 }

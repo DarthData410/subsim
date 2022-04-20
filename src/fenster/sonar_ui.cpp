@@ -1,9 +1,9 @@
 #include "sonar_ui.hpp"
 #include "../sim/game/objekte/sub.hpp"
-#include "imgui_addons.hpp"
-#include "../gfx/grafik.hpp"
-#include "../sim/net/klient.hpp"
 #include "../sim/physik.hpp"
+#include "gfx/grafik.hpp"
+#include "gfx/ui.hpp"
+#include "../sim/net/klient.hpp"
 
 #include <zufall.hpp>
 #include <SFML/Graphics/Texture.hpp>
@@ -57,10 +57,10 @@ void Sonar_UI::update_and_show(const Sub* sub) {
     ImGui::SetNextWindowSize({405,215});
     const Sonar_Passiv& ps = sub->get_sonars_passive().at(ps_array_select-1);
     ImGui::Begin("Sonar_Passive_Config", nullptr, flags);
-    ImGui::SliderInt("Array Select", &ps_array_select, 1, sub->get_sonars_passive().size(), "#%d");
-    ImGui::Text("Selected Sonar Model: %s", ps.get_name().c_str());
-    ImGui::SliderFloat("Update Intervall", &ps_intervall, 0.2f, 10.f, "%.1fs");
-    if (ImGui::Button("Clear")) {
+    ui::SliderInt("Array Select", &ps_array_select, 1, sub->get_sonars_passive().size(), "#%d");
+    ui::Text("Selected Sonar Model: %s", ps.get_name().c_str());
+    ui::SliderFloat("Update Intervall", &ps_intervall, 0.2f, 10.f, "%.1fs");
+    if (ui::Button("Clear")) {
         std::memset(ps_data.data(), BG_COL, ps_data.size());
         ps_tex->update(ps_data.data());
     }
@@ -69,22 +69,22 @@ void Sonar_UI::update_and_show(const Sub* sub) {
     // AS Select
     const Sonar_Aktiv& as = sub->get_sonars_active().at(as_array_select-1);
     ImGui::Begin("Sonar_Active_Config", nullptr);
-    ImGui::SliderInt("Array Select", &as_array_select, 1, sub->get_sonars_active().size(), "#%d");
-    ImGui::Text("Selected Sonar Model: %s", as.get_name().c_str());
-    ImGui::Text("Ping Mode");
+    ui::SliderInt("Array Select", &as_array_select, 1, sub->get_sonars_active().size(), "#%d");
+    ui::Text("Selected Sonar Model: %s", as.get_name().c_str());
+    ui::Text("Ping Mode");
     Sonar_Aktiv::Mode modus = as.get_mode();
-    if (ImGui::RadioButton("OFF", as.get_mode() == Sonar_Aktiv::Mode::OFF)) modus = Sonar_Aktiv::Mode::OFF;
+    if (ui::RadioButton("OFF", as.get_mode() == Sonar_Aktiv::Mode::OFF)) modus = Sonar_Aktiv::Mode::OFF;
     ImGui::SameLine();
-    if (ImGui::RadioButton("SINGLE", as.get_mode() == Sonar_Aktiv::Mode::SINGLE)) modus = Sonar_Aktiv::Mode::SINGLE;
+    if (ui::RadioButton("SINGLE", as.get_mode() == Sonar_Aktiv::Mode::SINGLE)) modus = Sonar_Aktiv::Mode::SINGLE;
     ImGui::SameLine();
-    if (ImGui::RadioButton("ON", as.get_mode() == Sonar_Aktiv::Mode::ON)) modus = Sonar_Aktiv::Mode::ON;
+    if (ui::RadioButton("ON", as.get_mode() == Sonar_Aktiv::Mode::ON)) modus = Sonar_Aktiv::Mode::ON;
     if (modus != as.get_mode()) klient->kommando(Kommando(Kommando::SONAR_A_MODE, sub->get_id(),
                                                           std::tuple<uint8_t, Sonar_Aktiv::Mode>(as_array_select-1, modus)));
-    ImGui::Text("Ping Intervall: %.1fs", as.get_intervall()); // TODO
-    if (ImGui::Button("Clear")) {
+    ui::Text("Ping Intervall: %.1fs", as.get_intervall()); // TODO
+    if (ui::Button("Clear")) {
         as_tex->clear({BG_COL, BG_COL, BG_COL, BG_COL});
     }
-    // ImGui::Text("Range Rings");
+    // ui::Text("Range Rings");
     ImGui::End();
 }
 

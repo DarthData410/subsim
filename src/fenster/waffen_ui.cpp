@@ -1,5 +1,5 @@
 #include "waffen_ui.hpp"
-#include "imgui_addons.hpp"
+#include "gfx/ui.hpp"
 #include "../sim/game/objekte/sub.hpp"
 #include "../sim/net/klient.hpp"
 
@@ -25,7 +25,7 @@ void Waffen_UI::show_weapons(const Sub* sub) const {
     for (int i = 0; i < (int)sub->get_torpedos().size(); ++i) {
         auto it = sub->get_torpedos().begin();
         std::advance(it, i);
-        ImGui::RadioButton(it->first.get_name().c_str(), &torpedo_index, i);
+        ui::RadioButton(it->first.get_name().c_str(), &torpedo_index, i);
     }
 
     // Ausgewähltes Torpedo bestimmen
@@ -35,28 +35,28 @@ void Waffen_UI::show_weapons(const Sub* sub) const {
     const Torpedo& torp = it->first;
     const unsigned ammo = it->second;
 
-    ImGui::Text("%u Torpedos Left", ammo);
-    ImGui::Text("Range: %.0f", torp.get_range());
+    ui::Text("%u Torpedos Left", ammo);
+    ui::Text("Range: %.0f", torp.get_range());
 
     ImGui::NewLine();
 
     static bool temp = false;
-    ImGui::Checkbox("Open Torpedobay Door", &temp);
+    ui::Checkbox("Open Torpedobay Door", &temp);
 
     static float target_bearing = 0.f;
-    ImGui::Nada::KnobDegree("Target Bearing", &target_bearing);
+    ui::KnobDegree("Target Bearing", &target_bearing);
 
     static int target_depth = -50;
-    ImGui::InputInt("Target Depth", &target_depth, 1, 10);
-    ImGui::Nada::Tooltip("Hold CTRL for fast increase/decrease");
+    ui::InputInt("Target Depth", &target_depth, 1, 10);
+    ui::Tooltip("Hold CTRL for fast increase/decrease");
 
     static int distance_to_activate = 100;
-    ImGui::InputInt("Distance to Activate", &distance_to_activate, 50, 100);
-    ImGui::Nada::Tooltip("Hold CTRL for fast increase/decrease");
+    ui::InputInt("Distance to Activate", &distance_to_activate, 50, 100);
+    ui::Tooltip("Hold CTRL for fast increase/decrease");
     distance_to_activate = std::clamp(distance_to_activate, 150, static_cast<int>(torp.get_range()));
 
     static int distance_to_explode = 50;
-    ImGui::InputInt("Proximity Fuse in m", &distance_to_explode, 1, 2);
+    ui::InputInt("Proximity Fuse in m", &distance_to_explode, 1, 2);
     distance_to_explode = std::clamp(distance_to_explode, 1, 100);
 
     if (ImGui::Button("Launch") && temp && ammo > 0) {
@@ -74,7 +74,7 @@ void Waffen_UI::show_intelligence() const {
     ImGui::Begin("Intelligence");
 
     // Übersicht: Submarine Designs
-    ImGui::TextUnformatted("Submarine Designs");
+    ui::TextUnformatted("Submarine Designs");
     if (ImGui::BeginTable("Submarine Designs", 7)) {
         ImGui::TableSetupColumn("Team");
         ImGui::TableSetupColumn("Name");
@@ -87,13 +87,13 @@ void Waffen_UI::show_intelligence() const {
         for (const auto& [team_id, team]: klient->get_teams()) {
             for (const auto& subdesign : team.get_sub_designs()) {
                 ImGui::TableNextRow();
-                ImGui::TableSetColumnIndex(0); ImGui::Text("%d", (int)team_id);
-                ImGui::TableSetColumnIndex(1); ImGui::TextUnformatted(subdesign.get_name().c_str());
-                ImGui::TableSetColumnIndex(2); ImGui::Text("%.1f", subdesign.get_speed_max());
-                ImGui::TableSetColumnIndex(3); ImGui::Text("%.1f", subdesign.get_noise());
-                ImGui::TableSetColumnIndex(4); ImGui::Text("%.1f", 0.001 * subdesign.get_max_reichweite_as());
-                ImGui::TableSetColumnIndex(5); ImGui::Text("%.1f", subdesign.get_beste_empfindlichkeit_ps());
-                ImGui::TableSetColumnIndex(6); ImGui::Text("%.1f", subdesign.get_best_aufloesung_sonar());
+                ImGui::TableSetColumnIndex(0); ui::Text("%d", (int)team_id);
+                ImGui::TableSetColumnIndex(1); ui::TextUnformatted(subdesign.get_name().c_str());
+                ImGui::TableSetColumnIndex(2); ui::Text("%.1f", subdesign.get_speed_max());
+                ImGui::TableSetColumnIndex(3); ui::Text("%.1f", subdesign.get_noise());
+                ImGui::TableSetColumnIndex(4); ui::Text("%.1f", 0.001 * subdesign.get_max_reichweite_as());
+                ImGui::TableSetColumnIndex(5); ui::Text("%.1f", subdesign.get_beste_empfindlichkeit_ps());
+                ImGui::TableSetColumnIndex(6); ui::Text("%.1f", subdesign.get_best_aufloesung_sonar());
             }
         }
         ImGui::EndTable();
@@ -101,7 +101,7 @@ void Waffen_UI::show_intelligence() const {
 
     // Torpedos
     ImGui::NewLine();
-    ImGui::TextUnformatted("Torpedoes");
+    ui::TextUnformatted("Torpedoes");
     if (ImGui::BeginTable("Torpedoes", 5)) {
         ImGui::TableSetupColumn("Team");
         ImGui::TableSetupColumn("Name");
@@ -112,11 +112,11 @@ void Waffen_UI::show_intelligence() const {
         for (const auto& [team_id, team]: klient->get_teams()) {
             for (const auto& t : team.get_torp_designs()) {
                 ImGui::TableNextRow();
-                ImGui::TableSetColumnIndex(0); ImGui::Text("%d", (int)team_id);
-                ImGui::TableSetColumnIndex(1); ImGui::TextUnformatted(t.get_name().c_str());
-                ImGui::TableSetColumnIndex(2); ImGui::Text("%.1f", t.get_speed_max());
-                ImGui::TableSetColumnIndex(3); ImGui::Text("%.1f", 0.001 * t.get_range());
-                ImGui::TableSetColumnIndex(4); ImGui::Text("%.1f", t.get_speed_max_rot());
+                ImGui::TableSetColumnIndex(0); ui::Text("%d", (int)team_id);
+                ImGui::TableSetColumnIndex(1); ui::TextUnformatted(t.get_name().c_str());
+                ImGui::TableSetColumnIndex(2); ui::Text("%.1f", t.get_speed_max());
+                ImGui::TableSetColumnIndex(3); ui::Text("%.1f", 0.001 * t.get_range());
+                ImGui::TableSetColumnIndex(4); ui::Text("%.1f", t.get_speed_max_rot());
             }
 
         }
@@ -125,7 +125,7 @@ void Waffen_UI::show_intelligence() const {
 
     // Aktive Sonars
     ImGui::NewLine();
-    ImGui::TextUnformatted("Active Sonars");
+    ui::TextUnformatted("Active Sonars");
     if (ImGui::BeginTable("Active Sonars", 6)) {
         ImGui::TableSetupColumn("Team");
         ImGui::TableSetupColumn("Name");
@@ -137,13 +137,13 @@ void Waffen_UI::show_intelligence() const {
         for (const auto& [team_id, team]: klient->get_teams()) {
             for (const auto& s: team.get_sonars_a()) {
                 ImGui::TableNextRow();
-                ImGui::TableSetColumnIndex(0); ImGui::Text("%d", (int)team_id);
-                ImGui::TableSetColumnIndex(1); ImGui::TextUnformatted(s.get_name().c_str());
-                ImGui::TableSetColumnIndex(2); ImGui::Text("%d", (int)s.get_groesse());
-                ImGui::TableSetColumnIndex(3); ImGui::Text("%.1f", 0.001 * s.get_max_range());
-                ImGui::TableSetColumnIndex(4); ImGui::Text("%.1f", s.get_aufloesung());
+                ImGui::TableSetColumnIndex(0); ui::Text("%d", (int)team_id);
+                ImGui::TableSetColumnIndex(1); ui::TextUnformatted(s.get_name().c_str());
+                ImGui::TableSetColumnIndex(2); ui::Text("%d", (int)s.get_groesse());
+                ImGui::TableSetColumnIndex(3); ui::Text("%.1f", 0.001 * s.get_max_range());
+                ImGui::TableSetColumnIndex(4); ui::Text("%.1f", s.get_aufloesung());
                 ImGui::TableSetColumnIndex(5);
-                for (const auto& tuple : s.get_blindspots()) ImGui::Text("@%.0f°,  +/-%.0f°", std::get<0>(tuple), std::get<1>(tuple));
+                for (const auto& tuple : s.get_blindspots()) ui::Text("@%.0f°,  +/-%.0f°", std::get<0>(tuple), std::get<1>(tuple));
             }
         }
         ImGui::EndTable();
@@ -151,7 +151,7 @@ void Waffen_UI::show_intelligence() const {
 
     // Aktive Sonars
     ImGui::NewLine();
-    ImGui::TextUnformatted("Passive Sonars");
+    ui::TextUnformatted("Passive Sonars");
     if (ImGui::BeginTable("Passive Sonars", 6)) {
         ImGui::TableSetupColumn("Team");
         ImGui::TableSetupColumn("Name");
@@ -163,13 +163,13 @@ void Waffen_UI::show_intelligence() const {
         for (const auto& [team_id, team]: klient->get_teams()) {
             for (const auto& s: team.get_sonars_p()) {
                 ImGui::TableNextRow();
-                ImGui::TableSetColumnIndex(0); ImGui::Text("%d", (int)team_id);
-                ImGui::TableSetColumnIndex(1); ImGui::TextUnformatted(s.get_name().c_str());
-                ImGui::TableSetColumnIndex(2); ImGui::Text("%d", (int)s.get_groesse());
-                ImGui::TableSetColumnIndex(3); ImGui::Text("%.1f", s.get_empfindlichkeit());
-                ImGui::TableSetColumnIndex(4); ImGui::Text("%.1f", s.get_aufloesung());
+                ImGui::TableSetColumnIndex(0); ui::Text("%d", (int)team_id);
+                ImGui::TableSetColumnIndex(1); ui::TextUnformatted(s.get_name().c_str());
+                ImGui::TableSetColumnIndex(2); ui::Text("%d", (int)s.get_groesse());
+                ImGui::TableSetColumnIndex(3); ui::Text("%.1f", s.get_empfindlichkeit());
+                ImGui::TableSetColumnIndex(4); ui::Text("%.1f", s.get_aufloesung());
                 ImGui::TableSetColumnIndex(5);
-                for (const auto& tuple : s.get_blindspots()) ImGui::Text("@%.0f°,  +/-%.0f°", std::get<0>(tuple), std::get<1>(tuple));
+                for (const auto& tuple : s.get_blindspots()) ui::Text("@%.0f°,  +/-%.0f°", std::get<0>(tuple), std::get<1>(tuple));
             }
         }
         ImGui::EndTable();
