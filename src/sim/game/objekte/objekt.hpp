@@ -32,6 +32,11 @@ public:
             PING             = 6, /// Kurzlebige Geräuschquelle
     };
 
+    /// Schäden, die ein Objekt haben kann.
+    enum class Schaden : uint8_t {
+        ZERSTOERT = 0,
+    };
+
     /// Ctor. Weist keine ID zu.
     Objekt() = default;
 

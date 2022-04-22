@@ -8,6 +8,20 @@
 class Test_Physik {
 TEST_CASE_CLASS("physik") {
 
+    SUBCASE("round") {
+        CHECK(Physik::round(123.0,  5.0) == doctest::Approx( 125.0));
+        CHECK(Physik::round(123.0, 10.0) == doctest::Approx( 120.0));
+        CHECK(Physik::round(-99.0, 10.0) == doctest::Approx(-100.0));
+        CHECK(Physik::round( 5.7, 1.0) ==  doctest::Approx( 6.0));
+        CHECK(Physik::round(-5.7, 1.0) ==  doctest::Approx(-6.0));
+        CHECK(Physik::round( 75.05, 1.0) ==  doctest::Approx( 75.0));
+        CHECK(Physik::round(-75.05, 1.0) ==  doctest::Approx(-75.0));
+        CHECK(Physik::round( 9, 5) == 10);
+        CHECK(Physik::round( 3, 5) ==  5);
+        CHECK(Physik::round(-3, 5) == -5);
+        CHECK(Physik::round(-1, 5) ==  0);
+    }
+
     SUBCASE("move und get_punkt") {
         const std::vector<Vektor> vektoren {
                 {  0,   0,   0},

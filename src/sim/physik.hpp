@@ -34,7 +34,7 @@ namespace Physik {
     /// Liefert distanz(v1,v2) <= reichweite.
     bool in_reichweite_xyz(const Vektor& v1, const Vektor& v2, dist_t reichweite);
     /// Liefert den Bremsweg bei gegebener Geschwindigkeit und Entschleunigung.
-    dist_t bremsweg(dist_t v, dist_t a);
+    dist_t bremsweg(float v, float a);
 
     /// Liefert die kürzeste Rotation (in Grad) von Winkel 1 zu Winkel 2. Zwischen -180 und +180.
     winkel_t winkel_diff(winkel_t winkel1, winkel_t winkel2);

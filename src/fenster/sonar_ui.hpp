@@ -4,6 +4,7 @@
 #include <vector>
 #include <cstdint>
 #include <memory>
+#include <optional>
 #include <SFML/Graphics/RenderTexture.hpp>
 #include <SFML/System/Clock.hpp>
 
@@ -12,19 +13,27 @@ class Sonar_UI final : public Standard_UI {
 
 public:
 
+    /// Ctor. @note Erzeugt keine verwendbare UI.
     Sonar_UI();
 
+    /// Benutzbare Sonar_UI muss hierüber erstellt werden.
     explicit Sonar_UI(Klient* klient);
 
+    /// Veranlasst alle UI und SFML Renderings.
     void update_and_show(const Sub* sub) override;
 
+    /// Veranlasst alle SFML-Renderings.
     void draw_gfx(const Sub* sub, sf::RenderWindow* window) override;
 
+    /// Unbenutzt. Kann für SFML Events genutzt werden.
     void handle(sf::Event* event) override { (void)event; }
 
 private:
 
+    /// Aktiven Sonar zeichnen.
     void draw_as(const Sub*, sf::RenderWindow* window);
+
+    /// Aktiven Sonar zeichnen.
     void draw_ps(const Sub*, sf::RenderWindow* window);
 
 private:
@@ -36,7 +45,6 @@ private:
     uint32_t as_last_ping = 0;
 
     /* Einstellungen */
-    float as_intervall = 15.f;
     int   as_array_select = 1;
     float as_scale = 0.1f;
     float ps_intervall = 0.5f;

@@ -39,8 +39,8 @@ dist_t Physik::distanz_xyz(const Vektor& v1, const Vektor& v2) {
     return std::hypot(v1.x()-v2.x(), std::hypot(v1.y()-v2.y(), v1.z()-v2.z()));
 }
 
-dist_t Physik::bremsweg(dist_t v, dist_t a) {
-    return std::abs((v * v) / (2.0 * a));
+dist_t Physik::bremsweg(float v, float a) {
+    return std::abs((v * v) / (2.0f * a));
 }
 
 std::pair<dist_t, dist_t> Physik::get_punkt(dist_t x, dist_t y, winkel_t kurs, dist_t entfernung) {
@@ -112,6 +112,9 @@ template<> double Physik::round<double>(double wert, double faktor) {
 }
 
 template<> int Physik::round<int>(int wert, int faktor) {
-    if ((wert % faktor) <= (faktor / 2)) return wert - (wert % faktor);
-    return wert - (wert % faktor) + faktor;
+    if (wert >= 0) {
+        if ((wert % faktor) <= (faktor / 2)) return wert - (wert % faktor);
+        return wert - (wert % faktor) + faktor;
+    }
+    else return -round(std::abs(wert), faktor);
 }

@@ -7,7 +7,7 @@ Team::Team(uint8_t id) : id(id), punkte(0) {
     // Stock Sub
     const Motor m1_linear(4, 0.25);
     const Motor m1_rot(1, 0.1);
-    const Motor m1_tauch(1, 0.1);
+    const Motor m1_tauch(0.5, 0.1);
     Sub beginner_sub("Type 1", {0,0,0}, m1_linear, m1_rot, m1_tauch);
     beginner_sub.team = Team::id;
     beginner_sub.noise = 0.95f;
@@ -26,7 +26,7 @@ Team::Team(uint8_t id) : id(id), punkte(0) {
     // Stock Torpedo
     const Torpedo torpedo1(Motor(10, 1),
                            Motor(20, 1),
-                           Motor(10, 1),
+                           Motor(2, 0.25),
                            "T1A",
                            10'000,
                            Explosion(30.f, 50, 10),

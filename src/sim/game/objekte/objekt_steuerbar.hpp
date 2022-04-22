@@ -13,11 +13,6 @@ class Objekt_Steuerbar : public Objekt {
 
 public:
 
-    /// Schäden, die ein Objekt haben kann. Wird
-    enum class Schaden : uint8_t {
-        ZERSTOERT = 0,
-    };
-
     Objekt_Steuerbar() = default;
 
     Objekt_Steuerbar(const Vektor& pos,
@@ -57,7 +52,7 @@ public:
     void set_target_bearing(float degree) { target_bearing = degree; }
 
     /// Setzt die Zieltiefe fest. Tiefenangaben sind negativ. Positive Zahlen bedeuten oberhalb der Wasseroberfläche.
-    void set_target_depth(dist_t depth) { target_depth = depth; }
+    void set_target_depth(float depth) { target_depth = depth; }
 
     /// Getter: Aktuelle x/y-Geschwindigkeit (absolut).
     float get_speed() const override { return motor_linear.v; }
@@ -68,10 +63,10 @@ public:
     /// Getter: Maximale x/y-Geschwindigkeit (absolut in m/s).
     float get_speed_max() const { return motor_linear.v_max; }
 
-    /// Getter: Maximale z-Geschwindigkeit (absolut in m/s).
+    /// Getter: Maximale Drehgeschwindigkeit (absolut in °/s).
     float get_speed_max_rot() const { return motor_rot.v_max; }
 
-    /// Getter: Maximale Drehgeschwindigkeit (absolut in °/s).
+    /// Getter: Maximale Tauchgeschwindigkeit (absolut in m/s).
     float get_speed_max_tauch() const { return motor_tauch.v_max; }
 
     /// Liefert die gewünschte absolute x/y-Geschwindigkeit.
@@ -119,7 +114,7 @@ protected:
     std::optional<winkel_t> target_bearing;
 
     /// Zieltiefe
-    std::optional<winkel_t> target_depth;
+    std::optional<float> target_depth;
 
     /// Zielposition. [Aktiv,X,Y]
     std::optional<std::array<dist_t, 2>> target_pos;
@@ -130,5 +125,6 @@ protected:
     /// Schäden, die das Objekt hat.
     std::set<Schaden> schaeden;
 
+    void auto_depth();
 };
 CEREAL_REGISTER_TYPE(Objekt_Steuerbar)

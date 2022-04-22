@@ -28,10 +28,9 @@ bool Objekt_Steuerbar::tick(Welt* welt, float s) {
     (void) welt;
 
     // Automatisches Pfadfinden
-    if (target_pos) auto_path();
-
-    // Automatische ausrichtung Links/Rechts
+    if (target_pos)     auto_path();
     if (target_bearing) auto_rudder();
+    if (target_depth)   auto_depth();
 
     // Beschleunigen/Bremsen
     motor_linear.tick(s);
@@ -41,14 +40,13 @@ bool Objekt_Steuerbar::tick(Welt* welt, float s) {
     // Links/Rechts in Grad bewegen
     // + Max. Rotation ist Geschwindigkeitsabhängig
     static constexpr float eps = 0.0001f;
-    const float max_rot = std::sqrt(std::abs(get_speed_relativ()));
-    if (std::abs(motor_rot.v) > motor_rot.v_max * max_rot) motor_rot.v = motor_rot.v * max_rot;
+    const float max_vm = std::sqrt(std::abs(get_speed_relativ())); // Maximale Manövergeschwindigkeit.
+    if (std::abs(motor_rot.v) > motor_rot.v_max * max_vm) motor_rot.v = motor_rot.v * max_vm;
     if (std::abs(motor_rot.v) > eps) kurs += motor_rot.v * s;
 
-    // Vorwärts/Rückwärts in m bewegen
+    // Bewegungen ausführen
     if (std::abs(motor_linear.v) > eps) Physik::move(pos, kurs, motor_linear.v * s);
-
-    // TODO target_depth
+    if (std::abs(motor_tauch.v)  > eps) pos.z(pos.z() + motor_tauch.v);
 
     // noch am Leben?
     return schaeden.count(Schaden::ZERSTOERT) == 0;
@@ -60,8 +58,22 @@ void Objekt_Steuerbar::auto_rudder() {
         motor_rot.v_target = 0;
         target_bearing = std::nullopt;
     }
-    else if (rotate_to < 0) motor_rot.v_target = -motor_rot.v_max;
     else if (rotate_to > 0) motor_rot.v_target =  motor_rot.v_max;
+    else if (rotate_to < 0) motor_rot.v_target = -motor_rot.v_max;
+}
+
+void Objekt_Steuerbar::auto_depth() {
+    const float target_depth_left = target_depth.value() - (float)pos.z();
+    const auto bremsweg = motor_tauch.get_bremsweg();
+    if (std::abs(target_depth_left) <= bremsweg * 10.f) { // Tauchvorgang verlangsamen
+        motor_tauch.v_target = 0.5f * motor_tauch.v_max;
+        if (std::abs(target_depth_left) <= bremsweg) { // Tiefe erreicht -> Stop
+            motor_tauch.v_target = 0;
+            target_depth = std::nullopt;
+        }
+    }
+    else if (target_depth_left > 0) motor_tauch.v_target =  motor_tauch.v_max;
+    else if (target_depth_left < 0) motor_tauch.v_target = -motor_tauch.v_max;
 }
 
 void Objekt_Steuerbar::auto_path() {

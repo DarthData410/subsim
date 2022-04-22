@@ -10,12 +10,33 @@ TEST_CASE_CLASS("welt") {
     Welt welt(0);
     SUBCASE("teams") {
         CHECK(welt.get_team_anzahl() == 2);
-        CHECK_NOTHROW(welt.get_team(1));
-        CHECK_NOTHROW(welt.get_team(2));
+        REQUIRE_NOTHROW(welt.get_team(1));
+        REQUIRE_NOTHROW(welt.get_team(2));
     }
     SUBCASE("zonen") {
-        CHECK(welt.get_zonen().size() > 0);
+        REQUIRE(welt.get_zonen().size() > 0);
         for (const auto& zone : welt.get_zonen()) CHECK(zone.get_team() == 0);
+    }
+    SUBCASE("Objekt_Steuerbar Pathfinding: auto_rudder, auto_depth") {
+        const auto sub_id = welt.add_new_sub(1, false)->get_id();
+        Sub* sub;
+        CHECK_NOTHROW(sub = dynamic_cast<Sub*>(welt.get_objekte().at(sub_id).get()));
+
+        sub->set_target_v(sub->get_speed_max());
+        for (unsigned i = 0; i < 10'000; ++i) welt.tick(0.1f);
+        REQUIRE(sub->get_speed_relativ() == doctest::Approx(1.0)); // Höchstgeschwindigkeit erreicht
+
+        sub->set_target_bearing(160); // Drehen
+        for (unsigned i = 0; i < 10'000; ++i) welt.tick(0.1f);
+        REQUIRE(Physik::round(sub->get_bearing(), 10.f) == doctest::Approx(160.0f));
+
+        sub->set_target_depth(-75.f); // Untertauchen
+        for (unsigned i = 0; i < 10'000; ++i) welt.tick(0.1f);
+        REQUIRE(Physik::round(sub->get_pos().z(), 5.0) == doctest::Approx(-75.0));
+
+        sub->set_target_depth(-25.f); // Auftauchen
+        for (unsigned i = 0; i < 10'000; ++i) welt.tick(0.1f);
+        REQUIRE(Physik::round(sub->get_pos().z(), 5.0) == doctest::Approx(-25.0));
     }
     SUBCASE("gegner nimmt zone ein") {
         CHECK(welt.get_objekte().size() == 0);
@@ -52,10 +73,10 @@ TEST_CASE_CLASS("welt") {
         CHECK(welt.get_objekte().size() == 2);
         Sub* sub1;
         Sub* sub2;
-        CHECK_NOTHROW(sub1 = dynamic_cast<Sub*>(welt.get_objekte().at(sub1_id).get()));
-        CHECK_NOTHROW(sub2 = dynamic_cast<Sub*>(welt.get_objekte().at(sub2_id).get()));
-        CHECK(sub1 != nullptr);
-        CHECK(sub2 != nullptr);
+        REQUIRE_NOTHROW(sub1 = dynamic_cast<Sub*>(welt.get_objekte().at(sub1_id).get()));
+        REQUIRE_NOTHROW(sub2 = dynamic_cast<Sub*>(welt.get_objekte().at(sub2_id).get()));
+        REQUIRE(sub1 != nullptr);
+        REQUIRE(sub2 != nullptr);
         CHECK(sub1->get_typ() == Objekt::Typ::SUB);
         CHECK(sub2->get_typ() == Objekt::Typ::SUB);
 

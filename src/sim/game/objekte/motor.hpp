@@ -31,5 +31,4 @@ struct Motor final {
     template <class Archive> void serialize(Archive& ar) {
         ar(v_max, v_target, v, a);
     }
-
 };
