@@ -15,9 +15,9 @@ Welt::Welt(unsigned npcs_pro_team) {
 }
 void Welt::tick() {
     static sf::Clock timer;
-    const float s = timelapse * timer.getElapsedTime().asSeconds(); // Sekunden vergangen
+    const float s = timer.getElapsedTime().asSeconds();
     timer.restart();
-    tick(s);
+    tick(s * timelapse);
     // Benchmark
     static unsigned counter = 0;
     static float counter_seconds = 0.f;
