@@ -46,6 +46,9 @@ public:
     /// Liefert einen Pointer zur verwendeten Textur.
     sf::Texture* data() const { return textur; }
 
+    /// Liefert den verwendeten Sprite.
+    const sf::Sprite& get_sprite() const { return sprite; }
+
     /// Grafik geladen?
     bool good() const { return textur != nullptr; }
 

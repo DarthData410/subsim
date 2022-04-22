@@ -14,8 +14,8 @@ Sonar_Aktiv::Sonar_Aktiv(const std::string& name, Groesse groesse, float resolut
 
 void Sonar_Aktiv::tick(Objekt* parent, Welt* welt, float s) {
     // Detektionen überhaupt durchführen?
-    if (this->mode == Mode::OFF) return; // Eingeschaltet?
     timer += s;
+    if (this->mode == Mode::OFF) return; // Eingeschaltet?
     if (timer < intervall) return; // Ist es an der Zeit?
     if (this->mode == Mode::SINGLE) mode = Mode::OFF; // nur 1x
     detektionen.clear();

@@ -19,7 +19,7 @@ TEST_CASE_CLASS("welt") {
     }
     SUBCASE("Objekt_Steuerbar Pathfinding: auto_rudder, auto_depth") {
         const auto sub_id = welt.add_new_sub(1, false)->get_id();
-        Sub* sub;
+        Sub* sub = nullptr;
         CHECK_NOTHROW(sub = dynamic_cast<Sub*>(welt.get_objekte().at(sub_id).get()));
 
         sub->set_target_v(sub->get_speed_max());
@@ -71,8 +71,8 @@ TEST_CASE_CLASS("welt") {
         auto sub1_id = welt.add_new_sub(1, false)->get_id();
         auto sub2_id = welt.add_new_sub(2, false)->get_id();
         CHECK(welt.get_objekte().size() == 2);
-        Sub* sub1;
-        Sub* sub2;
+        Sub* sub1 = nullptr;
+        Sub* sub2 = nullptr;
         REQUIRE_NOTHROW(sub1 = dynamic_cast<Sub*>(welt.get_objekte().at(sub1_id).get()));
         REQUIRE_NOTHROW(sub2 = dynamic_cast<Sub*>(welt.get_objekte().at(sub2_id).get()));
         REQUIRE(sub1 != nullptr);

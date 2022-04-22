@@ -53,8 +53,8 @@ public:
      */
     virtual bool tick(Welt* welt, float s) = 0;
 
-    /// Fügt diesem Objekt Explosionsschaden zu. Liefert `true`, wenn es durch die Explosion zerstört wurde.
-    virtual bool apply_damage(Explosion* explosion, float damage);
+    /// Fügt diesem Objekt Explosionsschaden zu. Liefert `true`, wenn es durch die Explosion zerstört wurde. @note Standardmäßig unzerstörbar.
+    virtual bool apply_damage(const Explosion* explosion, float damage) { (void) explosion; (void) damage; return false; }
 
     /// Liefert den Objekttypen zur Polymorphieauflösung.
     virtual Typ get_typ() const { return Typ::OBJEKT; };

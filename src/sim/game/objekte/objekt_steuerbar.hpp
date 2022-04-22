@@ -28,7 +28,7 @@ public:
     bool tick(Welt* welt, float s) override;
 
     /// Fügt dem Objekt schaden zu.
-    bool apply_damage(Explosion* explosion, float damage) override;
+    bool apply_damage(const Explosion* explosion, float damage) override;
 
     /// Getter: Objektname.
     const std::string& get_name() const override;

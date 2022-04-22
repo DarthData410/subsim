@@ -1,6 +1,6 @@
 # TODOs
 !!! = High Priority<br/>
-(?) = Idea / Unsure if necessary
+(?) = Idea / Unsure if necessary<br/>
 
 ## Gameplay / Meta / Strategy
 + [ ] Teambase: Repair/Resupply/Change sub
@@ -18,16 +18,20 @@
 + [ ] !!! fire Torpedos 
 
 ## Armamanets
-+ [ ] frei konfigurierbare Abschussrohre
++ [ ] Abschussrohre
 + [ ] !!! AS Pings temporär skalieren 
 + [ ] !!! Decoys 
 
 ## UI
-+ [ ] Nav Screen
++ [ ] Improve / Make Map Screen less rough
   + [ ] Show scale px : km
++ [ ] Passive Sonar: Bearing Markers
++ [ ] Active Sonar: Bearing Markers
++ [ ] Active Sonar: Range Markers
++ [ ] New Screen: Navigation / Controls
 + [ ] (?) Speed -> knots
 
 ## Simulation
-  + Terrain
-    + Depth from Heightmap
+  + [ ] Terrain
+    + [ ] Depth from Heightmap
   + [x] !!! Depth-rudder 

@@ -16,7 +16,8 @@ public:
 
     bool tick(Welt* welt, float s) override;
 
-    bool apply_damage(Explosion* explosion, float damage) override { (void)explosion; (void)damage; return false; }
+    /// Unzerstörbar.
+    bool apply_damage(const Explosion* explosion, float damage) override { (void)explosion; (void)damage; return false; }
 
     Typ get_typ() const override { return Typ::PING; }
 

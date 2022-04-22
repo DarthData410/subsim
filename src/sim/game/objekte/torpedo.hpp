@@ -53,6 +53,8 @@ public:
     /// In welcher Entfernung soll das Torpedo höchstens explodieren? D.h. ab welcher Distanz sich der Zünder einschaltet.
     float get_distance_to_explode() const { return distance_to_fuse; }
 
+    bool apply_damage(const Explosion* explosion, float damage) override;
+
     /// Zur Eintragung in `unordered_map` z.B. Muss einmaligen Namen haben.
     friend bool operator<(const Torpedo& lhs, const Torpedo& rhs);
 

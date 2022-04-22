@@ -32,12 +32,20 @@ Torpedo::Torpedo(const Torpedo& torpedo_typ, const Sub* sub,
     if (sonar_aktiv) sonar_aktiv->set_mode(Sonar_Aktiv::Mode::ON);
 }
 
+bool operator<(const Torpedo& lhs, const Torpedo& rhs) {
+    return lhs.name < rhs.name;
+}
+
 bool Torpedo::tick(Welt* welt, float s) {
     const auto pos_alt = this->pos;
-    if (!Objekt_Steuerbar::tick(welt, s)) return false;
+    if (!Objekt_Steuerbar::tick(welt, s)) { // Wurde beschädigt?
+        Explosion* e = new Explosion(this); // Dann explodiert es
+        welt->add(e);
+        return false;
+    }
     travelled += Physik::distanz(pos_alt.x(), pos_alt.y(), pos.x(), pos.y());
     if (travelled < distance_to_activate) return true; // noch nichts aktiv zu tun
-    if (travelled > range) return false;
+    if (travelled > range) return false; // Treibstoff leer -> deaktiviert
 
     // Sonars arbeiten lassen
     if (sonar_aktiv)  sonar_aktiv->tick(this, welt, s);
@@ -98,6 +106,12 @@ const Detektion* Torpedo::get_beste_detektion() const {
     return (const Detektion*) nullptr;
 }
 
-bool operator<(const Torpedo& lhs, const Torpedo& rhs) {
-    return lhs.name < rhs.name;
+bool Torpedo::apply_damage(const Explosion* explosion, float damage) {
+    (void) explosion;
+    if (damage <= 0) return false;
+    // Totalschaden
+    if (schaeden.count(Schaden::ZERSTOERT)) return false; // war bereits zerstört
+    Log::debug() << "Torpedo " << this->get_id() << " durch Explosion zerstoert.\n";
+    schaeden.insert(Schaden::ZERSTOERT);
+    return true;
 }

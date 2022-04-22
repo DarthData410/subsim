@@ -32,12 +32,6 @@ Objekt* Objekt::copy(const Objekt* o) {
     return nullptr;
 }
 
-bool Objekt::apply_damage(Explosion* explosion, float damage) {
-    (void) explosion;
-    (void) damage;
-    return false;
-}
-
 const std::string& Objekt::get_name() const {
     static const std::string s("Invalid Object [A]");
     return s;
