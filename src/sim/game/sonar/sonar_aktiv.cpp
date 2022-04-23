@@ -3,10 +3,11 @@
 #include "../../welt.hpp"
 #include "../../physik.hpp"
 
-Sonar_Aktiv::Sonar_Aktiv(const std::string& name, Groesse groesse, float resolution, dist_t max_range, float ping_intervall_min,
+Sonar_Aktiv::Sonar_Aktiv(const std::string& name, Groesse groesse, float resolution, uint16_t resolution_range,
+                         dist_t max_range, float ping_intervall_min,
                          const std::vector<std::tuple<float, float>>& blindspots) :
     Sonar(name, groesse, resolution, blindspots),
-    mode(Mode::OFF), max_range(max_range),
+    mode(Mode::OFF), max_range(max_range), resolution_range(resolution_range),
     ping_intervall_min(ping_intervall_min), ping_counter(0)
 {
     intervall = std::max(ping_intervall_min, 10.f); // Standardeinstellung: x oder Min-Intervall
@@ -29,7 +30,8 @@ void Sonar_Aktiv::tick(Objekt* parent, Welt* welt, float s) {
     // Detektionen berechnen
     static const std::unordered_set<Objekt::Typ> erkennbare_typen = {
             Objekt::Typ::SUB,
-            Objekt::Typ::SUB_AI
+            Objekt::Typ::SUB_AI,
+            Objekt::Typ::DECOY,
     };
     for (const auto& paar : welt->get_objekte()) {
         const Objekt* o = paar.second.get();
@@ -41,12 +43,12 @@ void Sonar_Aktiv::tick(Objekt* parent, Welt* welt, float s) {
         // Erkannt!
         const winkel_t kurs = Physik::kurs(parent->get_pos(), o->get_pos());
         const dist_t entfernung = Physik::distanz_xyz(parent->get_pos(), o->get_pos());
-        detektionen.push_back(Detektion(
+        detektionen.emplace_back(Detektion(
                 o->get_id(),
                 Detektion::Typ::ACTIVE_SONAR_ECHO,
-                o->get_noise(), // TODO gut so oder immer 1.0f einfach?
+                o->get_noise(), // TODO gut so oder immer 1.0f einfach? Oder mal Physik::schallfaktor(entfernung) ?
                 Physik::round(kurs, this->resolution),
-                entfernung)
-        );
+                Physik::round(entfernung, static_cast<dist_t>(this->resolution_range))
+        ));
     }
 }

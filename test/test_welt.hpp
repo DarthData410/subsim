@@ -19,6 +19,7 @@ TEST_CASE_CLASS("welt") {
     }
     SUBCASE("Objekt_Steuerbar Pathfinding: auto_rudder, auto_depth") {
         const auto sub_id = welt.add_new_sub(1, false)->get_id();
+        REQUIRE(welt.get_objektanzahl(Objekt::Typ::SUB) == 1);
         Sub* sub = nullptr;
         CHECK_NOTHROW(sub = dynamic_cast<Sub*>(welt.get_objekte().at(sub_id).get()));
 
@@ -44,6 +45,7 @@ TEST_CASE_CLASS("welt") {
         welt.add_new_sub(team, true);
         welt.add_new_sub(team, true);
         CHECK(welt.get_objekte().size() == 2);
+        REQUIRE(welt.get_objektanzahl(Objekt::Typ::SUB_AI) == 2);
         bool zone_eingenommen = false;
         for (unsigned i = 0; i < 100'000; ++i) { // Anzahl ticks
             welt.tick(10); // s pro tick
@@ -154,7 +156,7 @@ TEST_CASE_CLASS("welt") {
                 CHECK(torpedo.get_distance_to_activate() > torpedo.get_distance_to_explode());
                 int ammo_vorher = -1;
                 REQUIRE_NOTHROW(ammo_vorher = sub1->get_torpedos().at(torpedo));
-                welt.add_torpedo(sub1, torpedo);
+                welt.add_torpedo(sub1, &torpedo);
                 CHECK(sub1->get_torpedos().at(torpedo) == ammo_vorher - 1); // 1 Torpedo weniger?
                 for (unsigned i = 0; i < 100'000; ++i) {
                     welt.tick(0.1); // Zeit für Torpedo
@@ -187,6 +189,47 @@ TEST_CASE_CLASS("welt") {
             CHECK(welt.abschuesse.size() == 1); // 1 Statistik vorhanden
             if (!welt.abschuesse.empty()) Log::out() << welt.abschuesse.front().get_as_text() << '\n';
         }
+    }
+    SUBCASE("evasion durch decoy") {
+        const auto sub1_id = welt.add_new_sub(1, false)->get_id();
+        const auto sub2_id = welt.add_new_sub(2, false)->get_id();
+        Sub* sub1 = nullptr;
+        Sub* sub2 = nullptr;
+        CHECK_NOTHROW(sub1 = dynamic_cast<Sub*>(welt.get_objekte().at(sub1_id).get()));
+        CHECK_NOTHROW(sub2 = dynamic_cast<Sub*>(welt.get_objekte().at(sub2_id).get()));
+        REQUIRE(sub1 != nullptr);
+        REQUIRE(sub2 != nullptr);
+        sub1->pos = {0, 500, 0}; // oberhalb
+        sub1->kurs = 179;         // nach unten schauend
+        sub2->pos = {0,0,0};   // unterhalb, leicht links zu Beginn
+        sub2->kurs = 90;          // nach rechts schauend
+        sub2->set_target_v(sub2->get_speed_max()); // Volle Fahrt voraus
+        Torpedo torpedo;
+        /// Torpedo mit Ammo auswählen + einstellen
+        bool torpedo_gefunden = false;
+        for (const auto& torp_paar : sub1->get_torpedos()) if (torp_paar.second > 0) {
+                torpedo_gefunden = true;
+                torpedo = torp_paar.first;
+                break;
+        }
+        REQUIRE(torpedo_gefunden);
+        torpedo.set_target_bearing(170);
+        torpedo.set_target_depth(sub2->get_pos().z());
+        torpedo.set_distance_to_activate(250);
+        torpedo.set_distance_to_explode(50);
+        welt.add_torpedo(sub1, &torpedo);
+        welt.add_decoy(sub2, &(sub2->decoys.begin()->first));
+        //sub2->schaeden.insert(Objekt_Steuerbar::Schaden::ZERSTOERT);
+        for (unsigned i = 0; i < 100'000; ++i) {
+            welt.tick(0.1); // Zeit zum Simulieren
+            if (welt.get_objektanzahl(Objekt::Typ::TORPEDO) && // neuen Decoy starten?
+                sub2->decoys.begin()->second &&
+                welt.get_objektanzahl(Objekt::Typ::DECOY) == 0)
+            {
+                welt.add_decoy(sub2, &(sub2->decoys.begin()->first));
+            }
+        }
+        REQUIRE(welt.get_objekte().size() <= 2); // 1 oder 2 Subs übrig
     }
 }
 

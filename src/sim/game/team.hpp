@@ -60,7 +60,7 @@ private:
     std::vector<Torpedo> torp_designs;
 
     /// Verfügbare Aktive Sonars des Teams.
-    std::vector<Sonar_Aktiv>  sonars_a;
+    std::vector<Sonar_Aktiv> sonars_a;
 
     /// Verfügbare Passive Sonars des Teams.
     std::vector<Sonar_Passiv> sonars_p;

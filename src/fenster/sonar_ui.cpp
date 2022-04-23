@@ -181,7 +181,8 @@ void Sonar_UI::draw_as(const Sub* sub, sf::RenderWindow* window) {
         // Detektionen eintragen
         for (const auto& d : as.get_detektionen()) {
             if (!d.range) throw std::runtime_error("Active Sonar detection without range is invalid.\n");
-            auto punkt = Physik::get_punkt(0, 0, d.bearing, d.range.value() * as_scale);
+            const auto punkt = Physik::get_punkt(0, 0, d.bearing,
+             (d.range.value() + Zufall::i(-as.get_resolution_range()/2, as.get_resolution_range()/2)) * as_scale);
             sf::RectangleShape rect({2.f, 2.f});
             rect.setFillColor({0x00, 0xFF, 0x00, static_cast<uint8_t>(0xFF * d.gain)});
             rect.setPosition(0.5f * AS_SIZE_X + punkt.first, 0.5f * AS_SIZE_Y - punkt.second);

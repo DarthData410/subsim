@@ -29,8 +29,8 @@ public:
 
     const std::string& get_name() const override { return name; }
 
-    /// Torpedo mit gg. Namen (sofort) abschießen. `false`, wenn nicht möglich, weil z.B. keine Munition.
-    bool shoot(const std::string& torpedo_name);
+    /// Waffe mit gg. Namen (sofort) abschießen. `false`, wenn nicht möglich, weil z.B. keine Munition.
+    bool shoot(const std::string& name, Typ torpedo_oder_gegenmassnahme);
 
     /// Liefert alle aktiven Sonars an Board. Kann leer sein.
     const std::vector<Sonar_Aktiv>&  get_sonars_active()  const { return sonars_active; }

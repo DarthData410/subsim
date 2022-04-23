@@ -1,3 +1,4 @@
+#include <log.hpp>
 #include "decoy.hpp"
 #include "sub.hpp"
 
@@ -18,7 +19,7 @@ bool operator<(const Decoy& lhs, const Decoy& rhs) {
 }
 
 bool Decoy::tick(Welt* welt, float s) {
-    if (restzeit -= s; restzeit <= 0) return false;
+    if (restzeit -= s; restzeit <= 0) { Log::debug() << "Decoy " << id << " ran out and died\n"; return false; }
     Objekt_Steuerbar::tick(welt, s);
     return true;
 }

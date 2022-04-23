@@ -45,7 +45,10 @@ bool Torpedo::tick(Welt* welt, float s) {
     }
     travelled += Physik::distanz(pos_alt.x(), pos_alt.y(), pos.x(), pos.y());
     if (travelled < distance_to_activate) return true; // noch nichts aktiv zu tun
-    if (travelled > range) return false; // Treibstoff leer -> deaktiviert
+    if (travelled > range) {
+        Log::debug() << "Torpedo " << id << " died out of range\n";
+        return false; // Treibstoff leer -> deaktiviert
+    }
 
     // Sonars arbeiten lassen
     if (sonar_aktiv)  sonar_aktiv->tick(this, welt, s);

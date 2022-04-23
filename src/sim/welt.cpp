@@ -58,17 +58,28 @@ oid_t Welt::add(Objekt* o) {
     return o->get_id();
 }
 
-bool Welt::add_torpedo(Sub* sub, const Torpedo& eingestelltes_torpedo) {
-    if (sub->shoot(eingestelltes_torpedo.get_name())) {
-        this->add(new Torpedo(eingestelltes_torpedo, sub,
-                              eingestelltes_torpedo.get_distance_to_activate(),
-                              eingestelltes_torpedo.get_target_bearing(),
-                              eingestelltes_torpedo.get_target_depth(),
-                              eingestelltes_torpedo.get_distance_to_explode()));
-        Log::debug() << "Torpedo name=" << eingestelltes_torpedo.get_name() << " launched by Sub ID=" << sub->get_id() << '\n';
+bool Welt::add_torpedo(Sub* sub, const Torpedo* eingestelltes_torpedo) {
+    if (sub->shoot(eingestelltes_torpedo->get_name(), Objekt::Typ::TORPEDO)) {
+        Torpedo* torpedo = new Torpedo(*eingestelltes_torpedo, sub,
+                                       eingestelltes_torpedo->get_distance_to_activate(),
+                                       eingestelltes_torpedo->get_target_bearing(),
+                                       eingestelltes_torpedo->get_target_depth(),
+                                       eingestelltes_torpedo->get_distance_to_explode());
+        this->add(torpedo);
+        Log::debug() << "Welt::add_torpedo() Torpedo name=" << eingestelltes_torpedo->get_name() << " launched by Sub ID=" << sub->get_id() << '\n';
         return true;
     }
-    Log::debug() << "Sub ID=" << sub->get_id() << " out of Ammo name=" << eingestelltes_torpedo.get_name() << '\n';
+    return false;
+}
+
+bool Welt::add_decoy(Sub* sub, const Decoy* eingestellter_decoy) {
+    if (sub->shoot(eingestellter_decoy->get_name(), Objekt::Typ::DECOY)) {
+        //this->add(new Decoy(*eingestellter_decoy, sub,
+        Decoy* decoy = new Decoy(*eingestellter_decoy, sub);
+        this->add(decoy);
+        Log::debug() << "Welt::add_decoy() Decoy name=" << eingestellter_decoy->get_name() << " launched by Sub ID=" << sub->get_id() << '\n';
+        return true;
+    }
     return false;
 }
 
@@ -79,4 +90,10 @@ void Welt::add_abschuss(Abschuss&& abschuss) {
 const Objekt* Welt::get_objekt_or_null(oid_t id) {
     if (objekte.count(id) && objekte[id]) return objekte[id].get();
     return nullptr;
+}
+
+unsigned Welt::get_objektanzahl(Objekt::Typ typ) const {
+    return std::count_if(objekte.begin(), objekte.end(), [&](const auto& paar) {
+        return paar.second->get_typ() == typ;
+    });
 }

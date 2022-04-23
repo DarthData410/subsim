@@ -9,11 +9,11 @@ Sub_AI::Sub_AI(const Sub& sub) : Sub(sub), timer(0) {
 }
 
 bool Sub_AI::tick(Welt* welt, float s) {
-    if (!Sub::tick(welt, s)) return false; // Lebt nicht mehr
+    if (const bool alive = Sub::tick(welt, s); !alive) return false; // Lebt nicht mehr
 
     // Nicht jeden tick() nachdenken
     timer += s;
-    if (timer < 1000.f) return true;
+    if (timer < 10.f) return true;
     timer = 0;
 
     // Nichts zu tun -> Zone einnehmen / bewachen
@@ -34,8 +34,8 @@ bool Sub_AI::tick(Welt* welt, float s) {
     // Zum Ziel bewegen
     if (hat_status(TRAVEL)) {
         set_target_pos(ziel.x(), ziel.y());
-        if (hat_status(HIDE)) stop();
-        else set_target_v(SPEED_TRAVEL);
+        set_target_depth(DEPTH_TRAVEL);
+        set_target_v(SPEED_TRAVEL);
 
         // Ziel erreicht?
         if (Physik::distanz(pos.x(), pos.y(), ziel.x(), ziel.y()) <= TARGET_DISTANCE) {
@@ -45,5 +45,13 @@ bool Sub_AI::tick(Welt* welt, float s) {
             stop();
         }
     }
+
+    // TODO
+    if (hat_status(HIDE)) {
+        stop();
+    }
+
+
+
     return true;
 }

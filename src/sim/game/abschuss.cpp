@@ -12,7 +12,7 @@ Abschuss::Abschuss(const Objekt* o_sieger, const Objekt* o_opfer, const Objekt* 
 
 Abschuss::Abschuss(const Abschuss& a) : Abschuss(a.o_sieger.get(), a.o_opfer.get(), a.waffe.get())
 {
-    this->text = text;
+
 }
 
 const std::string& Abschuss::get_as_text() const {

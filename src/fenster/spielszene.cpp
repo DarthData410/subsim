@@ -62,7 +62,7 @@ void Spielszene::draw_menu() {
     static float timelapse = 1;
     ui::SliderFloat("Timelapse", &timelapse, 0, 20, "%.1f");
     if (ImGui::SameLine(); ui::Button("Set")) {
-        Log::debug() << "Timelapse sollte jetzt sein: " << timelapse << '\n';
+        Log::debug() << "Timelapse should now be: " << timelapse << '\n';
         const Kommando neue_zeit_kommando(Kommando::TIMELAPSE, 0, timelapse);
         klient->kommando(neue_zeit_kommando);
     }

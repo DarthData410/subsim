@@ -34,11 +34,11 @@ void Kommando::apply(Welt* welt) {
             break;
         case TORP_LAUNCH: {
             const Torpedo& t = as<Torpedo>();
-            welt->add_torpedo(sub, t);
+            welt->add_torpedo(sub, &t);
         }   break;
         case TIMELAPSE:
             welt->timelapse = as<float>();
-            Log::debug() << "Welt hat jetzt Timelapse = " << welt->timelapse << '\n';
+            Log::debug() << "World timelapse set to " << welt->timelapse << '\n';
             break;
         case SONAR_A_MODE: {
             const auto neuer_modus = as<std::tuple<uint8_t, Sonar_Aktiv::Mode>>();

@@ -17,12 +17,15 @@
 + [ ] !!! Evade 
 + [ ] !!! fire Torpedos 
 
-## Armamanets
+## Armament
 + [ ] Abschussrohre
++ [ ] Fix+Test Sonar Blindspots
 + [ ] !!! AS Pings temporär skalieren 
-+ [ ] !!! Decoys 
++ [x] !!! Decoys 
+  + [ ] Balance Decoy effectiveness
 
 ## UI
++ [ ] Mainmenu - game setup
 + [ ] Improve / Make Map Screen less rough
   + [ ] Show scale px : km
 + [ ] Passive Sonar: Bearing Markers
@@ -35,3 +38,6 @@
   + [ ] Terrain
     + [ ] Depth from Heightmap
   + [x] !!! Depth-rudder 
+
+## Code
++ Convert all stdouts / error messages to english

@@ -2,6 +2,10 @@
 #include "game/zone.hpp"
 #include "game/abschuss.hpp"
 
+class Sub;
+class Decoy;
+class Torpedo;
+
 /// Simluierte Welt, die alle Objekte enthält.
 class Welt final {
 
@@ -44,7 +48,13 @@ public:
      * Lässt `sub` mit `eingestelltes_torpedo` schießen, welches Zielkoordinaten usw. konfiguriert haben muss.
      * @note Hat `sub` keine Torpedos mehr des gewünschten Typs, passiert nichts.
      */
-    bool add_torpedo(Sub* sub, const Torpedo& eingestelltes_torpedo);
+    bool add_torpedo(Sub* sub, const Torpedo* eingestelltes_torpedo);
+
+    /**
+     * Lässt `sub` mit `eingestellter_decoy` schießen, welches fertig konfiguriert sein sollte.
+     * @note Hat `sub` keine Decoys mehr des gewünschten Typs, passiert nichts.
+     */
+    bool add_decoy(Sub* sub, const Decoy* eingestellter_decoy);
 
     /// Liefert den Zeitrafferfaktor. 1.0 bedeutet Echtzeit.
     float get_timelapse() const { return timelapse; }
@@ -57,6 +67,9 @@ public:
 
     /// Liefert alle  in der Welt simulierten Objekte.
     const std::unordered_map<oid_t, std::unique_ptr<Objekt>>& get_objekte() const { return objekte; }
+
+    /// Liefert die Anzahl an Objekten von `typ`.
+    unsigned get_objektanzahl(Objekt::Typ typ) const;
 
     /// Liefert Objekt mit `id` oder `nullptr`.
     const Objekt* get_objekt_or_null(oid_t id);

@@ -34,16 +34,16 @@ bool Explosion::tick(Welt* welt, float s) {
             const double d = Physik::distanz_xyz(this->get_pos(), o->get_pos());
             const double range_faktor = std::max(1.0 - (d / radius), 0.01);
             const float damage = range_faktor * power;
-            Log::debug() << "Explosion beschaedigt Objekt " << o->get_id() << " Typ=" << (int)o->get_typ()
-                         << " Schaden=" << damage << " (Max=" << power << ")\n";
+            Log::debug() << "Explosion hits Object " << o->get_id() << " Type=" << (int)o->get_typ() << ' ' << o->get_name()
+                         << " Damage=" << damage << " (Max=" << power << ")\n";
 
             // Schaden zufügen
             if (o->apply_damage(this, damage) && o->get_id() != quelle_torpedo) {
                 // Abschuss? Dann in die Statistik (außer wenn "Quell"-torpedo)
-                welt->add_abschuss(std::move(Abschuss(
+                welt->add_abschuss(Abschuss(
                         welt->get_objekt_or_null(quelle_sub),
                         welt->get_objekt_or_null(o->get_id()),
-                        nullptr))
+                        nullptr) // TODO?
                 );
             }
         }

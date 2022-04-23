@@ -16,13 +16,28 @@ bool Sub::tick(Welt* welt, float s) {
     return true;
 }
 
-bool Sub::shoot(const std::string& torpedo_name) {
-    for (auto& paar : torpedos) if (paar.first.get_name() == torpedo_name) {
-        if (paar.second > 0) { paar.second--; return true; }
-        else return false;
+bool Sub::shoot(const std::string& weapon_name, Objekt::Typ torpedo_oder_gegenmassnahme) {
+    auto get_weapon = [&](auto& container) {
+        for (auto& paar : container) if (paar.first.get_name() == weapon_name) {
+            if (paar.second > 0) {
+                paar.second--;
+                return true;
+            }
+            else {
+                Log::err() << "Sub::shoot(): " << name << " is out of ammo\n";
+                return false;
+            }
+        }
+        Log::err() << "Sub::shoot(): Unknown Object " << (int)torpedo_oder_gegenmassnahme << " with name=" << name << '\n';
+        return false;
+    };
+    if (torpedo_oder_gegenmassnahme != Objekt::Typ::TORPEDO && torpedo_oder_gegenmassnahme != Objekt::Typ::DECOY) {
+        Log::err() << "Sub::shoot(): Invalid Weapontype: " << (int)torpedo_oder_gegenmassnahme << " with name=" << name << '\n';
+        return false;
     }
-    Log::err() << "Sub::shoot(): no Torpedo with name=" << torpedo_name << '\n';
-    return false;
+    const bool abschuss_erfolgt = torpedo_oder_gegenmassnahme == Objekt::Typ::TORPEDO ?
+            get_weapon(torpedos) : get_weapon(decoys);
+    return abschuss_erfolgt;
 }
 
 dist_t Sub::get_max_reichweite_as() const {

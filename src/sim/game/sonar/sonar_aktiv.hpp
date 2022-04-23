@@ -15,7 +15,7 @@ public:
     Sonar_Aktiv() = default;
 
     /// Ctor. @note Aktive Sonars sind standardmäßig ausgeschaltet.
-    Sonar_Aktiv(const std::string& name, Groesse groesse, float resolution, dist_t max_range, float ping_intervall_min,
+    Sonar_Aktiv(const std::string& name, Groesse groesse, float resolution, uint16_t resolution_range, dist_t max_range, float ping_intervall_min,
                 const std::vector<std::tuple<float, float>>& blindspots);
 
     /// Führt erkennungen durch.
@@ -39,10 +39,13 @@ public:
     /// Maximale Reichweite in m.
     dist_t get_max_range() const { return max_range; }
 
+    /// Liefert die Auflösung bei der Bestimmung von Entfernungen in Metern. 1 = Metergenau; 1000 = auf 1000m genau.
+    uint16_t get_resolution_range() const { return resolution_range;}
+
     /// Serialisierung via cereal.
     template <class Archive> void serialize(Archive& ar) {
         ar(cereal::base_class<Sonar>(this),
-                mode, ping_intervall_min, max_range, ping_counter);
+                mode, ping_intervall_min, max_range, ping_counter, resolution_range);
     }
 
 private:
@@ -52,6 +55,9 @@ private:
 
     /// Erkennungsreichweite der Pings.
     dist_t max_range;
+
+    /// Auflösung bei der Bestimmung von Entfernungen in Metern. 1 = Metergenau; 1000 = auf 1000m genau.
+    uint16_t resolution_range;
 
     /// Schnellstmögliches Intervall für Pings.
     float ping_intervall_min;
