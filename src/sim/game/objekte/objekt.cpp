@@ -3,6 +3,7 @@
 #include "torpedo.hpp"
 #include "sub_ai.hpp"
 #include "ping.hpp"
+#include "decoy.hpp"
 
 Objekt::Objekt(const Vektor& pos, const float& bearing) :
         pos(pos),
@@ -23,6 +24,7 @@ Objekt* Objekt::copy(const Objekt* o) {
         case Typ::PING:             return new Ping(*((Ping*)o));
         case Typ::SUB_AI:           return new Sub_AI(*((Sub_AI*)o));
         case Typ::SUB:              return new Sub(*((Sub*)o));
+        case Typ::DECOY:            return new Decoy(*((Decoy*)o));
         case Typ::TORPEDO:          return new Torpedo(*((Torpedo*)o));
         case Typ::EXPLOSION:        return new Explosion(*((Explosion*)o));
         case Typ::OBJEKT:           return nullptr;

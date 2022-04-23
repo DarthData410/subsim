@@ -26,10 +26,11 @@ public:
             OBJEKT           = 0, /// Basis-Klasse. Kann nicht instanziert werden.
             OBJEKT_STEUERBAR = 1, /// Sollte nicht instanziert werden.
             SUB              = 2, /// Spieler Sub.
-            SUB_AI           = 3, /// Computergesteuertes Sub
+            SUB_AI           = 3, /// Computergesteuertes Sub.
             TORPEDO          = 4, /// Torpedo.
             EXPLOSION        = 5, /// Eine kurzlebige Explosion.
-            PING             = 6, /// Kurzlebige Geräuschquelle
+            PING             = 6, /// Kurzlebige Geräuschquelle.
+            DECOY            = 7, /// Torpedo-Gegenmaßnahme.
     };
 
     /// Schäden, die ein Objekt haben kann.

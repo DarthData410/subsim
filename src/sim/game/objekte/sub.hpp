@@ -1,9 +1,10 @@
 #pragma once
 
 #include "objekt_steuerbar.hpp"
+#include "../sonar/sonar_aktiv.hpp"
 #include "../sonar/sonar_passiv.hpp"
 #include "torpedo.hpp"
-#include "../sonar/sonar_aktiv.hpp"
+#include "decoy.hpp"
 
 #include <cereal/types/map.hpp>
 
@@ -52,7 +53,7 @@ public:
     /// Serialisierung via cereal.
     template <class Archive> void serialize(Archive& ar) {
         ar(cereal::base_class<Objekt_Steuerbar>(this),
-           name, sonars_active, sonars_passive, torpedos
+           name, sonars_active, sonars_passive, torpedos, decoys
         );
     }
 
@@ -69,6 +70,9 @@ protected:
 
     /// Torpedos und deren Anzahl.
     std::map<Torpedo, uint8_t> torpedos;
+
+    /// Decoys und deren Anzahl.
+    std::map<Decoy, uint8_t> decoys;
 
 };
 CEREAL_REGISTER_TYPE(Sub)
