@@ -94,16 +94,20 @@ const Detektion* Torpedo::get_beste_detektion() const {
     // Bestes Ziel Auswahl
     const auto& ziel = std::min_element(detektionen.begin(),
                                         detektionen.end(),
-                        // Sortierung, die über die Zielpriorisierung entscheidet // TODO besser testen
-                        [this](const Detektion* d1, const Detektion* d2) {
-                            // MOVEMENT_SIGNATURE bevorzugen
-                            if (d1->typ == Detektion::Typ::MOVEMENT_SIGNATURE && d2->typ != Detektion::Typ::MOVEMENT_SIGNATURE) return true;
-                            if (d1->typ != Detektion::Typ::MOVEMENT_SIGNATURE && d2->typ == Detektion::Typ::MOVEMENT_SIGNATURE) return false;
-                            // ACTIVE_SONAR_ECHO bevorzugen
+                        // Sortierung, die über die Zielpriorisierung entscheidet
+                        [this](const Detektion* d1, const Detektion* d2) { // true = links / false = rechts
+                            // 1) ACTIVE_SONAR_ECHO bevorzugen
                             if (d1->typ == Detektion::Typ::ACTIVE_SONAR_ECHO && d2->typ != Detektion::Typ::ACTIVE_SONAR_ECHO) return true;
                             if (d1->typ != Detektion::Typ::ACTIVE_SONAR_ECHO && d2->typ == Detektion::Typ::ACTIVE_SONAR_ECHO) return false;
-                            return std::abs(Physik::winkel_diff(this->kurs, d1->bearing)) <
-                                   std::abs(Physik::winkel_diff(this->kurs, d2->bearing));
+                            // 2) MOVEMENT_SIGNATURE bevorzugen
+                            if (d1->typ == Detektion::Typ::MOVEMENT_SIGNATURE && d2->typ != Detektion::Typ::MOVEMENT_SIGNATURE) return true;
+                            if (d1->typ != Detektion::Typ::MOVEMENT_SIGNATURE && d2->typ == Detektion::Typ::MOVEMENT_SIGNATURE) return false;
+                            // 3) Bei gleicher Richtung: näheres bevorzugen
+                            if (d1->range.has_value() && d2->range.has_value() && d1->bearing == d2->bearing) return *d1->range < *d2->range;
+                            // 4) Ähnlichere Richtung (div. Lautstärke) bevorzugen
+                            //    Faktor 16 durch Test "Torpedo Zielauswahl via AS detektionen" in Test_Objekte ermittelt
+                            return (std::abs(Physik::winkel_diff(this->kurs, d1->bearing)*16) / d1->gain) <
+                                   (std::abs(Physik::winkel_diff(this->kurs, d2->bearing)*16) / d2->gain);
     });
     if (ziel != detektionen.end()) return *ziel;
     return (const Detektion*) nullptr;

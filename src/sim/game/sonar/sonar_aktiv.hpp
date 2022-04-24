@@ -5,6 +5,7 @@
 class Sonar_Aktiv final : public Sonar {
 
     friend class Kommando;
+    friend class Test_Objekte;
 
 public:
 

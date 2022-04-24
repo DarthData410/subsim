@@ -21,27 +21,29 @@
 + [ ] !!! fire Torpedos 
 
 ## Armament
-+ [ ] Abschussrohre
++ [ ] !!! Abschussrohre
 + [ ] Fix+Test Sonar Blindspots
 + [ ] !!! AS Pings temporär skalieren 
 + [x] !!! Decoys 
   + [ ] !!! Kommando
   + [ ] Balance Decoy effectiveness
++ [x] !!! Active Sonar detects depths
++ [x] !!! Torpedo target choice test + improve
 
 ## UI
 + [ ] Improve / Make Map Screen less rough
   + [ ] Show scale px : km
-+ [ ] Passive Sonar: Bearing Markers
-+ [ ] Active Sonar: Bearing Markers
-+ [ ] Active Sonar: Range Markers
++ [ ] !!! Passive Sonar: Bearing Markers
++ [ ] !!! Active Sonar: Bearing Markers
++ [ ] !!! Active Sonar: Range Markers
 + [ ] New Screen: Navigation / Controls
 + [ ] (?) Speed -> knots
 
 
 ## Simulation
-  + [ ] Terrain
-    + [ ] Depth from Heightmap
-  + [x] !!! Depth-rudder 
++ [ ] Terrain
+  + [ ] Depth from Heightmap
++ [x] !!! Depth-rudder
 
 ## Code
 + Convert all stdouts / error messages to english

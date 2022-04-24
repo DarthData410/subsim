@@ -1,3 +1,5 @@
+#pragma once
+
 #include "game/team.hpp"
 #include "game/zone.hpp"
 #include "game/abschuss.hpp"
@@ -17,6 +19,7 @@ class Welt final {
     friend class Sonar_Passiv;
     friend class Torpedo;
     friend class Test_Welt;
+    friend class Test_Objekte;
 
 public:
 

@@ -14,6 +14,7 @@ class Sonar_Passiv;
 class Torpedo final : public Objekt_Steuerbar {
 
     friend class Explosion;
+    friend class Test_Objekte;
 
 public:
 

@@ -48,7 +48,8 @@ void Sonar_Aktiv::tick(Objekt* parent, Welt* welt, float s) {
                 Detektion::Typ::ACTIVE_SONAR_ECHO,
                 o->get_noise(), // TODO gut so oder immer 1.0f einfach? Oder mal Physik::schallfaktor(entfernung) ?
                 Physik::round(kurs, this->resolution),
-                Physik::round(entfernung, static_cast<dist_t>(this->resolution_range))
+                Physik::round(entfernung, static_cast<dist_t>(this->resolution_range)),
+                o->get_pos().z()
         ));
     }
 }
