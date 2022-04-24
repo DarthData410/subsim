@@ -5,13 +5,16 @@
 ## Gameplay / Meta / Strategy
 + [ ] Teambase: Repair/Resupply/Change sub
 + [ ] Replace Player's sub on death
-+ [ ] Research new
++ [ ] Research
   + [ ] Torpedo models
   + [ ] Passive Sonar models
   + [ ] Motor models
-    + [ ] Sub models
+  + [ ] Sub models
+  + [ ] Decoys
 + [ ] Zones: Spawn Ships, Have them reach home for Points
-+ [ ] (?) Attack / Defend gameplay instead of 'Equal Encounter'
++ [ ] Mainmenu - game setup
+  + [ ] (?) Attack / Defend gameplay instead of 'Equal Encounter'
++ [ ] Surface Ships
 
 ## AI
 + [ ] !!! Evade 
@@ -22,10 +25,10 @@
 + [ ] Fix+Test Sonar Blindspots
 + [ ] !!! AS Pings temporär skalieren 
 + [x] !!! Decoys 
+  + [ ] !!! Kommando
   + [ ] Balance Decoy effectiveness
 
 ## UI
-+ [ ] Mainmenu - game setup
 + [ ] Improve / Make Map Screen less rough
   + [ ] Show scale px : km
 + [ ] Passive Sonar: Bearing Markers
@@ -33,6 +36,7 @@
 + [ ] Active Sonar: Range Markers
 + [ ] New Screen: Navigation / Controls
 + [ ] (?) Speed -> knots
+
 
 ## Simulation
   + [ ] Terrain
