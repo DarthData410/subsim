@@ -5,7 +5,7 @@
 #include <zufall.hpp>
 #include <imgui.h>
 #include <imgui_internal.h>
-
+#include <SFML/Graphics/Font.hpp>
 
 ui::Font::Font(ui::FONT typ, const ImVec4& color) {
     int s = static_cast<int>(typ);
@@ -130,4 +130,14 @@ template<typename T> void ui::MouseWheel(T& value, T increment, T min, T max) {
             }
         }
     }
+}
+
+const sf::Font* ui::get_font() {
+    static const std::unique_ptr<sf::Font> sfml_font(std::invoke([]() {
+        sf::Font* font = new sf::Font;
+        const std::string font_file = "data/gfx/fonts/font.ttf";
+        if (!font->loadFromFile(font_file)) Log::err() << "Error: Unable to load font from file " << font_file << '\n';
+        return font;
+    }));
+    return sfml_font.get();
 }

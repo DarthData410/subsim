@@ -47,7 +47,8 @@ private:
     /* Einstellungen */
     int   as_array_select = 1;
     float as_scale = 0.1f;
-    float ps_intervall = 0.5f;
+    bool  as_range_rings = true;
     int   ps_array_select = 1;
+    float ps_intervall = 0.5f;
 
 };

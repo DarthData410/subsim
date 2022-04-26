@@ -11,6 +11,7 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/CircleShape.hpp>
+#include <SFML/Graphics/Text.hpp>
 
 namespace {
     const unsigned RGB_PX = 4; // RGBA
@@ -29,6 +30,7 @@ namespace {
     sw::Ring           as_ring; // Aufdeckend
     sf::RectangleShape ps_rect;
     Grafik bg("data/gfx/bg_sonar.png");
+    sf::Color SOFT_GREEN(0, 0xFF, 0, 0x80);
 }
 
 Sonar_UI::Sonar_UI() : Standard_UI(nullptr) {}
@@ -96,6 +98,7 @@ void Sonar_UI::update_and_show(const Sub* sub) {
     if (as_last_ping_timer.has_value()) ui::Text("Last Ping: %.1fs", as_last_ping_timer->getElapsedTime().asSeconds());
     else ui::TextUnformatted("Last Ping: -");
     ui::Text("Total Pings: %d", as.get_ping_counter());
+    ui::Checkbox("Range Rings", &as_range_rings);
     if (ui::Button("Clear")) {
         as_tex->clear({BG_COL, BG_COL, BG_COL, BG_COL});
         as_last_ping_timer.reset();
@@ -111,25 +114,28 @@ void Sonar_UI::draw_gfx(const Sub* sub, sf::RenderWindow* window) {
 }
 
 void Sonar_UI::draw_ps(const Sub* sub, sf::RenderWindow* window) {
-    /// 1 Line Update
+    // Konvertiert 0°-360°-Kurs-Koordinaten zu x-Koordinaten der Sonar-Anzeige
+    auto convert = [](float degree) {
+        if (degree > 360.f) degree -= 360.f;
+        if (degree < 0.f)   degree += 360.f;
+        return std::clamp(static_cast<unsigned>(std::round((degree * static_cast<float>(PS_SIZE_X)) / 360.f)),
+                          0u, PS_SIZE_X - 1u);
+    };
+
+    // 1 Line Update
     if (static sf::Clock timer; timer.getElapsedTime().asSeconds() > ps_intervall) {
         timer.restart();
         const auto& sonar = sub->get_sonars_passive().at(ps_array_select-1);
-
-        /// Konvertiert 0°-360°-Kurs-Koordinaten zu x-Koordinaten der Sonar-Anzeige
-        auto convert = [](float degree) {
-            return static_cast<unsigned>(std::round(((degree * static_cast<float>(PS_SIZE_X)) / 360.f)));
-        };
         const unsigned res = std::max(1u, convert(sonar.get_aufloesung()));
 
-        /// Rauschen eintragen
+        // Rauschen eintragen
         std::vector<uint8_t> v(PS_SIZE_X);
         for (unsigned i = 0; i < v.size(); i += res) {
             const uint8_t rnd = Zufall::ui(0, 0x10);
             for (unsigned k = 0; k < res && i+k < v.size(); ++k) v[i+k] = rnd;
         }
 
-        /// Detektionen zu x-Koordinaten konvertieren / eintragen
+        // Detektionen zu x-Koordinaten konvertieren / eintragen
         for (const auto& d : sonar.get_detektionen()) {
             const unsigned pos = convert(d.bearing);
             const uint8_t val = std::clamp(static_cast<int>(v.at(pos) + (d.gain * 255.f)), 0, 0xFF);
@@ -138,7 +144,7 @@ void Sonar_UI::draw_ps(const Sub* sub, sf::RenderWindow* window) {
             }
         }
 
-        /// Neue Zeile eintragen
+        // Neue Zeile eintragen
         for (unsigned i = 0; i < PS_LINE_WIDTH; i+=RGB_PX) {
             const auto pos = (PS_LINE_WIDTH * (PS_SIZE_Y-1)) + i;
             ps_data[pos]   = 0x00; // R
@@ -146,13 +152,30 @@ void Sonar_UI::draw_ps(const Sub* sub, sf::RenderWindow* window) {
             ps_data[pos+2] = 0x00; // B
             ps_data[pos+3] = 0xFF; // A
         }
-        /// Neue Zeile nach oben schieben
+        // Neue Zeile nach oben schieben
         for (unsigned i = 0; i < res; ++i) {
             std::memmove(ps_data.data(), ps_data.data() + PS_LINE_WIDTH, ps_data.size() - PS_LINE_WIDTH);
         }
         ps_tex->update(ps_data.data()); // In Textur übernehmen
     }
     window->draw(ps_rect);
+
+    // Skala eintragen
+    for (unsigned i = 0; i < 360; i += 40) {
+        sf::Text marker(std::to_string(i), *ui::get_font(), 12);
+        marker.setFillColor(SOFT_GREEN);
+        const auto pos_x = std::min(PS_POS_X + convert(i), PS_POS_X + PS_SIZE_X - 20);
+        const auto pos_y = PS_POS_Y + PS_SIZE_Y;
+        marker.setPosition(pos_x, pos_y - 16.f);
+        window->draw(marker);
+        if (i > 0) { // kein Marker für die Ränder
+            const sf::Vertex line[] = {
+                    sf::Vertex({static_cast<float>(pos_x), pos_y - 16.f}, SOFT_GREEN),
+                    sf::Vertex({static_cast<float>(pos_x), pos_y}, SOFT_GREEN)
+            };
+            window->draw(line, 2, sf::Lines);
+        }
+    }
 }
 
 void Sonar_UI::draw_as(const Sub* sub, sf::RenderWindow* window) {
@@ -184,7 +207,8 @@ void Sonar_UI::draw_as(const Sub* sub, sf::RenderWindow* window) {
             const auto punkt = Physik::get_punkt(0, 0, d.bearing,
              (d.range.value() + Zufall::i(-as.get_resolution_range()/2, as.get_resolution_range()/2)) * as_scale);
             sf::RectangleShape rect({2.f, 2.f});
-            rect.setFillColor({0x00, 0xFF, 0x00, static_cast<uint8_t>(0xFF * d.gain)});
+            const uint8_t brightness = static_cast<uint8_t>(0xFF * d.gain);
+            rect.setFillColor({0x00, brightness, 0x00, brightness});
             rect.setPosition(0.5f * AS_SIZE_X + punkt.first, 0.5f * AS_SIZE_Y - punkt.second);
             as_tex->draw(rect);
         }
@@ -197,10 +221,27 @@ void Sonar_UI::draw_as(const Sub* sub, sf::RenderWindow* window) {
     }
     window->draw(as_circ);
 
-    /// Per Ring aufdecken
-    if (static sf::Clock ring_clock; as_last_ping_timer && ring_clock.getElapsedTime().asSeconds() > 1) {
+    // Per Ring aufdecken
+    if (static sf::Clock ring_clock; as_last_ping_timer && ring_clock.getElapsedTime().asSeconds() > 0.1f) {
         ring_clock.restart();
-        as_ring.setHole(std::min(as_ring.getHole() + 0.025f, 1.0f));
+        const float hole_grow = (1.0f - as_ring.getHole()) * 0.0078125f * (as_scale / 0.1f); // TODO scale
+        as_ring.setHole(std::min(as_ring.getHole() + hole_grow, 1.0f));
     }
     window->draw(as_ring);
+
+    // Range Ringe
+    if (as_range_rings) for (float radius = 50.f; radius < AS_RADIUS; radius += 50.f) {
+        sf::CircleShape rr(radius);
+        rr.setFillColor(sf::Color::Transparent);
+        rr.setOutlineThickness(1);
+        rr.setOutlineColor(SOFT_GREEN);
+        rr.setPosition(AS_POS_X + AS_RADIUS - rr.getRadius(), AS_POS_Y + AS_RADIUS - rr.getRadius());
+        window->draw(rr);
+        // Text
+        sf::Text marker(std::to_string(static_cast<int>(std::round(radius / as_scale))), // Entfernung vom Sub
+                        *ui::get_font(), 12);
+        marker.setFillColor(SOFT_GREEN);
+        marker.setPosition(rr.getPosition().x, rr.getPosition().y + rr.getRadius());
+        window->draw(marker);
+    }
 }

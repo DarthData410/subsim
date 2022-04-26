@@ -32,13 +32,14 @@
 
 ## UI
 + [ ] Improve / Make Map Screen less rough
-  + [ ] Show scale px : km
-+ [ ] !!! Passive Sonar: Bearing Markers
-+ [ ] !!! Active Sonar: Bearing Markers
-+ [ ] !!! Active Sonar: Range Markers
+  + [ ] Show scale px : km/sm
+  + [ ] Terrain (see below)
++ [x] !!! Passive Sonar: Bearing Markers
++ [x] !!! Passive Sonar: Bug: vector::_M_range_check: __n (which is 432) >= this->size() (which is 432)
++ [x] !!! Active Sonar: Bearing Markers
++ [x] !!! Active Sonar: Range Markers
 + [ ] New Screen: Navigation / Controls
 + [ ] (?) Speed -> knots
-
 
 ## Simulation
 + [ ] Terrain
@@ -46,4 +47,4 @@
 + [x] !!! Depth-rudder
 
 ## Code
-+ Convert all stdouts / error messages to english
++ [ ] Convert all stdouts / error messages to english

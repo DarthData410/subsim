@@ -3,6 +3,8 @@
 #include <optional>
 #include <imgui.h>
 
+namespace sf { class Font; }
+
 /// ImGui-Wrapper & Addons.
 namespace ui {
 
@@ -24,6 +26,8 @@ namespace ui {
         ~Font(); /// Hebt die Schriftartänderung auf.
     private: ImVec4 old_color;
     };
+
+    const sf::Font* get_font();
 
     /**
      * Modifiziert vom Original: https://github.com/Flix01/imgui
