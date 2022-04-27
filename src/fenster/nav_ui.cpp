@@ -34,6 +34,7 @@ void Nav_UI::sync(bool force) {
 }
 
 void Nav_UI::update_and_show(const Sub* sub) {
+    ui::Font f(ui::FONT::MONO_16);
     sync(objekte.empty());
     handle_imgui_events();
     show_navigation(sub);

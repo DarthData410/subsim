@@ -16,11 +16,15 @@
 namespace {
     const unsigned RGB_PX = 4; // RGBA
     const uint8_t  BG_COL = 0x40;
-    const unsigned AS_RADIUS =  300;
-    const unsigned AS_SIZE_X =  AS_RADIUS * 2;
-    const unsigned AS_SIZE_Y =  AS_RADIUS * 2;
-    const unsigned AS_POS_X  = 1230;
-    const unsigned AS_POS_Y  =   82;
+    const unsigned AS_RADIUS  =  300;
+    const unsigned AS_SIZE_X  =  AS_RADIUS * 2;
+    const unsigned AS_SIZE_Y  =  AS_RADIUS * 2;
+    const unsigned AS_POS_X   = 1230;
+    const unsigned AS_POS_Y   =   82;
+    const unsigned AS_MITTE_X     = AS_SIZE_X / 2;
+    const unsigned AS_MITTE_Y     = AS_SIZE_Y / 2;
+    const unsigned AS_MITTE_X_ABS = AS_POS_X + AS_MITTE_X;
+    const unsigned AS_MITTE_Y_ABS = AS_POS_Y + AS_MITTE_Y;
     const unsigned PS_SIZE_X =  432;
     const unsigned PS_SIZE_Y =  660;
     const unsigned PS_POS_X  =  112;
@@ -80,30 +84,38 @@ void Sonar_UI::update_and_show(const Sub* sub) {
 
     // AS Select
     const Sonar_Aktiv& as = sub->get_sonars_active().at(as_array_select-1);
+    auto as_clear = [&]() {
+        as_tex->clear({BG_COL, BG_COL, BG_COL, BG_COL});
+        as_ring.setHole(0); // komplett verdecken
+        as_last_ping_timer.reset();
+    };
     ImGui::SetNextWindowPos({1309, 788});
     ImGui::SetNextWindowSize({489, 259});
     ImGui::Begin("Sonar_Active_Config", nullptr, flags);
     ui::SliderInt("Array Select", &as_array_select, 1, sub->get_sonars_active().size(), "#%d");
-    ui::Text("Selected Sonar Model: %s", as.get_name().c_str());
+    ui::Text("Selected Sonar Model: %s (%.1fkm Range)", as.get_name().c_str(), as.get_max_range() / 1000.f);
     ui::Text("Ping Mode");
     Sonar_Aktiv::Mode modus = as.get_mode();
-    if (ui::RadioButton("OFF", as.get_mode() == Sonar_Aktiv::Mode::OFF)) modus = Sonar_Aktiv::Mode::OFF;
-    ImGui::SameLine();
-    if (ui::RadioButton("SINGLE", as.get_mode() == Sonar_Aktiv::Mode::SINGLE)) modus = Sonar_Aktiv::Mode::SINGLE;
-    ImGui::SameLine();
-    if (ui::RadioButton("ON", as.get_mode() == Sonar_Aktiv::Mode::ON)) modus = Sonar_Aktiv::Mode::ON;
+    ImGui::SameLine(); if (ui::RadioButton("OFF", as.get_mode() == Sonar_Aktiv::Mode::OFF)) modus = Sonar_Aktiv::Mode::OFF;
+    ImGui::SameLine(); if (ui::RadioButton("SINGLE", as.get_mode() == Sonar_Aktiv::Mode::SINGLE)) modus = Sonar_Aktiv::Mode::SINGLE;
+    ImGui::SameLine(); if (ui::RadioButton("ON", as.get_mode() == Sonar_Aktiv::Mode::ON)) modus = Sonar_Aktiv::Mode::ON;
+    ImGui::SameLine(); if (ui::RadioButton("CLEAR", false)) as_clear();
     if (modus != as.get_mode()) klient->kommando(Kommando(Kommando::SONAR_A_MODE, sub->get_id(),
                                                           std::tuple<uint8_t, Sonar_Aktiv::Mode>(as_array_select-1, modus)));
-    ui::Text("Ping Intervall: %.1fs", as.get_intervall()); // TODO Kommando
+    ui::Text("Ping Intervall: %.1fs", as.get_intervall()); // TODO Kommando zum Anpassen
     if (as_last_ping_timer.has_value()) ui::Text("Last Ping: %.1fs", as_last_ping_timer->getElapsedTime().asSeconds());
     else ui::TextUnformatted("Last Ping: -");
     ui::Text("Total Pings: %d", as.get_ping_counter());
+
+    // AS Range Settings
     ui::Checkbox("Range Rings", &as_range_rings);
-    if (ui::Button("Clear")) {
-        as_tex->clear({BG_COL, BG_COL, BG_COL, BG_COL});
-        as_last_ping_timer.reset();
-    }
-    // ui::Text("Range Rings");
+    ui::TextUnformatted("Set Range");
+    if (as.get_max_range() > 1'500)  { ImGui::SameLine(); if (ui::Button("1.5k##as_range_1.5k")) { as_scale = AS_RADIUS / 1500.f;  as_clear(); }}
+    if (as.get_max_range() > 3'000)  { ImGui::SameLine(); if (ui::Button("3k##as_range_3k"))   { as_scale = AS_RADIUS / 3000.f;  as_clear(); }}
+    if (as.get_max_range() > 9'000)  { ImGui::SameLine(); if (ui::Button("9k##as_range_9k"))   { as_scale = AS_RADIUS / 9000.f;  as_clear(); }}
+    if (as.get_max_range() > 30'000) { ImGui::SameLine(); if (ui::Button("30k##as_range_30k")) { as_scale = AS_RADIUS / 30000.f; as_clear(); }}
+    ImGui::SameLine(); if (ui::Button("Max##as_range_max")) { as_scale = AS_RADIUS / as.get_max_range(); as_clear(); }
+    //if (AS_RADIUS / as_scale > as.get_max_range()) as_scale = AS_RADIUS / as.get_max_range(); // Reichweite nicht überschreiten
     ImGui::End();
 }
 
@@ -162,7 +174,7 @@ void Sonar_UI::draw_ps(const Sub* sub, sf::RenderWindow* window) {
 
     // Skala eintragen
     for (unsigned i = 0; i < 360; i += 40) {
-        sf::Text marker(std::to_string(i), *ui::get_font(), 12);
+        sf::Text marker(std::to_string(i), *ui::get_font(), ui::FONT_SIZE_SFML);
         marker.setFillColor(SOFT_GREEN);
         const auto pos_x = std::min(PS_POS_X + convert(i), PS_POS_X + PS_SIZE_X - 20);
         const auto pos_y = PS_POS_Y + PS_SIZE_Y;
@@ -180,6 +192,7 @@ void Sonar_UI::draw_ps(const Sub* sub, sf::RenderWindow* window) {
 
 void Sonar_UI::draw_as(const Sub* sub, sf::RenderWindow* window) {
     const Sonar_Aktiv& as = sub->get_sonars_active().at(as_array_select-1);
+
     if (as.get_ping_counter() != as_last_ping) { // Refresh ausführen?
         as_ring.setHole(0); // Verdecken
         as_last_ping = as.get_ping_counter();
@@ -201,20 +214,20 @@ void Sonar_UI::draw_as(const Sub* sub, sf::RenderWindow* window) {
         rect_rauschen.setTexture(&tex_rauschen);
         as_tex->draw(rect_rauschen);
 
-        // Detektionen eintragen
+        // Detektionen eintragen //std::fmod(540.f-d.bearing, 360.f)
         for (const auto& d : as.get_detektionen()) {
             if (!d.range) throw std::runtime_error("Active Sonar detection without range is invalid.\n");
-            const auto punkt = Physik::get_punkt(0, 0, d.bearing,
-             (d.range.value() + Zufall::i(-as.get_resolution_range()/2, as.get_resolution_range()/2)) * as_scale);
+            const auto punkt = Physik::get_punkt(0, 0, d.bearing, d.range.value() * as_scale);
             sf::RectangleShape rect({2.f, 2.f});
             const uint8_t brightness = static_cast<uint8_t>(0xFF * d.gain);
             rect.setFillColor({0x00, brightness, 0x00, brightness});
             rect.setPosition(0.5f * AS_SIZE_X + punkt.first, 0.5f * AS_SIZE_Y - punkt.second);
             as_tex->draw(rect);
         }
-        sf::RectangleShape rect({4.f, 4.f});
-        rect.setFillColor({0xFF, 0xFF, 0xFF, 0xFF});
-        rect.setPosition(0.5 * AS_SIZE_X, 0.5 * AS_SIZE_Y);
+        // Mitten-Marker
+        sf::RectangleShape rect({3.f, 3.f}); // Mitte
+        rect.setFillColor(sf::Color::White);
+        rect.setPosition(AS_MITTE_X-1, AS_MITTE_Y-1);
         as_tex->draw(rect);
         as_tex->display();
         as_circ.setTexture(&as_tex->getTexture());
@@ -230,18 +243,58 @@ void Sonar_UI::draw_as(const Sub* sub, sf::RenderWindow* window) {
     window->draw(as_ring);
 
     // Range Ringe
-    if (as_range_rings) for (float radius = 50.f; radius < AS_RADIUS; radius += 50.f) {
-        sf::CircleShape rr(radius);
-        rr.setFillColor(sf::Color::Transparent);
-        rr.setOutlineThickness(1);
-        rr.setOutlineColor(SOFT_GREEN);
-        rr.setPosition(AS_POS_X + AS_RADIUS - rr.getRadius(), AS_POS_Y + AS_RADIUS - rr.getRadius());
-        window->draw(rr);
-        // Text
-        sf::Text marker(std::to_string(static_cast<int>(std::round(radius / as_scale))), // Entfernung vom Sub
-                        *ui::get_font(), 12);
-        marker.setFillColor(SOFT_GREEN);
-        marker.setPosition(rr.getPosition().x, rr.getPosition().y + rr.getRadius());
+    if (as_range_rings) {
+        auto put_marker = [&](int ring_m, float pos_x, float pos_y) {
+            std::string str_marker(std::to_string(ring_m));
+            if (ring_m > 1000) {
+                str_marker = std::to_string(ring_m/1000.f);
+                if (str_marker.find(".0") != std::string::npos) str_marker = str_marker.substr(0, str_marker.find('.'));
+                else if (str_marker.find('.') != std::string::npos) str_marker = str_marker.substr(0, str_marker.find('.') + 2);
+                str_marker += 'k';
+            }
+            sf::Text marker(str_marker, *ui::get_font(), ui::FONT_SIZE_SFML);
+            marker.setFillColor(SOFT_GREEN);
+            marker.setPosition(pos_x, pos_y);
+            window->draw(marker);
+        };
+        for (float radius = 50.f; radius < AS_RADIUS; radius += 50.f) {
+            sf::CircleShape rr(radius);
+            rr.setFillColor(sf::Color::Transparent);
+            rr.setOutlineThickness(1);
+            rr.setOutlineColor(SOFT_GREEN);
+            rr.setPosition(AS_POS_X + AS_RADIUS - rr.getRadius(), AS_POS_Y + AS_RADIUS - rr.getRadius());
+            window->draw(rr);
+            // Text (Entfernung vom Sub)
+            const int ring_m = static_cast<int>(std::round(radius / as_scale));
+            put_marker(ring_m, rr.getPosition().x + rr.getRadius(), rr.getPosition().y);
+        }
+        put_marker(AS_RADIUS / as_scale, AS_MITTE_X_ABS, AS_POS_Y); // Oberster Marker ohne Ring
+
+        // Mouse Nav
+        static auto maus_pos = ImGui::GetMousePos();
+        static auto maus_richtung = Physik::kurs(AS_MITTE_X_ABS, AS_MITTE_Y_ABS, maus_pos.x, maus_pos.y);
+        static auto line_bearing_mitte = Physik::get_punkt(AS_MITTE_X_ABS, AS_MITTE_Y_ABS, maus_richtung, 0.5f*AS_RADIUS);
+        static auto line_bearing_ende  = Physik::get_punkt(AS_MITTE_X_ABS, AS_MITTE_Y_ABS, maus_richtung, AS_RADIUS);
+        static sf::Text marker("", *ui::get_font(), ui::FONT_SIZE_SFML);
+        static std::array<sf::Vertex, 2> line_bearing = {
+                sf::Vertex({static_cast<float>(AS_MITTE_X_ABS), static_cast<float>(AS_MITTE_Y_ABS)}, SOFT_GREEN),
+                sf::Vertex({static_cast<float>(line_bearing_ende.first), static_cast<float>(line_bearing_ende.second)}, SOFT_GREEN)
+        };
+        // Refresh?
+        if (const auto maus_pos_neu = ImGui::GetMousePos(); Physik::distanz(maus_pos_neu.x, maus_pos_neu.y, AS_MITTE_X_ABS, AS_MITTE_Y_ABS) <= AS_RADIUS) {
+            maus_pos = maus_pos_neu; // Maus im AS-Radius-Bereich
+            maus_richtung = Physik::kurs(AS_MITTE_X_ABS, AS_MITTE_Y_ABS, maus_pos.x, maus_pos.y);
+            line_bearing_mitte = Physik::get_punkt(AS_MITTE_X_ABS, AS_MITTE_Y_ABS, maus_richtung, 0.5f*AS_RADIUS);
+            line_bearing_ende  = Physik::get_punkt(AS_MITTE_X_ABS, AS_MITTE_Y_ABS, maus_richtung, AS_RADIUS);
+            line_bearing = {
+                    sf::Vertex({static_cast<float>(AS_MITTE_X_ABS), static_cast<float>(AS_MITTE_Y_ABS)}, SOFT_GREEN),
+                    sf::Vertex({static_cast<float>(line_bearing_ende.first), static_cast<float>(line_bearing_ende.second)}, SOFT_GREEN)
+            };
+            marker.setString(std::to_string(static_cast<int>(540-std::round(maus_richtung))%360));
+            marker.setFillColor(sf::Color::Green);
+            marker.setPosition(line_bearing_mitte.first, line_bearing_mitte.second);
+        }
+        window->draw(line_bearing.data(), 2, sf::Lines);
         window->draw(marker);
     }
 }

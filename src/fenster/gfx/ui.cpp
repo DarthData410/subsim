@@ -7,6 +7,15 @@
 #include <imgui_internal.h>
 #include <SFML/Graphics/Font.hpp>
 
+// Kandidaten für Schriftarten:
+// LCD: E1234.ttf         ! OFL           | https://ggbot.itch.io/e1234-font
+// optixal.ttf            ! CC            | zu klein / zu groß / recht passend | https://fontenddev.com/fonts/optixal/
+// PixeloidMono.ttf       ! Txt
+const std::string ui::FILE_FONT_IMGUI = "data/gfx/fonts/font.ttf";
+const std::string ui::FILE_FONT_SFML  = "data/gfx/fonts/font.ttf";
+const float    ui::FONT_SIZE_IMGUI    = 1.0f;
+const unsigned ui::FONT_SIZE_SFML     = 14;
+
 ui::Font::Font(ui::FONT typ, const ImVec4& color) {
     int s = static_cast<int>(typ);
     if (const auto verfuegbar = ImGui::GetIO().Fonts->Fonts.size(); s > verfuegbar) {
@@ -135,8 +144,7 @@ template<typename T> void ui::MouseWheel(T& value, T increment, T min, T max) {
 const sf::Font* ui::get_font() {
     static const std::unique_ptr<sf::Font> sfml_font(std::invoke([]() {
         sf::Font* font = new sf::Font;
-        const std::string font_file = "data/gfx/fonts/font.ttf";
-        if (!font->loadFromFile(font_file)) Log::err() << "Error: Unable to load font from file " << font_file << '\n';
+        if (!font->loadFromFile(ui::FILE_FONT_SFML)) Log::err() << "Error: Unable to load font from file " << ui::FILE_FONT_SFML << '\n';
         return font;
     }));
     return sfml_font.get();

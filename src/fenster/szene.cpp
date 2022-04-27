@@ -1,4 +1,5 @@
 #include "szene.hpp"
+#include "gfx/ui.hpp"
 
 #include <iostream>
 #include <memory>
@@ -32,7 +33,7 @@ void Szene::load_fonts() {
     // 12 14 16 18 20 22 24
     for (unsigned i = 12; i <= 24; i += 2) { // Schriftgrößen
         io.Fonts->AddFontFromFileTTF(
-                "data/gfx/fonts/font_mono.ttf", static_cast<float>(i), nullptr,
+                ui::FILE_FONT_IMGUI.c_str(), static_cast<float>(i * ui::FONT_SIZE_IMGUI), nullptr,
                 glyph_range
         );
     }

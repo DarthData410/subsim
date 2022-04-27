@@ -2,21 +2,27 @@
 
 #include <optional>
 #include <imgui.h>
+#include <string>
 
 namespace sf { class Font; }
 
 /// ImGui-Wrapper & Addons.
 namespace ui {
 
+    extern const std::string FILE_FONT_SFML;
+    extern const std::string FILE_FONT_IMGUI;
+    extern const unsigned    FONT_SIZE_SFML;
+    extern const float       FONT_SIZE_IMGUI;
+
     /// Verfügbare Schriftarten.
     enum class FONT {
         MONO_12=0,
-        MONO_14=1,
-        MONO_16=2,
-        MONO_18=3,
-        MONO_20=4,
-        MONO_22=5,
-        MONO_24=6,
+        MONO_14=0,
+        MONO_16=1,
+        MONO_18=2,
+        MONO_20=3,
+        MONO_22=4,
+        MONO_24=5,
     };
 
     /// Zum festlegen einer Schriftart via RAII.
