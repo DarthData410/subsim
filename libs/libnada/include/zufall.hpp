@@ -109,4 +109,4 @@ namespace Zufall {
         return v;
     }
 
-};
+}

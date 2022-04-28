@@ -10,8 +10,8 @@
 
 Host::Host(uint16_t port) {
     ENetAddress address {
-        .host = ENET_HOST_ANY,
-        .port = port
+        ENET_HOST_ANY,
+        port
     };
     if (server = enet_host_create(&address, 32, // Max. Klienten
                                   2, // Kanäle; 0 = Request/Receive, 1 = Broadcast

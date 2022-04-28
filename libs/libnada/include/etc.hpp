@@ -85,4 +85,4 @@ namespace Etc {
     template <typename T>
     bool ptr_compare(const T* o1, const T* o2) { return *o1 < *o2; }
 
-};
+}
