@@ -12,6 +12,7 @@ Waffen_UI::Waffen_UI(Klient* klient) : Standard_UI(klient) {
 }
 
 void Waffen_UI::update_and_show(const Sub* sub) {
+    ui::Font font(ui::FONT::MONO_16);
     show_weapons(sub);
     show_intelligence();
 }

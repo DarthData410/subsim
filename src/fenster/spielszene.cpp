@@ -5,6 +5,15 @@
 #include <imgui.h>
 #include <imgui-SFML.h>
 #include <SFML/Window/Event.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
+#include <memory>
+
+#include "../sim/game/objekte/sub.hpp"
+#include "../sim/net/klient.hpp"
+#include "nav_ui.hpp"
+#include "sonar_ui.hpp"
+#include "waffen_ui.hpp"
+#include "map_ui.hpp"
 
 Spielszene::Spielszene(sf::RenderWindow* window, const std::string& ip) :
     klient(new Klient(ip)), window(window)
@@ -18,8 +27,8 @@ void Spielszene::sync() {
         if (player_sub) {
             const std::string& antwort = klient->request(Net::REQUEST_SUB, player_sub->get_id());
             if (!antwort.empty()) {
-                player_sub = Net::deserialize<Sub>(antwort);
-                //Log::debug() << "sync sub id=" << player_sub->get_id() << '\n';
+                player_sub = std::make_unique<Sub>(Net::deserialize<Sub>(antwort));
+                Log::debug() << "sync sub id=" << player_sub->get_id() << '\n';
             }
             else Log::err() << "Spielszene::" << __func__ << " no sub returned with ID " << player_sub->get_id() << '\n';
         }
@@ -30,27 +39,26 @@ void Spielszene::sync() {
 void Spielszene::key_pressed(const sf::Keyboard::Key& key) {
     switch (key) {
         case sf::Keyboard::Escape: window->close(); break;
-
-        // Neues Spieler Sub geben (nur wenn keins vorhanden)
-        case sf::Keyboard::M: {
+        case sf::Keyboard::M: { // Neues Spiel: Sub geben (nur wenn keins vorhanden) && UIs init
             if (player_sub) { Log::debug() << "New player_sub not needed\n"; break; }
             const std::string& antwort = klient->request(Net::AKTION_NEUES_UBOOT, 1); // objekt_id = Team
             if (!antwort.empty()) {
-                player_sub = Net::deserialize<Sub>(antwort);
-                nav_ui     = Nav_UI(klient.get());
-                sonar_ui   = Sonar_UI(klient.get());
-                waffen_ui  = Waffen_UI(klient.get());
+                player_sub = std::make_unique<Sub>(Net::deserialize<Sub>(antwort));
+                map_ui     = std::make_unique<Map_UI>(klient.get());
+                nav_ui     = std::make_unique<Nav_UI>(klient.get());
+                sonar_ui   = std::make_unique<Sonar_UI>(klient.get());
+                waffen_ui  = std::make_unique<Waffen_UI>(klient.get());
                 Log::debug() << "New player_sub id=" << player_sub->get_id() << '\n';
             }
             else Log::err() << "New player_sub not available\n";
         } break;
-
-        // Tabs
-        case sf::Keyboard::F1: tab = NAV;      break;
-        case sf::Keyboard::F2: tab = SONAR;    break;
-        case sf::Keyboard::F3: tab = WEAPONS;  break;
-        case sf::Keyboard::F4: tab = THREE_D;  break;
-        case sf::Keyboard::F5: tab = MAINMENU; break;
+        // Change Tab
+        case sf::Keyboard::F1: tab = MAP;      break;
+        case sf::Keyboard::F2: tab = NAV;      break;
+        case sf::Keyboard::F3: tab = SONAR;    break;
+        case sf::Keyboard::F4: tab = WEAPONS;  break;
+        case sf::Keyboard::F5: tab = THREE_D;  break;
+        case sf::Keyboard::F6: tab = MAINMENU; break;
         default: break;
     }
 }
@@ -81,14 +89,14 @@ void Spielszene::show() {
                 default: break;
             }
             switch (tab) {
-                case NAV: nav_ui.handle(&event); break;
+                case NAV: nav_ui->handle(&event); break;
                 default: break;
             }
         }
         if (!player_sub) tab = MAINMENU; // Kein Sub? -> Hauptmenü
 
         // Gfx Interpolieren (nur eigenes Sub)
-        if (static sf::Clock timer_interpol; player_sub.has_value()) {
+        if (static sf::Clock timer_interpol; player_sub) {
             player_sub->tick(nullptr, timer_interpol.getElapsedTime().asSeconds() * klient->get_timelapse());
             timer_interpol.restart();
         }
@@ -108,9 +116,10 @@ void Spielszene::draw_imgui() {
     // Welches Menü rendern?
     switch (tab) {
         case MAINMENU: draw_menu(); break;
-        case NAV:      nav_ui.update_and_show(&player_sub.value());    break;
-        case SONAR:    sonar_ui.update_and_show(&player_sub.value());  break;
-        case WEAPONS:  waffen_ui.update_and_show(&player_sub.value()); break;
+        case MAP:      map_ui->update_and_show(player_sub.get());    break;
+        case NAV:      nav_ui->update_and_show(player_sub.get());    break;
+        case SONAR:    sonar_ui->update_and_show(player_sub.get());  break;
+        case WEAPONS:  waffen_ui->update_and_show(player_sub.get()); break;
         case THREE_D:  break;
         default:       tab = MAINMENU; break;
     }
@@ -119,9 +128,10 @@ void Spielszene::draw_imgui() {
 void Spielszene::draw_gfx() {
     switch (tab) {
         case MAINMENU: break;
-        case NAV:      nav_ui.draw_gfx(&player_sub.value(), window); break;
-        case SONAR:    sonar_ui.draw_gfx(&player_sub.value(), window); break;
-        case WEAPONS:  waffen_ui.draw_gfx(&player_sub.value(), window); break;
+        case MAP:      map_ui->draw_gfx(player_sub.get(), window);    break;
+        case NAV:      nav_ui->draw_gfx(player_sub.get(), window);    break;
+        case SONAR:    sonar_ui->draw_gfx(player_sub.get(), window);  break;
+        case WEAPONS:  waffen_ui->draw_gfx(player_sub.get(), window); break;
         case THREE_D:  break;
         default: break;
     }

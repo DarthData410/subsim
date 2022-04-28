@@ -1,8 +1,12 @@
 #include "szene.hpp"
-#include "gfx/ui.hpp"
 
-#include <iostream>
-#include <memory>
+#include "gfx/ui.hpp"
+#include "../sim/net/klient.hpp"
+#include "nav_ui.hpp"
+#include "sonar_ui.hpp"
+#include "waffen_ui.hpp"
+#include "map_ui.hpp"
+
 #include <imgui-SFML.h>
 #include <implot.h>
 

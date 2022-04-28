@@ -7,6 +7,7 @@
     #include "sim/net/host.hpp"
     #include "sim/net/net.hpp"
     #include <log.hpp>
+    #include <thread>
 
 void start_server(Host*& host) {
     Log::out() << "Server startet..." << Log::flush;

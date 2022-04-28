@@ -1,14 +1,18 @@
 #pragma once
 
-#include "../sim/game/objekte/sub.hpp"
-#include "../sim/net/klient.hpp"
-#include "nav_ui.hpp"
-#include "sonar_ui.hpp"
-#include "waffen_ui.hpp"
-
 #include <SFML/Window/Keyboard.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
+#include <string>
+#include <memory>
 
+namespace sf { class RenderWindow; }
+class Klient;
+class Sub;
+class Map_UI;
+class Nav_UI;
+class Sonar_UI;
+class Waffen_UI;
+
+/// Verwaltet das UI. Besitzt alle UIs als Instanzen.
 class Spielszene final {
 
 public:
@@ -33,11 +37,13 @@ private:
 
 private:
 
-    enum Tab : uint8_t {
+    /// Anzuzeigender Tab.
+    enum Tab {
         MAINMENU,   // TODO
+        MAP,
         NAV,
-        SONAR,      // TODO
-        WEAPONS,    // TODO
+        SONAR,
+        WEAPONS,
         THREE_D
     };
 
@@ -50,10 +56,13 @@ private:
     std::unique_ptr<Klient> klient;
 
     /// Simulation
-    std::optional<Sub> player_sub = std::nullopt;
-    Nav_UI nav_ui;
-    Sonar_UI sonar_ui;
-    Waffen_UI waffen_ui;
-    sf::RenderWindow* window;
+    std::unique_ptr<Sub> player_sub;
+
+    /// UI
+    sf::RenderWindow* window; // Diese Klasse hier ist nicht Besitzer.
+    std::unique_ptr<Map_UI> map_ui;
+    std::unique_ptr<Nav_UI> nav_ui;
+    std::unique_ptr<Sonar_UI> sonar_ui;
+    std::unique_ptr<Waffen_UI> waffen_ui;
 
 };
