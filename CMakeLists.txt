@@ -4,7 +4,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 # Build Config
 if (CMAKE_BUILD_TYPE STREQUAL "Release")
-    set(CMAKE_CXX_FLAGS "-O2 -s -m64 -march=athlon64-sse3 -mtune=generic")
+    set(CMAKE_CXX_FLAGS "-O2 -s -m64 -march=athlon64-sse3 -mtune=generic") # evtl. -fimplicit-constexpr -ffastmath
     add_subdirectory(libs)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -Wall -Wextra -Wpedantic")
 else () # Debug build

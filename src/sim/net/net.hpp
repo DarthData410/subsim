@@ -12,10 +12,12 @@ public:
 
     /// Typen von Anfragen vom Klienten.
     enum Request : uint8_t {
-        SUB_CMD            = 0,   // "Kommando"
-        AKTION_NEUES_UBOOT = 1,   // "uint8_t Team" -> "Sub"
+                                  // Inhalt Anfrage -> Inhalt Antwort
+        MAP                = 0,   // "" -> "Welt"
+        SUB_CMD            = 1,   // "Kommando"
         REQUEST_SUB        = 2,   // "uint32_t ID"  -> "Sub" oder ""
-        ALLE_OBJEKTE       = 3,   // "" -> std::vector<Objekt>
+        AKTION_NEUES_UBOOT = 30,  // "uint8_t Team" -> "Sub"
+        ALLE_OBJEKTE       = 99,  // "" -> std::vector<Objekt>
         BROADCAST          = 100, // ServerBroadcast -> Klienten auf Kanal 2: welt - "teams" & "zonen"
     };
 

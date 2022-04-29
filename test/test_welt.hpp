@@ -1,8 +1,11 @@
 #pragma once
 
 #include "../src/sim/welt.hpp"
+#include "../src/sim/game/karte.hpp"
 #include <doctest.h>
 #include <log.hpp>
+#include <SFML/Graphics/Image.hpp>
+#include <SimplexNoise.h>
 
 class Test_Welt {
 
@@ -230,6 +233,27 @@ TEST_CASE_CLASS("welt") {
             }
         }
         REQUIRE(welt.get_objekte().size() <= 2); // 1 oder 2 Subs übrig
+    }
+    SUBCASE("karte terrain generierung") {
+        Karte karte;
+        const auto karte_raw = karte.get_image(100, 100);
+        CHECK_NOTHROW(karte_raw->saveToFile("temp_karte.png"));
+        float min = 0.5f; // noise min
+        float max = 0.5f; // noise max
+        float min_h = 0;  // höhe min
+        float max_h = 0;  // höhe max
+        for (int x = -1000; x <= 1000; ++x) for (int y = -1000; y <= 1000; ++y) {
+            const auto val = karte.get_raw_at(x,y);
+            const auto height = karte.get_height_at(x,y);
+            min = std::min(min, val);
+            max = std::max(max, val);
+            min_h = std::min(min_h, height);
+            max_h = std::max(max_h, height);
+        }
+        REQUIRE(min >= 0.f);
+        REQUIRE(max <= 1.f);
+        REQUIRE(min_h  < 0);
+        REQUIRE(max_h >= 0);
     }
 }
 

@@ -49,6 +49,7 @@ target_include_directories(bibliotheken SYSTEM PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}/cereal/include
         ${CMAKE_CURRENT_LIST_DIR}/libnada/include
         ${CMAKE_CURRENT_LIST_DIR}/libnada/selbaward
+        ${CMAKE_CURRENT_LIST_DIR}/libnada/simplex_noise/include
         )
 
 # Ueber Build Modus informieren

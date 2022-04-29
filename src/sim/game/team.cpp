@@ -1,7 +1,6 @@
 #include "team.hpp"
 
 #include <zufall.hpp>
-#include <cassert>
 
 Team::Team(uint8_t id) : id(id), punkte(0) {
     // Stock Sub

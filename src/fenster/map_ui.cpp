@@ -2,11 +2,20 @@
 #include "gfx/ui.hpp"
 #include "../sim/net/net.hpp"
 #include "../sim/net/klient.hpp"
+#include "../sim/game/karte.hpp"
+#include "../sim/physik.hpp"
+
 #include <log.hpp>
+#include <SimplexNoise.h>
 #include <SFML/System/Clock.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/CircleShape.hpp>
+#include <SFML/Graphics/Text.hpp>
+
+Map_UI::Map_UI(Klient* klient) : Standard_UI(klient) {
+    //
+}
 
 void Map_UI::update_and_show(const Sub* sub) {
     ui::Font f(ui::FONT::MONO_16);
@@ -58,15 +67,51 @@ void Map_UI::draw_gfx(const Sub* sub, sf::RenderWindow* window) {
     const float center_x = 0.5f * size_x;
     const float center_y = 0.5f * size_y;
 
+    /// Konvertiert Welt zu Fenster-Koordinaten (UI).
     const auto world2ui = [&] (float x, float y) {
         return sf::Vector2<float> {
                 static_cast<float>(center_x + shift_x + (scale * (x - pos_sub.x()))),
                 static_cast<float>(center_y + shift_y - (scale * (y - pos_sub.y())))
         };
     };
+    /// Konvertiert von Fenster-Koordinaten zu Welt-Koordinaten
+    const auto ui2world = [&] (float x, float y) { return std::tuple<float,float> {
+            static_cast<float>(((x - center_x - shift_x) / scale) + pos_sub.x()),
+            static_cast<float>(((y - center_y - shift_y) / scale) + pos_sub.y()) };
+    };
 
-    // Ozean zeichnen
-    // TODO (=> Terrain)
+    // Kartenrenderer
+    static Karte karte; // TODO vom Host holen
+    const unsigned vsize = 16; // Vertex-Größe
+    for (unsigned x = 0; x <= size_x; x += vsize) for (unsigned y = 0; y <= size_y; y += vsize) {
+            sf::VertexArray va(sf::Quads, 4);
+            std::array<uint8_t, 4> rgba;
+            const auto [x0, y0] = ui2world(x, y);
+            const auto [x1, y1] = ui2world(x+vsize, y+vsize);
+            rgba = karte.get_rgba_at(x0, y1);
+            va[0] = sf::Vertex({static_cast<float>(x), static_cast<float>(y+vsize)},
+                               {rgba[0], rgba[1], rgba[2], rgba[3]});
+            rgba = karte.get_rgba_at(x0, y0);
+            va[1] = sf::Vertex({static_cast<float>(x), static_cast<float>(y)},
+                               {rgba[0], rgba[1], rgba[2], rgba[3]});
+            rgba = karte.get_rgba_at(x1, y0);
+            va[2] = sf::Vertex({static_cast<float>(x+vsize), static_cast<float>(y)},
+                               {rgba[0], rgba[1], rgba[2], rgba[3]});
+            rgba = karte.get_rgba_at(x1, y1);
+            va[3] = sf::Vertex({static_cast<float>(x+vsize), static_cast<float>(y+vsize)},
+                               {rgba[0], rgba[1], rgba[2], rgba[3]});
+            window->draw(va);
+    }
+
+    // Skala
+    const int skala_size_real = std::max(1000.f, Physik::round(200.f / scale, 1000.f));
+    sf::RectangleShape skala_rect;
+    skala_rect.setPosition(20.f, size_y - 40.f);
+    skala_rect.setSize({skala_size_real * scale, 16.f});
+    sf::Text skala_txt(std::to_string(skala_size_real/1000) + " km", *ui::get_font(), 16);
+    skala_txt.setPosition(skala_rect.getPosition().x, skala_rect.getPosition().y - skala_rect.getSize().y - skala_txt.getCharacterSize() - 8);
+    window->draw(skala_txt);
+    window->draw(skala_rect);
 
     // Zonen zeichnen
     for (const Zone& zone : zonen) {

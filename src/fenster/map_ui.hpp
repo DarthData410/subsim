@@ -10,7 +10,7 @@ public:
 
     Map_UI() : Standard_UI(nullptr) {}
 
-    explicit Map_UI(Klient* klient) : Standard_UI(klient) {}
+    explicit Map_UI(Klient* klient);
 
     void update_and_show(const Sub* sub) override;
 
