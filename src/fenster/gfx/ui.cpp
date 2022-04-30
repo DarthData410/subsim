@@ -3,6 +3,7 @@
 #include <cmath>
 #include <algorithm>
 #include <zufall.hpp>
+#include <functional>
 #include <imgui.h>
 #include <imgui_internal.h>
 #include <SFML/Graphics/Font.hpp>
@@ -144,7 +145,11 @@ template<typename T> void ui::MouseWheel(T& value, T increment, T min, T max) {
 const sf::Font* ui::get_font() {
     static const std::unique_ptr<sf::Font> sfml_font(std::invoke([]() {
         sf::Font* font = new sf::Font;
-        if (!font->loadFromFile(ui::FILE_FONT_SFML)) Log::err() << "Error: Unable to load font from file " << ui::FILE_FONT_SFML << '\n';
+        if (!font->loadFromFile(ui::FILE_FONT_SFML)) {
+            Log::err() << "Error: Unable to load font from file " << ui::FILE_FONT_SFML << '\n';
+            static sf::Font fallback_font;
+            return &fallback_font;
+        }
         return font;
     }));
     return sfml_font.get();
