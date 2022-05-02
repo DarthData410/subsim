@@ -11,6 +11,7 @@ namespace ui {
 
     extern const std::string FILE_FONT_SFML;
     extern const std::string FILE_FONT_IMGUI;
+    extern const std::string FILE_FONT_LCD;
     extern const unsigned    FONT_SIZE_SFML;
     extern const float       FONT_SIZE_IMGUI;
 
@@ -61,6 +62,12 @@ namespace ui {
 
     /// Mausrad kann über dem vorigen ImGui-Element verwendet werden, um einen Wert zu erhöhen/verringern.
     template <typename T> void MouseWheel(T& value, T increment, T min, T max);
+
+    /**
+     * Beginnt ein unsichtbares Fenster - der zugewiesene Inhalt ist jedoch sichtbar.
+     * @note Muss mit ImGui::End beendet werden.
+     */
+    void BeginInvisible(const char* titel, const ImVec2& pos, const ImVec2& size);
 
     /* Wrapper für ImGui::XXX */
     void Text(const char* fmt, ...);

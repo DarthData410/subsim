@@ -14,6 +14,7 @@
 // PixeloidMono.ttf       ! Txt
 const std::string ui::FILE_FONT_IMGUI = "data/gfx/fonts/font.ttf";
 const std::string ui::FILE_FONT_SFML  = "data/gfx/fonts/font.ttf";
+const std::string ui::FILE_FONT_LCD   = "data/gfx/fonts/E1234.ttf";
 const float    ui::FONT_SIZE_IMGUI    = 1.0f;
 const unsigned ui::FONT_SIZE_SFML     = 14;
 
@@ -153,4 +154,12 @@ const sf::Font* ui::get_font() {
         return font;
     }));
     return sfml_font.get();
+}
+
+void ui::BeginInvisible(const char* titel, const ImVec2& pos, const ImVec2& size) {
+    const auto flags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize |
+                       ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground;
+    ImGui::SetNextWindowPos(pos);
+    ImGui::SetNextWindowSize(size);
+    ImGui::Begin(titel, nullptr, flags);
 }

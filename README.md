@@ -24,6 +24,7 @@ TODO: Description
 + [ ] (?) Attack / Defend gameplay instead of 'Equal Encounter'
 + [ ] <font color='grey'>Surface Ships</font>
 + [ ] <font color='grey'>Aircraft</font>
++ [ ] Save/Load Game
 
 ## AI
 + [ ] **Evade**
@@ -40,7 +41,6 @@ TODO: Description
     + [ ] Decoy effectiveness balancing
 + [x] Active Sonar detects depths
 + [X] Torpedos kill
-    + [ ] Damage model
 + [x] Torpedo Targeting choice test + improve
 
 ## UI
@@ -52,15 +52,19 @@ TODO: Description
 + [x] Passive Sonar: Bug: vector::_M_range_check: __n (which is 432) >= this->size() (which is 432)
 + [x] Active Sonar: Bearing Markers
 + [x] Active Sonar: Range Markers
-+ [ ] New Screen: Navigation / Controls
++ [X] New Screen: Navigation / Controls
+  + [ ] O2 Ventilation
+  + [ ] Emergency Surface
 + [ ] (?) Speed -> knots
++ [ ] Weapons Screen
 
 ## Simulation
 + [X] Basic Physics Simulation
     + [X] Object Movement
     + [X] Distance and bearing calculations
++ [ ] Damage model
 + [X] Terrain
-    + [X] Depth from ~~Height Map~~ Simplex Noise
+    + [X] Terrain from ~~Height Map~~ procedural Simplex Noise
     + [ ] Synchronize with Host
     + [ ] Land: Collision
     + [ ] Land: AI Pathfinding around)

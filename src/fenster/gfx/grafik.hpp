@@ -1,17 +1,24 @@
 #pragma once
 
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Graphics/Texture.hpp>
-#include <SFML/Graphics/Sprite.hpp>
 #include <memory>
 #include <unordered_map>
+#include <string>
+#include <SFML/System/Vector2.hpp>
+#include <SFML/Graphics/Color.hpp>
+
+namespace sf {
+    class Texture;
+    class RenderWindow;
+    class RectangleShape;
+}
 
 /**
  * Wurzelklasse für alle Dinge, die vom Fenster gerendert werden.
  * Enthält zum Anzeigen eine Methode `draw`.
- * @version 1.1
+ * @version 1.2
  * @author nada
  */
+namespace gfx {
 class Grafik final {
 
 public:
@@ -20,46 +27,43 @@ public:
      *  Konstruktor.
      *  @note `is_shared` = true bedeutet, dass die Grafik nicht gelöscht wird nach ableben der Instanz.
      */
-    Grafik() : is_shared(false), is_flipped(false) {};
+    Grafik();
 
     /// ctor. Erzeugt eine Grafik aus gegebener Datei (`jpg`, `png` ...). Formate: vgl SFML Doku.
     explicit Grafik(const std::string& textur_pfad, bool is_shared = false);
 
-    /// dtor.
-    virtual ~Grafik();
+    /// Gibt die Textur wieder frei.
+    ~Grafik();
 
     /// Zeichnet die Textur auf das gegebene Fenster.
-    virtual void draw(sf::RenderWindow* fenster);
+    void draw(sf::RenderWindow* fenster);
 
     /// Getter: X-Koordinate.
-    float x() const { return sprite.getPosition().x; }
+    float x() const;
 
     /// Getter: Y-Koordinate.
-    float y() const { return sprite.getPosition().y; }
+    float y() const;
 
     /// Getter: Kompletter Positionsvektor.
-    const sf::Vector2f& pos() const { return sprite.getPosition(); }
+    const sf::Vector2f& pos() const;
 
     /// Liegt gegebener Punkt in der Grafik?
     bool is_inside(float x, float y) const;
 
     /// Liefert einen Pointer zur verwendeten Textur.
-    sf::Texture* data() const { return textur; }
-
-    /// Liefert den verwendeten Sprite.
-    const sf::Sprite& get_sprite() const { return sprite; }
+    sf::Texture* data() const;
 
     /// Grafik geladen?
     bool good() const { return textur != nullptr; }
 
     /// Liefert die Dimensionen der Textur.
-    sf::Vector2u size() const { return textur->getSize(); }
+    sf::Vector2u size() const;
 
     /// Liefert die x-Dimensionen der Grafik.
-    float size_x() const { return textur->getSize().x * sprite.getScale().x; }
+    float size_x() const;
 
     /// Liefert die y-Dimensionen der Grafik.
-    float size_y() const { return textur->getSize().y * sprite.getScale().y; }
+    float size_y() const;
 
     /// Liefert die Dimensionen der Grafik zu float konvertiert.
     sf::Vector2f size_f() const;
@@ -68,23 +72,23 @@ public:
     const std::string& get_pfad() const { return textur_pfad; }
 
     /// Manipuliert (multipliziert) gegebene Farbe mit der Grafik.
-    void set_color(const sf::Color& farbe) { sprite.setColor(farbe); }
+    void set_color(const sf::Color& farbe);
 
     void set_opacity(float faktor);
 
     /// Skaliert die Grafik auf gegebene Größe in Pixel.
     void set_size(const sf::Vector2f& size);
 
-    void set_size(float scale) { sprite.setScale(scale, scale); }
+    void set_size(float scale);
 
     /// Setter: X-Koordinate.
-    void set_x(float x) { sprite.setPosition(x, sprite.getPosition().y); }
+    void set_x(float x);
 
     /// Setter: Y-Koordinate.
-    void set_y(float y) { sprite.setPosition(sprite.getPosition().x, y); }
+    void set_y(float y);
 
     /// Setter: Position als Vektor.
-    void set_pos(const sf::Vector2f& pos) { sprite.setPosition(pos); }
+    void set_pos(const sf::Vector2f& pos);
 
     /// Setter: Horizontal spiegeln.
     void set_flip(bool flip);
@@ -106,8 +110,9 @@ private:
 
     std::string textur_pfad;
 
-    sf::Texture* textur = nullptr;
+    sf::Texture* textur;
 
-    sf::Sprite sprite;
+    sf::RectangleShape* rect;
 
 };
+}

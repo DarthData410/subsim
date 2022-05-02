@@ -56,7 +56,7 @@ void Map_UI::handle_imgui_events() {
     /// Zoom via Mausrad
     if (!ImGui::IsAnyItemHovered() && std::abs(io.MouseWheel) > 0) {
         scale += (0.25f * scale * io.MouseWheel);
-        scale = std::clamp(scale, 0.001f, 1.f);
+        scale = std::clamp(scale, 0.005f, 1.f);
     }
 }
 

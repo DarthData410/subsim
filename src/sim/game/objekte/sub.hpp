@@ -19,6 +19,9 @@ class Sub : public Objekt_Steuerbar {
 
 public:
 
+    /// Mindesttiefe für U-Boote.
+    static constexpr float SURFACE_DEPTH = -5.f;
+
     Sub() = default;
 
     Sub(const std::string& name, const Vektor& pos,
@@ -50,6 +53,9 @@ public:
 
     /// Liefert die beste Auflösung aller Sonars (AS & PS).
     float get_best_aufloesung_sonar() const;
+
+    /// Liefert die Tiefe (z negativ), ab der geschnorchelt werden kann.
+    float get_schnorcheltiefe() const { return -50.f; }
 
     /// Serialisierung via cereal.
     template <class Archive> void serialize(Archive& ar) {

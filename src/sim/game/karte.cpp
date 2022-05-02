@@ -6,7 +6,7 @@
 #include <SFML/Graphics/Image.hpp>
 
 Karte::Karte() {
-    water_level = 1.0f; // (0,1) // TODO Land
+    water_level = 0.75f; // (0,1) // TODO Land
     octaves = 3;
     map_shift_x = Zufall::ui(0,1000000);
     map_shift_y = Zufall::ui(0,1000000);

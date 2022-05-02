@@ -57,6 +57,9 @@ public:
     /// Getter: Aktuelle x/y-Geschwindigkeit (absolut).
     float get_speed() const override { return motor_linear.v; }
 
+    /// Getter: Aktuelle (x/y-)Rotation in °/s.
+    float get_speed_rot() const { return motor_rot.v; }
+
     /// Liefert die relative x/y-Geschwindigkeit zur Höchstgeschwindigkeit (negativ, wenn Rückwärts).
     float get_speed_relativ() const { return motor_linear.v / motor_linear.v_max; }
 

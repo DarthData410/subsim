@@ -33,7 +33,7 @@ namespace {
     sf::CircleShape    as_circ;
     sw::Ring           as_ring; // Aufdeckend
     sf::RectangleShape ps_rect;
-    Grafik bg("data/gfx/bg_sonar.png");
+    gfx::Grafik bg("data/gfx/bg_sonar.png");
     sf::Color SOFT_GREEN(0, 0xFF, 0, 0x80);
 }
 
@@ -63,15 +63,9 @@ Sonar_UI::Sonar_UI(Klient* klient) : Standard_UI(klient),
 }
 
 void Sonar_UI::update_and_show(const Sub* sub) {
-    const ui::Font font(ui::FONT::MONO_20, ImColor(0.f, 1.0f, 0.f));
-    const auto flags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize |
-                 ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground;
-
-    // Passive Sonar Config
-    ImGui::SetNextWindowPos({130, 836});
-    ImGui::SetNextWindowSize({405,215});
     const Sonar_Passiv& ps = sub->get_sonars_passive().at(ps_array_select-1);
-    ImGui::Begin("Sonar_Passive_Config", nullptr, flags);
+    const ui::Font font(ui::FONT::MONO_20, ImColor(0.f, 1.0f, 0.f));
+    ui::BeginInvisible("Sonar_Passive_Config", {130, 836}, {405, 215});
     ui::SliderInt("Array Select", &ps_array_select, 1, sub->get_sonars_passive().size(), "#%d");
     ui::Text("Selected Sonar Model: %s", ps.get_name().c_str());
     ui::SliderFloat("Update Intervall", &ps_intervall, 0.2f, 10.f, "%.1fs");
@@ -89,9 +83,7 @@ void Sonar_UI::update_and_show(const Sub* sub) {
         as_ring.setHole(0); // komplett verdecken
         as_last_ping_timer.reset();
     };
-    ImGui::SetNextWindowPos({1309, 788});
-    ImGui::SetNextWindowSize({489, 259});
-    ImGui::Begin("Sonar_Active_Config", nullptr, flags);
+    ui::BeginInvisible("Sonar_Active_Config", {1309, 788}, {489, 259});
     ui::SliderInt("Array Select", &as_array_select, 1, sub->get_sonars_active().size(), "#%d");
     ui::Text("Selected Sonar Model: %s (%.1fkm Range)", as.get_name().c_str(), as.get_max_range() / 1000.f);
     ui::Text("Ping Mode");
