@@ -21,8 +21,10 @@ public:
     /// Rendert die UI. In jedem Renderschritt aufzurufen.
     virtual void update_and_show(const Sub* sub) = 0;
 
+    /// SFML Eingabe-Event verwenden.
     virtual void handle(sf::Event* event) = 0;
 
+    /// An diese Stelle kommen SFML-Renderings.
     virtual void draw_gfx(const Sub* sub, sf::RenderWindow* window) = 0;
 
 protected:

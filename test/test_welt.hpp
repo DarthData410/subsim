@@ -38,6 +38,10 @@ TEST_CASE_CLASS("welt") {
         for (unsigned i = 0; i < 10'000; ++i) welt.tick(0.1f);
         REQUIRE(Physik::round(sub->get_pos().z(), 5.0) == doctest::Approx(-75.0));
 
+        sub->set_target_depth(-150.f); // Untertauchen
+        for (unsigned i = 0; i < 10'000; ++i) welt.tick(0.1f);
+        REQUIRE(Physik::round(sub->get_pos().z(), 5.0) == doctest::Approx(-150.0));
+
         sub->set_target_depth(-25.f); // Auftauchen
         for (unsigned i = 0; i < 10'000; ++i) welt.tick(0.1f);
         REQUIRE(Physik::round(sub->get_pos().z(), 5.0) == doctest::Approx(-25.0));

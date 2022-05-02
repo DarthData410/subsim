@@ -28,7 +28,9 @@ public:
 
     void handle(sf::Event* event) override;
 
-    void handle_imgui_events();
+    void handle_imgui_events(const Sub* sub);
+
+    void sync(const Sub* sub);
 
 private:
 

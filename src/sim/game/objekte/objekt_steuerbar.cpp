@@ -40,13 +40,22 @@ bool Objekt_Steuerbar::tick(Welt* welt, float s) {
     // Links/Rechts in Grad bewegen
     // + Max. Rotation ist Geschwindigkeitsabhängig
     static constexpr float eps = 0.0001f;
-    const float max_vm = std::sqrt(std::abs(get_speed_relativ())); // Maximale Manövergeschwindigkeit.
-    if (std::abs(motor_rot.v) > motor_rot.v_max * max_vm) motor_rot.v = motor_rot.v * max_vm;
-    if (std::abs(motor_rot.v) > eps) kurs += motor_rot.v * s;
+    if (std::abs(motor_rot.v) > eps) {
+        if (std::abs(motor_rot.v) > motor_rot.v_max * get_speedfaktor()) motor_rot.v = motor_rot.v_max * get_speedfaktor();
+        kurs += get_speed_rot() * s;
+    }
 
-    // Bewegungen ausführen
+    // Höhenbewegung
+    if (std::abs(motor_tauch.v) > eps) {
+        const float tauch_faktor = std::max(0.25f, get_speedfaktor());
+        if (std::abs(motor_tauch.v) > motor_tauch.v_max * tauch_faktor) {
+            motor_tauch.v = motor_tauch.v > 0 ? (motor_tauch.v_max * tauch_faktor) : (-motor_tauch.v_max * tauch_faktor);
+        }
+        pos.z(pos.z() + (get_speed_tauch() * s));
+    }
+
+    // Vorwärtsbewegung ausführen
     if (std::abs(motor_linear.v) > eps) Physik::move(pos, kurs, motor_linear.v * s);
-    if (std::abs(motor_tauch.v)  > eps) pos.z(pos.z() + motor_tauch.v);
 
     // noch am Leben?
     return schaeden.count(Schaden::ZERSTOERT) == 0;
@@ -87,6 +96,10 @@ void Objekt_Steuerbar::auto_path() {
         set_target_bearing(bearing);
         stop();
     }
+}
+
+float Objekt_Steuerbar::get_speedfaktor() const {
+    return std::sqrt(std::abs(get_speed_relativ()));
 }
 
 bool Objekt_Steuerbar::apply_damage(const Explosion* explosion, float damage) {

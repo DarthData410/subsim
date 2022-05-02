@@ -20,7 +20,7 @@ void Kommando::apply(Welt* welt) {
             sub->set_target_rudder(as<float>());
             break;
         case MOTOR_TAUCH:
-            // TODO
+            sub->set_target_pitch(as<float>());
             break;
         case AUTO_POS: {
             const auto& pos = as<std::tuple<float, float>>();
@@ -30,7 +30,7 @@ void Kommando::apply(Welt* welt) {
             sub->set_target_bearing(as<float>());
             break;
         case AUTO_TIEFE:
-            // TODO
+            sub->set_target_depth(as<float>());
             break;
         case TORP_LAUNCH: {
             const Torpedo& t = as<Torpedo>();

@@ -7,6 +7,12 @@
 #include <vector>
 #include <algorithm>
 
+/// Benutzung z.B. so: `if (static Do_Once _; _)`
+struct Do_Once {
+    explicit operator bool() { return std::exchange(b, false); }
+    private: bool b = true;
+};
+
 /// Helfermethoden, die sonst in keine Kategorie passen.
 namespace Etc {
 

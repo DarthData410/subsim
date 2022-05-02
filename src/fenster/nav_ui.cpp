@@ -7,12 +7,14 @@
 #include "gfx/multigrafik.hpp"
 
 #include <implot.h>
+#include <etc.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/ConvexShape.hpp>
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Text.hpp>
+#include <SFML/Graphics/Shader.hpp>
 #include <cmath>
 
 Nav_UI::Nav_UI() : Standard_UI(nullptr) {}
@@ -44,7 +46,7 @@ Nav_UI::~Nav_UI() {
 }
 
 void Nav_UI::update_and_show(const Sub* sub) {
-    handle_imgui_events();
+    handle_imgui_events(sub);
     ui::Font f(ui::FONT::MONO_16);
     show_navigation(sub);
     show_noise_signature(sub, sub->get_speed());
@@ -65,19 +67,28 @@ void Nav_UI::show_navigation(const Sub* sub) const {
                           std::tuple<float, float>(target_x, target_z)});
     }*/
 
+    ui::Separator();
     static float target_bearing = 0;
-    ui::KnobDegree("target_bearing", &target_bearing,
+    ui::KnobDegree("Target Course", &target_bearing,
                             0.f, 360.f, 1.f, 40.f, 2.f, "%.0f°", std::make_optional(sub->get_bearing()));
-    if (ui::Button("Set##set_bearing")) {
+    if (ImGui::SameLine(); ui::Button("Set##set_bearing")) {
         klient->kommando({Kommando::AUTO_KURS, sub->get_id(), target_bearing});
     }
     ui::Separator();
 
     static float target_speed = 0;
-    ui::SliderFloat("Set Speed", &target_speed, -sub->get_speed_max(), sub->get_speed_max(), "%.1f");
+    ui::SliderFloat("Target Speed", &target_speed, -sub->get_speed_max(), sub->get_speed_max(), "%.1f");
     ui::MouseWheel(target_speed, 0.5f, -sub->get_speed_max(), sub->get_speed_max());
-    if (ui::Button("Set##set_speed")) {
+    if (ImGui::SameLine(); ui::Button("Set##set_speed")) {
         klient->kommando({Kommando::MOTOR_LINEAR, sub->get_id(), target_speed / sub->get_speed_max()});
+    }
+    ui::Separator();
+
+    static int target_depth = std::abs(sub->get_pos().z());
+    ui::SliderInt("Target Depth", &target_depth, std::abs(sub->SURFACE_DEPTH), 1000, "%d");
+    ui::MouseWheel(target_speed, 0.5f, -sub->get_speed_max(), sub->get_speed_max());
+    if (ImGui::SameLine(); ui::Button("Set##set_depth")) {
+        klient->kommando({Kommando::AUTO_TIEFE, sub->get_id(), (float)-target_depth});
     }
     ui::Separator();
 
@@ -153,6 +164,25 @@ void Nav_UI::draw_gfx(const Sub* sub, sf::RenderWindow* window) {
     window->draw(text_speed);
     window->draw(text_depth);
 
+/*    static sf::Shader shader; // TODO Shader
+    if (static Do_Once Q; Q) {
+        shader.loadFromFile("data/gfx/shader/lcd_effect.glsl", sf::Shader::Fragment);
+        shader.setUniform("res", sf::Vector3f(1920, 1080, 32));
+    }
+    shader.setUniform("tex2d", sf::Shader::CurrentTexture);
+    window->draw(text_speed, &shader);*/
+
+    // Zeichnet Zahlen als Text für Skalenbeschriftungen
+    auto text = [&](std::string text, float x, float y, unsigned nachkommastellen = 0) {
+        if (nachkommastellen > 0) {
+            text = text.substr(0, text.find('.') + nachkommastellen + 1);
+            if (text.back() == '0') text.pop_back();
+        }
+        sf::Text t(text, *ui::get_font(), 12);
+        t.setPosition({x,y});
+        window->draw(t);
+    };
+
     // Bearing
     static sf::ConvexShape bearing_indicator = std::invoke([]() {
         const float length = 128;
@@ -181,11 +211,46 @@ void Nav_UI::draw_gfx(const Sub* sub, sf::RenderWindow* window) {
         cs.setPosition(821, 936);
         return cs;
     });
-    const float kurs_grad_pro_wert = 90.f / 4.4f; // 4,4 <=> 90°
+    // Skala
+    const float kurs_step = sub->get_speed_max_rot() / 3.f;
+    text("0", 816, 868);
+    text(std::to_string(kurs_step), 775, 880, 1);
+    text(std::to_string(kurs_step), 848, 880, 1);
+    text(std::to_string(kurs_step*2), 750, 920, 1);
+    text(std::to_string(kurs_step*2), 868, 920, 1);
+    text(std::to_string(sub->get_speed_max_rot()), 760, 964, 1);
+    text(std::to_string(sub->get_speed_max_rot()), 860, 964, 1);
+    const float kurs_grad_pro_wert = 90.f / (kurs_step * 2.3f); // 2,3 Steps <=> 90°
     kurs_indicator.setRotation(sub->get_speed_rot() * kurs_grad_pro_wert);
     window->draw(kurs_indicator);
 
-    // Tiefenruder TODO
+    // Tiefenruder
+    const float tiefe_step = sub->get_speed_max_tauch() / 5.f;
+    const float tiefe_grad_pro_wert = 90.f / (tiefe_step * 3.25f); // 3,25 steps <=> 90°
+    const unsigned nachkommastellen = tiefe_step < 0.1f ? 2 : 1;
+    text("0", 1150, 935);
+    text(std::to_string(tiefe_step), 1144, 906, nachkommastellen);
+    text(std::to_string(tiefe_step), 1144, 960, nachkommastellen);
+    text(std::to_string(tiefe_step*2), 1122, 884, nachkommastellen);
+    text(std::to_string(tiefe_step*2), 1122, 980, nachkommastellen);
+    text(std::to_string(tiefe_step*3), 1092, 870, nachkommastellen);
+    text(std::to_string(tiefe_step*3), 1092, 996, nachkommastellen);
+    text(std::to_string(tiefe_step*4), 1066, 878, nachkommastellen);
+    text(std::to_string(tiefe_step*4), 1066, 992, nachkommastellen);
+    text(std::to_string(sub->get_speed_max_tauch()), 1038, 894, nachkommastellen);
+    text(std::to_string(sub->get_speed_max_tauch()), 1038, 980, nachkommastellen);
+    static sf::ConvexShape tiefen_ruder = std::invoke([]() {
+        const float length = 80;
+        sf::ConvexShape cs(3);
+        cs.setPoint(0, sf::Vector2f(0, length));
+        cs.setPoint(1, sf::Vector2f(2, 0));
+        cs.setPoint(1, sf::Vector2f(4, length));
+        cs.setOrigin(2, length);
+        cs.setPosition(1098, 940);
+        return cs;
+    });
+    tiefen_ruder.setRotation(std::fmod(450.f - (sub->get_speed_tauch() * tiefe_grad_pro_wert), 360.f));
+    window->draw(tiefen_ruder);
 
     // O2 Anzeige TODO
 
@@ -195,9 +260,17 @@ void Nav_UI::handle(sf::Event* event) {
     (void)event;
 }
 
-void Nav_UI::handle_imgui_events() {
+void Nav_UI::handle_imgui_events(const Sub* sub) {
+    (void) sub;
     if (ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
         const auto& maus_pos = ImGui::GetMousePos();
         if (schalter_emergency_surface->is_inside(maus_pos.x, maus_pos.y)) emergency_surface = !emergency_surface;
     }
+}
+
+void Nav_UI::sync(const Sub* sub) {
+    if (static sf::Clock timer; timer.getElapsedTime().asSeconds() < 1) return;
+    else timer.restart();
+    // Notauftauchen, wenn Heben betätigt TODO
+    if (emergency_surface) klient->kommando({Kommando::MOTOR_TAUCH, sub->get_id(), sub->get_speed_max_tauch()});
 }

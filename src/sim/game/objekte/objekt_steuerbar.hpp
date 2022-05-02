@@ -51,8 +51,8 @@ public:
     /// Setzt den Zielkurs fest (in °).
     void set_target_bearing(float degree) { target_bearing = degree; }
 
-    /// Setzt die Zieltiefe fest. Tiefenangaben sind negativ. Positive Zahlen bedeuten oberhalb der Wasseroberfläche.
-    void set_target_depth(float depth) { target_depth = depth; }
+    /// Setzt die Zielhöhe bzw. Tiefe fest. Tiefenangaben sind negativ. Positive Zahlen bedeuten oberhalb der Wasseroberfläche.
+    void set_target_depth(float height) { target_depth = height; }
 
     /// Getter: Aktuelle x/y-Geschwindigkeit (absolut).
     float get_speed() const override { return motor_linear.v; }
@@ -60,8 +60,14 @@ public:
     /// Getter: Aktuelle (x/y-)Rotation in °/s.
     float get_speed_rot() const { return motor_rot.v; }
 
+    /// Getter: Aktuelle Tauchgeschwindigkeit in m/s.
+    float get_speed_tauch() const { return motor_tauch.v; }
+
     /// Liefert die relative x/y-Geschwindigkeit zur Höchstgeschwindigkeit (negativ, wenn Rückwärts).
     float get_speed_relativ() const { return motor_linear.v / motor_linear.v_max; }
+
+    /// Faktor, der die Roation / Tauchgeschwindigkeit beeinflusst.
+    float get_speedfaktor() const;
 
     /// Getter: Maximale x/y-Geschwindigkeit (absolut in m/s).
     float get_speed_max() const { return motor_linear.v_max; }
@@ -102,6 +108,9 @@ protected:
     /// Lenken zum Zielpfad (nicht beschleunigen jedoch).
     void auto_path();
 
+    /// Lenken auf Zieltiefe.
+    void auto_depth();
+
 protected:
 
     /// Motor zur linearen Bewegung.
@@ -128,6 +137,5 @@ protected:
     /// Schäden, die das Objekt hat.
     std::set<Schaden> schaeden;
 
-    void auto_depth();
 };
 CEREAL_REGISTER_TYPE(Objekt_Steuerbar)
