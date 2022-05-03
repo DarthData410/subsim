@@ -17,9 +17,11 @@ void Kommando::apply(Welt* welt) {
             sub->set_target_v(as<float>());
             break;
         case MOTOR_ROT:
+            sub->target_bearing = std::nullopt;
             sub->set_target_rudder(as<float>());
             break;
         case MOTOR_TAUCH:
+            sub->target_depth = std::nullopt;
             sub->set_target_pitch(as<float>());
             break;
         case AUTO_POS: {

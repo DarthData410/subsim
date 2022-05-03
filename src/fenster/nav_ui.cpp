@@ -46,10 +46,18 @@ Nav_UI::~Nav_UI() {
 }
 
 void Nav_UI::update_and_show(const Sub* sub) {
+    sync(sub);
     handle_imgui_events(sub);
     ui::Font f(ui::FONT::MONO_16);
     show_navigation(sub);
     show_noise_signature(sub, sub->get_speed());
+}
+
+void Nav_UI::sync(const Sub* sub) {
+    if (static sf::Clock timer; timer.getElapsedTime().asSeconds() < 1) return;
+    else timer.restart();
+    // Notauftauchen, wenn Heben betätigt TODO
+    if (emergency_surface) klient->kommando({Kommando::MOTOR_TAUCH, sub->get_id(), sub->get_speed_max_tauch()});
 }
 
 void Nav_UI::show_navigation(const Sub* sub) const {
@@ -266,11 +274,4 @@ void Nav_UI::handle_imgui_events(const Sub* sub) {
         const auto& maus_pos = ImGui::GetMousePos();
         if (schalter_emergency_surface->is_inside(maus_pos.x, maus_pos.y)) emergency_surface = !emergency_surface;
     }
-}
-
-void Nav_UI::sync(const Sub* sub) {
-    if (static sf::Clock timer; timer.getElapsedTime().asSeconds() < 1) return;
-    else timer.restart();
-    // Notauftauchen, wenn Heben betätigt TODO
-    if (emergency_surface) klient->kommando({Kommando::MOTOR_TAUCH, sub->get_id(), sub->get_speed_max_tauch()});
 }
