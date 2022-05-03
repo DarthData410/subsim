@@ -67,6 +67,8 @@ TODO: Description
     + [X] Terrain from ~~Height Map~~ procedural Simplex Noise
     + [ ] Synchronize with Host
     + [ ] Land: Collision
+      + [x] Adjust sub's start position if collision detected
+      + [ ] Adjust zone position to sea only
     + [ ] Land: AI Pathfinding around)
 + [x] Depth-rudder
     + [ ] **Depth influences stealth**

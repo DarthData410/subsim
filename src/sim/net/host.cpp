@@ -21,6 +21,11 @@ Host::Host(uint16_t port) {
     }
 }
 
+Host::~Host() {
+    stop();
+    enet_host_destroy(server);
+}
+
 void Host::start() {
     while (loop) {
         welt.tick(); // TODO benchmark ms
@@ -62,11 +67,6 @@ void Host::start() {
 
 void Host::stop() {
     loop = false;
-}
-
-Host::~Host() {
-    stop();
-    enet_host_destroy(server);
 }
 
 void Host::handle_receive(ENetEvent& event) {

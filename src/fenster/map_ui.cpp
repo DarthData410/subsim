@@ -82,6 +82,10 @@ void Map_UI::draw_gfx(const Sub* sub, sf::RenderWindow* window) {
 
     // Kartenrenderer
     static Karte karte; // TODO vom Host holen
+
+    const auto& [mouse_world_x, mouse_world_y] = ui2world(ImGui::GetMousePos().x, ImGui::GetMousePos().y);
+    height_at_mouse = karte.get_height_at(mouse_world_x, mouse_world_y); // TODO nur in Debug (?)
+
     const unsigned vsize = 16; // Vertex-Größe
     for (unsigned x = 0; x <= size_x; x += vsize) for (unsigned y = 0; y <= size_y; y += vsize) {
             sf::VertexArray va(sf::Quads, 4);
@@ -155,6 +159,7 @@ void Map_UI::show_minimap(const Sub* sub) const {
     (void) sub;
     ImGui::Begin("Map Settings");
     if (ui::Button("Center on Sub")) { shift_x = 0; shift_y = 0; }
+    ui::Text("Height @ Mouse = %.1f", height_at_mouse); // TODO nur in Debug (?)
     ui::SliderFloat("Scale", &scale, 0.001, 0.5);
 
     for (const auto& team : teams) {

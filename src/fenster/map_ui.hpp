@@ -37,6 +37,7 @@ private:
     std::vector<std::unique_ptr<Objekt>> objekte;
     std::vector<Zone> zonen;
     std::unordered_map<uint8_t, Team> teams;
+    float height_at_mouse = 0;
 
     /// Karteneinstellungen
     mutable float scale = 0.1f;

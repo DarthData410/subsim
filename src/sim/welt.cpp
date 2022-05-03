@@ -43,11 +43,11 @@ const Sub* Welt::add_new_sub(uint8_t team, bool computer_controlled) {
     if (computer_controlled) sub_ptr = new Sub_AI(teams.at(team).get_new_sub());
     else sub_ptr = new Sub(teams.at(team).get_new_sub());
     add(sub_ptr);
-    sub_ptr->pos = { // Startposition beim Team, leicht versetzt
+    const auto& [start_x, start_y] = karte.get_nearest_passable(
             teams[team].get_basis().x() + Zufall::f(-500.f, 500.f),
             teams[team].get_basis().y() + Zufall::f(-500.f, 500.f),
-            start_tiefe_sub // Tiefe
-    };
+            start_tiefe_sub, std::less<>());
+    sub_ptr->pos = {start_x, start_y, start_tiefe_sub};
     return sub_ptr;
 }
 

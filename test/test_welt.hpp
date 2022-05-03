@@ -6,6 +6,7 @@
 #include <log.hpp>
 #include <SFML/Graphics/Image.hpp>
 #include <SimplexNoise.h>
+#include <zufall.hpp>
 
 class Test_Welt {
 
@@ -56,7 +57,10 @@ TEST_CASE_CLASS("welt") {
         bool zone_eingenommen = false;
         for (unsigned i = 0; i < 100'000; ++i) { // Anzahl ticks
             welt.tick(10); // s pro tick
-            for (const auto& zone : welt.get_zonen()) if (zone.get_team() == team) { zone_eingenommen = true; break; }
+            for (const auto& zone: welt.get_zonen()) if (zone.get_team() == team) {
+                zone_eingenommen = true;
+                break;
+            }
         }
         CHECK(zone_eingenommen == true);
         CHECK(welt.get_team(team).get_punkte() > 0);
@@ -129,7 +133,8 @@ TEST_CASE_CLASS("welt") {
             CAPTURE(kurs_relativ);
             CHECK(sonar_passiv.is_in_toter_winkel(Physik::kurs_relativ(sub1, sub2)) == false);
             REQUIRE(detektionen.size() == 1);
-            CHECK(detektionen.front().bearing == doctest::Approx(Physik::round(kurs_relativ, sonar_passiv.get_aufloesung())));
+            CHECK(detektionen.front().bearing ==
+                  doctest::Approx(Physik::round(kurs_relativ, sonar_passiv.get_aufloesung())));
         }
 
         SUBCASE("torpedo abschuss") {
@@ -171,8 +176,7 @@ TEST_CASE_CLASS("welt") {
                         if (o.second->get_typ() == Objekt::Typ::TORPEDO && sub2) {
                             const double d = Physik::distanz_xyz(o.second->get_pos(), sub2->get_pos());
                             min_distance = std::min(min_distance, d);
-                        }
-                        else if (o.second->get_typ() == Objekt::Typ::EXPLOSION) war_explosion = true;
+                        } else if (o.second->get_typ() == Objekt::Typ::EXPLOSION) war_explosion = true;
                         else if (o.second->get_typ() == Objekt::Typ::PING) ping_ids.insert(o.second->get_id());
                     }
                 }
@@ -231,14 +235,15 @@ TEST_CASE_CLASS("welt") {
             welt.tick(0.1); // Zeit zum Simulieren
             if (welt.get_objektanzahl(Objekt::Typ::TORPEDO) && // neuen Decoy starten?
                 sub2->decoys.begin()->second &&
-                welt.get_objektanzahl(Objekt::Typ::DECOY) == 0)
-            {
+                welt.get_objektanzahl(Objekt::Typ::DECOY) == 0) {
                 welt.add_decoy(sub2, &(sub2->decoys.begin()->first));
             }
         }
         REQUIRE(welt.get_objekte().size() <= 2); // 1 oder 2 Subs übrig
     }
-    SUBCASE("karte terrain generierung") {
+}
+TEST_CASE_CLASS("karte" * doctest::timeout(30)) {
+    SUBCASE("terrain generierung") {
         Karte karte;
         const auto karte_raw = karte.get_image(100, 100);
         CHECK_NOTHROW(karte_raw->saveToFile("temp_karte.png"));
@@ -258,6 +263,24 @@ TEST_CASE_CLASS("welt") {
         REQUIRE(max <= 1.f);
         REQUIRE(min_h  < 0);
         REQUIRE(max_h >= 0);
+    }
+    SUBCASE("terrain passierbarkeit") {
+        Karte karte;
+        for (unsigned i = 0; i < 100; ++i) {
+            // Zufällige Position
+            const float x = Zufall::f(-100000.f, 100000.f);
+            const float y = Zufall::f(-100000.f, 100000.f);
+            {   // Mindestens
+                const auto [px, py] = karte.get_nearest_passable(x, y, -50.f, std::greater_equal<>());
+                const float height_at_xy = karte.get_height_at(px, py);
+                CHECK(height_at_xy >= -50.f);
+            }
+            {   // Höchstens
+                const auto [px, py] = karte.get_nearest_passable(x, y, -50.f, std::less_equal<>());
+                const float height_at_xy = karte.get_height_at(px, py);
+                CHECK(height_at_xy <= -50.f);
+            }
+        }
     }
 }
 

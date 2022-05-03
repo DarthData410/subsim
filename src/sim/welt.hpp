@@ -3,6 +3,7 @@
 #include "game/team.hpp"
 #include "game/zone.hpp"
 #include "game/abschuss.hpp"
+#include "game/karte.hpp"
 
 class Sub;
 class Decoy;
@@ -80,6 +81,9 @@ public:
     /// Liefert alle eroberbaren Zonen.
     const std::vector<Zone>& get_zonen() const { return zonen; }
 
+    /// Liefert das Terrain.
+    const Karte& get_karte() const { return karte; }
+
 private:
 
     /// Zeitraffer. TODO: Broadcast
@@ -99,5 +103,8 @@ private:
 
     /// Statistik über alle Abschpsse.
     std::vector<Abschuss> abschuesse;
+
+    /// Terrain der Welt.
+    Karte karte;
 
 };

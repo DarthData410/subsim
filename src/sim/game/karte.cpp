@@ -1,4 +1,5 @@
 #include "karte.hpp"
+#include "../physik.hpp"
 
 #include <SimplexNoise.h>
 #include <memory>
@@ -6,15 +7,15 @@
 #include <SFML/Graphics/Image.hpp>
 
 Karte::Karte() {
-    water_level = 0.75f; // (0,1) // TODO Land
+    water_level = 0.75f; // (0,1)
     octaves = 3;
     map_shift_x = Zufall::ui(0,1000000);
     map_shift_y = Zufall::ui(0,1000000);
     const float frequency   = 0.00001f;
     const float amplitude   = 0.5f;
     const float lacunarity  = 1.99f;
-    const float persistance = 0.5f;
-    noise = std::make_unique<SimplexNoise>(frequency, amplitude, lacunarity, persistance);
+    const float persistence = 0.5f;
+    noise = SimplexNoise(frequency, amplitude, lacunarity, persistence);
 }
 
 float Karte::get_height_at(float x, float y) const {
@@ -22,7 +23,7 @@ float Karte::get_height_at(float x, float y) const {
 }
 
 float Karte::get_raw_at(float x, float y) const {
-    const auto val = 0.5f * (1.f + noise->fractal(octaves, x+map_shift_x, y+map_shift_y));
+    const auto val = 0.5f * (1.f + noise.fractal(octaves, x+map_shift_x, y+map_shift_y));
     return val;
 }
 
@@ -46,4 +47,18 @@ std::unique_ptr<sf::Image> Karte::get_image(unsigned int map_size_x, unsigned in
             img->setPixel(x, y, {rgba[0], rgba[1], rgba[2], rgba[3]});
     }
     return img;
+}
+
+std::pair<float, float>
+Karte::get_nearest_passable(float x, float y, float height, const std::function<bool(float, float)>& cmp) {
+    unsigned i = 0;
+    if (cmp(get_height_at(x, y), height)) return {x, y};
+    for (float r = 100; ; r += 100) for (float kurs = 0.f; kurs < 355.f; kurs += 45.f) {
+        i++;
+        const auto [px, py] = Physik::get_punkt(x, y, kurs, r);
+        if (cmp(get_height_at(px, py), height)) {
+            Log::debug() << "Karte::get_nearest_passable " << i << " Iterationen, Distanz: " << (int)Physik::distanz(x,y, px,py) << '\n';
+            return {px, py};
+        }
+    }
 }
