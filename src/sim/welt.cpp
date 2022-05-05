@@ -39,15 +39,18 @@ void Welt::tick(float s) {
 
 const Sub* Welt::add_new_sub(uint8_t team, bool computer_controlled) {
     Log::debug() << "Welt::" << __func__ << " for team " << (unsigned)team << Log::endl;
-    Sub* sub_ptr = nullptr;
+    Sub* sub_ptr;
     if (computer_controlled) sub_ptr = new Sub_AI(teams.at(team).get_new_sub());
     else sub_ptr = new Sub(teams.at(team).get_new_sub());
     add(sub_ptr);
     const auto& [start_x, start_y] = karte.get_nearest_passable(
             teams[team].get_basis().x() + Zufall::f(-500.f, 500.f),
             teams[team].get_basis().y() + Zufall::f(-500.f, 500.f),
-            start_tiefe_sub, std::less<>());
-    sub_ptr->pos = {start_x, start_y, start_tiefe_sub};
+            START_DEPTH_SUB, std::less<>());
+    sub_ptr->pos = {start_x, start_y, START_DEPTH_SUB};
+    const auto depth_at_start = karte.get_height_at(start_x, start_y);
+    if (depth_at_start > START_DEPTH_SUB) throw std::runtime_error("Error: Depth for new sub = " + std::to_string(depth_at_start));
+    else Log::debug() << "Welt::add_new_sub depth=" << depth_at_start << '\n';
     return sub_ptr;
 }
 

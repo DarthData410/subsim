@@ -81,8 +81,8 @@ void Map_UI::draw_gfx(const Sub* sub, sf::RenderWindow* window) {
     };
 
     // Kartenrenderer
-    static Karte karte; // TODO vom Host holen
-
+    static Karte karte = klient->get_karte();
+    if (sf::Clock sync_karte; sync_karte.getElapsedTime().asSeconds() > 3) { karte = klient->get_karte(); sync_karte.restart(); }
     const auto& [mouse_world_x, mouse_world_y] = ui2world(ImGui::GetMousePos().x, ImGui::GetMousePos().y);
     height_at_mouse = karte.get_height_at(mouse_world_x, mouse_world_y); // TODO nur in Debug (?)
 

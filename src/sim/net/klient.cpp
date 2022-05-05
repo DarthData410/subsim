@@ -6,6 +6,8 @@
 #include <cereal/types/vector.hpp>
 #include <cereal/types/unordered_map.hpp>
 
+#define LOCK_MUTEX std::scoped_lock lock(connection_mutex)
+
 Klient::Klient(const std::string& ip) : host_ip(ip) {
     klient = enet_host_create(NULL, // 0 = Klient
                               1,  // Verbindungen
@@ -17,6 +19,12 @@ Klient::Klient(const std::string& ip) : host_ip(ip) {
         return;
     }
     connect();
+    // Daten, die nur 1x empfangen werden müssen, z.B. die Karte
+    const std::string& antwort_str = request(Net::NEUER_KLIENT);
+    if (!antwort_str.empty()) {
+        const auto& antwort_daten = Net::deserialize<std::tuple<Karte>>(antwort_str);
+        karte = std::get<Karte>(antwort_daten);
+    }
     flush_thread = std::thread(&Klient::keep_alive, this);
 }
 
@@ -57,7 +65,7 @@ bool Klient::connect() {
 void Klient::keep_alive() {
     while (alive.load()) {
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
-        std::scoped_lock lock(connection_mutex);
+        LOCK_MUTEX;
         ENetEvent event;
         while (enet_host_service(klient, &event, 0) > 0 && event.channelID == 1) switch (event.type) {
             case ENET_EVENT_TYPE_RECEIVE: {
@@ -67,7 +75,7 @@ void Klient::keep_alive() {
                 //Log::debug() << "Klient::" << __func__ << " received bytes: " << data.size() << Log::endl;
                 Net::Request typ;
                 ds >> typ;
-                if (typ == Net::BROADCAST) ds >> timelapse >> teams >> zonen;
+                if (typ == Net::BROADCAST) ds >> timelapse >> teams >> zonen >> abschuesse;
                 else Log::debug() << "Klient::" << __func__ << " received wrong event: " << typ << Log::endl;
             } break;
             default: Log::debug() << "Klient::" << __func__ << " received Event " << event.type << Log::endl;
@@ -79,7 +87,7 @@ void Klient::keep_alive() {
 void Klient::sende(const std::string& paket_daten) {
     //Log::debug() << "Klient::sende paket_daten=" << paket_daten.size() << Log::endl;
     ENetPacket* packet = enet_packet_create(paket_daten.c_str(), paket_daten.size(), ENET_PACKET_FLAG_RELIABLE);
-    std::scoped_lock lock(connection_mutex);
+    LOCK_MUTEX;
     enet_peer_send(server, 0, packet);
     enet_host_flush(klient);
 }
@@ -87,7 +95,7 @@ void Klient::sende(const std::string& paket_daten) {
 std::string Klient::sende_und_empfange(const std::string& paket_daten) {
     //Log::debug() << "Klient::sende_und_empfange paket_daten >> " << paket_daten.size() << Log::endl;
     ENetPacket* packet = enet_packet_create(paket_daten.c_str(), paket_daten.size(), ENET_PACKET_FLAG_RELIABLE);
-    std::scoped_lock lock(connection_mutex);
+    LOCK_MUTEX;
     enet_peer_send(server, 0, packet);
     while (true) {
         // Antwort abwarten
@@ -125,16 +133,26 @@ void Klient::kommando(const Kommando& cmd) {
 }
 
 float Klient::get_timelapse() {
-    std::scoped_lock lock(connection_mutex);
+    LOCK_MUTEX;
     return timelapse;
 }
 
 std::unordered_map<uint8_t, Team> Klient::get_teams() {
-    std::scoped_lock lock(connection_mutex);
+    LOCK_MUTEX;
     return teams;
 }
 
 std::vector<Zone> Klient::get_zonen() {
-    std::scoped_lock lock(connection_mutex);
+    LOCK_MUTEX;
     return zonen;
+}
+
+Karte Klient::get_karte() {
+    LOCK_MUTEX;
+    return karte;
+}
+
+std::vector<Abschuss> Klient::get_abschuesse() {
+    LOCK_MUTEX;
+    return abschuesse;
 }

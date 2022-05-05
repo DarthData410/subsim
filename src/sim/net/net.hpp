@@ -3,9 +3,7 @@
 #include <cereal/archives/binary.hpp>
 
 /// Globale Netzwerkdefinitionen.
-class Net final {
-
-public:
+namespace Net {
 
     /// Port für Server + Klient.
     static constexpr uint16_t PORT = 29078;
@@ -13,7 +11,7 @@ public:
     /// Typen von Anfragen vom Klienten.
     enum Request : uint8_t {
                                   // Inhalt Anfrage -> Inhalt Antwort
-        MAP                = 0,   // "" -> "Welt"
+        NEUER_KLIENT       = 0,   // "" -> vgl. Klient() ctor
         SUB_CMD            = 1,   // "Kommando"
         REQUEST_SUB        = 2,   // "uint32_t ID"  -> "Sub" oder ""
         AKTION_NEUES_UBOOT = 30,  // "uint8_t Team" -> "Sub"
@@ -46,4 +44,4 @@ public:
         return t;
     }
 
-};
+}

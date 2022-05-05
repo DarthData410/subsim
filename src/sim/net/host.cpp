@@ -54,8 +54,8 @@ void Host::start() {
             std::stringstream ss;
             Net::Serializer s(ss);
             s << Net::BROADCAST;
-            s << welt.timelapse << welt.teams << welt.zonen;
-            const std::string& data = ss.str();
+            s << welt.timelapse << welt.teams << welt.zonen << welt.abschuesse;
+            const std::string data(ss.str());
             ENetPacket* paket = enet_packet_create(data.c_str(), data.size(),
                                                    ENET_PACKET_FLAG_UNRELIABLE_FRAGMENT);
             enet_host_broadcast(server, 1, paket);
@@ -96,7 +96,7 @@ void Host::handle_receive(ENetEvent& event) {
             else sende_antwort(event, "");
         } break;
         case Net::ALLE_OBJEKTE: {
-            static auto no_delete = [](Objekt*) {};
+            static auto no_delete = [](Objekt*) {}; // Workaround für cereal - Objekte nicht löschen
             std::vector<std::unique_ptr<Objekt, decltype(no_delete)>> objekte;
             objekte.reserve(welt.objekte.size());
             for (const auto& paar : welt.objekte) {
@@ -105,7 +105,11 @@ void Host::handle_receive(ENetEvent& event) {
             }
             sende_antwort(event, Net::serialize(objekte));
         } break;
-        default: Log::err() << "\tUnknown Request Net::" << request << '\n'; break;
+        case Net::NEUER_KLIENT: {
+            const std::tuple<Karte> daten = {welt.karte};
+            sende_antwort(event, Net::serialize(daten));
+        } break;
+        default: Log::err() << "\tUnknown Request Net::" << (int)request << '\n'; break;
     }
 }
 

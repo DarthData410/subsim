@@ -3,6 +3,8 @@
 #include "kommando.hpp"
 #include "../game/team.hpp"
 #include "../game/zone.hpp"
+#include "../game/abschuss.hpp"
+#include "../game/karte.hpp"
 
 #include <enet/enet.h>
 #include <iostream>
@@ -35,6 +37,12 @@ public:
 
     /// Getter: Zonen. @note Setzt einen ``std::mutex`` ein.
     std::vector<Zone> get_zonen();
+
+    /// Getter: Karte. @note Setzt einen ``std::mutex`` ein.
+    Karte get_karte();
+
+    /// Getter: Abschüsse. @note Setzt einen ``std::mutex`` ein.
+    std::vector<Abschuss> get_abschuesse();
 
     /// Sendet gegebenes Kommando an den Server.
     void kommando(const Kommando& cmd);
@@ -82,5 +90,7 @@ private:
     float timelapse;
     std::unordered_map<uint8_t, Team> teams;
     std::vector<Zone> zonen;
+    std::vector<Abschuss> abschuesse;
+    Karte karte;
 
 };

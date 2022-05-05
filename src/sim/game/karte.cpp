@@ -7,7 +7,7 @@
 #include <SFML/Graphics/Image.hpp>
 
 Karte::Karte() {
-    water_level = 0.75f; // (0,1)
+    water_level = 0.55f; // (0,1)
     octaves = 3;
     map_shift_x = Zufall::ui(0,1000000);
     map_shift_y = Zufall::ui(0,1000000);
@@ -23,6 +23,7 @@ float Karte::get_height_at(float x, float y) const {
 }
 
 float Karte::get_raw_at(float x, float y) const {
+    // Von [-1.0,1.0] nach [0.0,1.0] konvertieren
     const auto val = 0.5f * (1.f + noise.fractal(octaves, x+map_shift_x, y+map_shift_y));
     return val;
 }

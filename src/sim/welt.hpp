@@ -24,6 +24,9 @@ class Welt final {
 
 public:
 
+    /// Tiefe, in der Subs gespawnt werden.
+    static constexpr float START_DEPTH_SUB = -50.f;
+
     /// Erstellt eine nutzbare Welt. Teams, Zonen und Computergegner werden auch generiert.
     explicit Welt(unsigned npcs_pro_team = 1);
 
@@ -86,13 +89,10 @@ public:
 
 private:
 
-    /// Zeitraffer. TODO: Broadcast
-    float timelapse = 1.0f; // TODO 1.0f wenn nicht test
+    /// Zeitraffer.
+    float timelapse = 1.0f;
 
-    /// Tiefe, in der Subs gespawnt werden.
-    float start_tiefe_sub = -50.f;
-
-    /// Teams. TODO: Broadcast
+    /// Teams.
     std::unordered_map<uint8_t, Team> teams;
 
     /// Alle simulierten Objekte, Subs, Spielersubs, KI-Subs, UUVs, Torpedos

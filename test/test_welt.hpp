@@ -252,8 +252,8 @@ TEST_CASE_CLASS("karte" * doctest::timeout(30)) {
         float min_h = 0;  // höhe min
         float max_h = 0;  // höhe max
         for (int x = -1000; x <= 1000; ++x) for (int y = -1000; y <= 1000; ++y) {
-            const auto val = karte.get_raw_at(x,y);
-            const auto height = karte.get_height_at(x,y);
+            const auto val = karte.get_raw_at(x*100,y*100);
+            const auto height = karte.get_height_at(x*100,y*100);
             min = std::min(min, val);
             max = std::max(max, val);
             min_h = std::min(min_h, height);
@@ -279,6 +279,18 @@ TEST_CASE_CLASS("karte" * doctest::timeout(30)) {
                 const auto [px, py] = karte.get_nearest_passable(x, y, -50.f, std::less_equal<>());
                 const float height_at_xy = karte.get_height_at(px, py);
                 CHECK(height_at_xy <= -50.f);
+            }
+        }
+    }
+    SUBCASE("valide startpositionen") {
+        for (unsigned i = 0; i < 100; ++i) {
+            Welt welt(10);
+            CHECK(welt.get_objektanzahl(Objekt::Typ::SUB_AI) >= 10);
+            for (const auto& [key, o] : welt.get_objekte()) {
+                if (o->get_typ() == Objekt::Typ::SUB_AI) {
+                    const auto obj_hoehe = welt.get_karte().get_height_at(o->get_pos().x(), o->get_pos().y());
+                    REQUIRE(obj_hoehe <= welt.START_DEPTH_SUB);
+                }
             }
         }
     }

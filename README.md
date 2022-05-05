@@ -42,12 +42,14 @@ TODO: Description
 + [x] Active Sonar detects depths
 + [X] Torpedos kill
 + [x] Torpedo Targeting choice test + improve
++ [ ] Torpedo Activate to change course / Waypoints
 
 ## UI
 + [X] Improve / Make Map Screen less rough
     + [X] Show scale px : km/~~sm~~
-    + [X] Terrain Renderer (VertexArray based for now)
+    + [x] Terrain Renderer (VertexArray based for now)
     + [ ] Clean up Map Settings Window
+    + [ ] Bug: Possible Map Depth discrepancy view/model
 + [x] Passive Sonar: Bearing Markers
 + [x] Passive Sonar: Bug: vector::_M_range_check: __n (which is 432) >= this->size() (which is 432)
 + [x] Active Sonar: Bearing Markers
@@ -65,7 +67,7 @@ TODO: Description
 + [ ] Damage model
 + [X] Terrain
     + [X] Terrain from ~~Height Map~~ procedural Simplex Noise
-    + [ ] Synchronize with Host
+    + [x] Synchronize with Host
     + [ ] Land: Collision
       + [x] Adjust sub's start position if collision detected
       + [ ] Adjust zone position to sea only
