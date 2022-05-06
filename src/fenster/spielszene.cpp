@@ -26,10 +26,7 @@ void Spielszene::sync() {
     if (static sf::Clock timer; timer.getElapsedTime().asMilliseconds() >= 500) {
         if (player_sub) {
             const std::string& antwort = klient->request(Net::REQUEST_SUB, player_sub->get_id());
-            if (!antwort.empty()) {
-                player_sub = std::make_unique<Sub>(Net::deserialize<Sub>(antwort));
-                Log::debug() << "sync sub id=" << player_sub->get_id() << '\n';
-            }
+            if (!antwort.empty()) player_sub = std::make_unique<Sub>(Net::deserialize<Sub>(antwort));
             else Log::err() << "Spielszene::" << __func__ << " no sub returned with ID " << player_sub->get_id() << '\n';
         }
         timer.restart();

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "sub.hpp"
+
 #include <SFML/System/Clock.hpp>
 
 /// Ein Computergesteuertes U-B
@@ -9,6 +10,7 @@ class Sub_AI final : public Sub {
     static constexpr float SPEED_TRAVEL = 0.75;
     static constexpr float DEPTH_TRAVEL = -50;
     static constexpr float TARGET_DISTANCE = 1000;
+    static constexpr float AI_THINK_INTERVALL = 10; // Sekunden
 
     enum Status : uint8_t { // nicht vergessen: größeren Typen bei wachsender Zahl Status
         DONE    = 0,        // Keine Aufgabe (mehr).
@@ -17,6 +19,7 @@ class Sub_AI final : public Sub {
         HIDE    = 1 << 2,   // Verstecken vor Feinden.
         EVADE   = 1 << 3,   // Torpedos / Waffen ausweichen.
         ATTACK  = 1 << 4,   // Feinde Angreifen.
+        WAIT    = 1 << 5,   // absolut nichts tun
     };
 
 public:
@@ -50,10 +53,19 @@ private:
     /// Entfernt gg. Status. @note `DONE` darf so nicht entfernt werden, stattdessen: `clear_status()`.
     void remove_status(Status status) { this->status &= ~status; }
 
+    /// Liefert die Entfernung zum Ziel in m.
+    dist_t get_zielentfernung() const;
+
+    /// Weckt die KI und lässt sie sofort eine neue Aufgabe finden.
+    void wake() { timer_next_action = 0; }
+
 private:
 
     /// Timer für neue Aufgaben.
     float timer;
+
+    /// Wecker, wann die nächste Entscheidung getroffen werden soll.
+    float timer_next_action;
 
     /// Zielkoordinaten. Zieltyp ist kontextabhängig.
     Vektor ziel;

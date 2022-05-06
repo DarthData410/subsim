@@ -62,7 +62,8 @@ void Sonar_Passiv::tick(Objekt* parent, Welt* welt, float s) {
                     objekt->get_id(),
                     typ,
                     sichtbarkeit,
-                    Physik::round(kurs_absolut, this->resolution)
+                    Physik::round(kurs_absolut, this->resolution),
+                    objekt->get_team()
             ));
         }
     }

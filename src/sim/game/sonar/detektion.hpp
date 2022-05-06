@@ -15,9 +15,11 @@ public:
 
     Detektion() = default;
 
-    Detektion(oid_t objekt_id, Detektion::Typ typ, float gain, float bearing,
-              const std::optional<dist_t>& range = std::nullopt, const std::optional<float>& depth = std::nullopt) :
-        objekt_id(objekt_id), gain(std::clamp(gain, 0.f, 1.0f)), bearing(bearing), depth(depth), range(range), typ(typ) {}
+    Detektion(oid_t objekt_id, Detektion::Typ typ, float gain, float bearing, uint8_t team,
+              const std::optional<dist_t>& range = std::nullopt,
+              const std::optional<float>& depth  = std::nullopt) :
+        objekt_id(objekt_id), gain(std::clamp(gain, 0.f, 1.0f)),
+        bearing(bearing), depth(depth), range(range), typ(typ), team(team) {}
 
     oid_t objekt_id;             // ID des erkannten Objekts. Kann bereits vernichtet sein.
     float gain;                  // Lautstärke der Signatur. Garantiert im Bereich (0.0,1.0].
@@ -25,9 +27,10 @@ public:
     std::optional<float> depth;  // Negative Werte: unterhalb der Wasseroberfläche (=Tiefe); Positiv: Darüber (=(Flug-)Höhe).
     std::optional<dist_t> range; // Entfernung in m.
     Typ typ;                     // Typ der Signatur.
+    uint8_t team;                // Team. 0 bedeutet teamlos.
 
     template <class Archive> void serialize(Archive& ar) {
-        ar(objekt_id, gain, bearing, depth, range, typ); // typ
+        ar(objekt_id, gain, bearing, depth, range, typ, team); // typ
     }
 
 };

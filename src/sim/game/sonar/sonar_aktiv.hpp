@@ -22,7 +22,7 @@ public:
     /// Führt erkennungen durch.
     void tick(Objekt* parent, Welt* welt, float s) override;
 
-    /// Setter: Ping Intervall. @note Nutzt `std::max` um min nicht zu unterschreiten.
+    /// Setter: Ping Intervall in Sekunden. @note Nutzt `std::max` um min nicht zu unterschreiten.
     void set_ping_intervall(float ping_intervall) { this->intervall = std::max(ping_intervall, ping_intervall_min); }
 
     /// Aktivieren / Deaktivieren.

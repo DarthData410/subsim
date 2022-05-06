@@ -10,6 +10,7 @@ Sub::Sub(const std::string& name, const Vektor& pos,
 
 bool Sub::tick(Welt* welt, float s) {
     if (!Objekt_Steuerbar::tick(welt, s)) return false;
+    if (this->pos.z() > Sub::SURFACE_DEPTH) this->pos.z(Sub::SURFACE_DEPTH); // Praktisch aufgetaucht
     if (!welt) return true; // alles weitere kann nur Host mit `welt`
     for (Sonar_Aktiv&  as : sonars_active)  as.tick(this, welt, s);
     for (Sonar_Passiv& ps : sonars_passive) ps.tick(this, welt, s);
@@ -42,7 +43,13 @@ bool Sub::shoot(const std::string& weapon_name, Objekt::Typ torpedo_oder_gegenma
 
 dist_t Sub::get_max_reichweite_as() const {
     dist_t max_range = 0;
-    for (const auto& as : sonars_active) if (as.get_max_range() > max_range) max_range = as.get_max_range();
+    for (const auto& as : sonars_active) max_range = std::max(max_range, as.get_max_range());
+    return max_range;
+}
+
+float Sub::get_max_reichweite_torpedo() const {
+    float max_range = 0;
+    for (const auto& t : torpedos) max_range = std::max(max_range, t.first.get_range());
     return max_range;
 }
 

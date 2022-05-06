@@ -48,6 +48,9 @@ public:
     /// Liefert die höchste Reichweite aller AS.
     dist_t get_max_reichweite_as() const;
 
+    /// Liefert die beste Reichweite aller Torpedos (auch derer ohne Munition).
+    float get_max_reichweite_torpedo() const;
+
     /// Liefert die beste Empfindlichkeit aller PS.
     float get_beste_empfindlichkeit_ps() const;
 
