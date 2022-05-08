@@ -32,15 +32,15 @@ class Test_Objekte {
         SUBCASE("Auswahl durch passenden Kurs") {
             as.detektionen.emplace_back(Detektion(
                     1, Detektion::Typ::ACTIVE_SONAR_ECHO,
-                    0.8f, 90.f, 500.0, -50.0 // kurs wie Torpedo
+                    0.8f, 90.f, 1, 500.0, -50.0 // kurs wie Torpedo
             ));
             as.detektionen.emplace_back(Detektion(
                     2, Detektion::Typ::ACTIVE_SONAR_ECHO,
-                    0.8f, 10.f, 500.0, -50.0
+                    0.8f, 10.f, 1, 500.0, -50.0
             ));
             as.detektionen.emplace_back(Detektion(
                     3, Detektion::Typ::ACTIVE_SONAR_ECHO,
-                    0.8f, 270.f, 500.0, -50.0
+                    0.8f, 270.f, 1, 500.0, -50.0
             ));
             const Detektion* d1 = t.get_beste_detektion();
             CHECK(d1->objekt_id == 1);
@@ -48,11 +48,11 @@ class Test_Objekte {
         SUBCASE("Auswahl durch Detektionstyp") {
             as.detektionen.emplace_back(Detektion(
                     1, Detektion::Typ::ACTIVE_SONAR_ECHO, // zu bevorzugener Typ
-                    0.8f, 90.f, 500.0, -50.0
+                    0.8f, 90.f, 1, 500.0, -50.0
             ));
             as.detektionen.emplace_back(Detektion(
                     2, Detektion::Typ::MOVEMENT_SIGNATURE,
-                    0.8f, 90.f, 500.0, -50.0
+                    0.8f, 90.f, 1, 500.0, -50.0
             ));
             const Detektion* d1 = t.get_beste_detektion();
             CHECK(d1->objekt_id == 1);
@@ -60,11 +60,11 @@ class Test_Objekte {
         SUBCASE("Auswahl durch Entfernung") {
             as.detektionen.emplace_back(Detektion(
                     1, Detektion::Typ::ACTIVE_SONAR_ECHO,
-                    0.8f, 90.f, 500.0, -50.0
+                    0.8f, 90.f, 1, 500.0, -50.0
             ));
             as.detektionen.emplace_back(Detektion(
                     2, Detektion::Typ::ACTIVE_SONAR_ECHO,
-                    0.8f, 90.f, 400.0, -50.0 // zu bevorzugende Entfernung
+                    0.8f, 90.f, 1, 400.0, -50.0 // zu bevorzugende Entfernung
             ));
             const Detektion* d1 = t.get_beste_detektion();
             CHECK(d1->objekt_id == 2);
@@ -72,15 +72,15 @@ class Test_Objekte {
         SUBCASE("Auswahl durch Richtung + Noise 1") {
             as.detektionen.emplace_back(Detektion(
                     1, Detektion::Typ::ACTIVE_SONAR_ECHO,
-                    0.3f, 60.f, 400.0, -50.0
+                    0.3f, 60.f, 1, 400.0, -50.0
             ));
             as.detektionen.emplace_back(Detektion(
                     2, Detektion::Typ::ACTIVE_SONAR_ECHO,
-                    0.4f, 70.f, 400.0, -50.0
+                    0.4f, 70.f, 1, 400.0, -50.0
             ));
             as.detektionen.emplace_back(Detektion(
                     3, Detektion::Typ::ACTIVE_SONAR_ECHO,
-                    0.5f, 80.f, 400.0, -50.0
+                    0.5f, 80.f, 1, 400.0, -50.0
             ));
             const Detektion* d1 = t.get_beste_detektion();
             CHECK(d1->objekt_id == 3);
@@ -88,15 +88,15 @@ class Test_Objekte {
         SUBCASE("Auswahl durch Richtung + Noise 2") {
             as.detektionen.emplace_back(Detektion(
                     1, Detektion::Typ::ACTIVE_SONAR_ECHO,
-                    0.9f, 60.f, 400.0, -50.0 // wegen hohem noise attraktiv
+                    0.9f, 60.f, 1, 400.0, -50.0 // wegen hohem noise attraktiv
             ));
             as.detektionen.emplace_back(Detektion(
                     2, Detektion::Typ::ACTIVE_SONAR_ECHO,
-                    0.1f, 70.f, 400.0, -50.0
+                    0.1f, 70.f, 1, 400.0, -50.0
             ));
             as.detektionen.emplace_back(Detektion(
                     3, Detektion::Typ::ACTIVE_SONAR_ECHO,
-                    0.1f, 80.f, 400.0, -50.0
+                    0.1f, 80.f, 1, 400.0, -50.0
             ));
             const Detektion* d1 = t.get_beste_detektion();
             CHECK(d1->objekt_id == 1);
@@ -104,15 +104,15 @@ class Test_Objekte {
         SUBCASE("Auswahl durch Richtung + Noise 3") {
             as.detektionen.emplace_back(Detektion(
                     1, Detektion::Typ::ACTIVE_SONAR_ECHO,
-                    0.9f, 250.f, 400.0, -50.0 // sollte trotz hohem noise zu hoher Kursdiff sein
+                    0.9f, 250.f, 1, 400.0, -50.0 // sollte trotz hohem noise zu hoher Kursdiff sein
             ));
             as.detektionen.emplace_back(Detektion(
                     2, Detektion::Typ::ACTIVE_SONAR_ECHO,
-                    0.2f, 70.f, 400.0, -50.0
+                    0.2f, 70.f, 1, 400.0, -50.0
             ));
             as.detektionen.emplace_back(Detektion(
                     3, Detektion::Typ::ACTIVE_SONAR_ECHO,
-                    0.2f, 80.f, 400.0, -50.0
+                    0.2f, 80.f, 1, 400.0, -50.0
             ));
             const Detektion* d1 = t.get_beste_detektion();
             CHECK(d1->objekt_id == 3);
