@@ -43,7 +43,7 @@ bool Sub_AI::tick(Welt* welt, float s) {
         }
 
         // Zielauswahl
-        const auto torpedo_range = this->get_max_reichweite_torpedo();
+        const auto torpedo_range = this->get_max_reichweite_torpedo(true);
         const Detektion* angriffsziel = detektionen[0];
         for (const auto& d : detektionen) {
             if (angriffsziel->range.has_value() && d->range.has_value() && d->range < angriffsziel->range) angriffsziel = d;
@@ -56,7 +56,7 @@ bool Sub_AI::tick(Welt* welt, float s) {
             remove_status(SEARCH);
         }
         else { // Angriff!
-            // TODO
+            
         }
     }
 

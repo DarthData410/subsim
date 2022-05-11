@@ -47,9 +47,9 @@ dist_t Sub::get_max_reichweite_as() const {
     return max_range;
 }
 
-float Sub::get_max_reichweite_torpedo() const {
+float Sub::get_max_reichweite_torpedo(bool nur_mit_muni) const {
     float max_range = 0;
-    for (const auto& t : torpedos) max_range = std::max(max_range, t.first.get_range());
+    for (const auto& t : torpedos) if (t.second > 0 || nur_mit_muni == false) max_range = std::max(max_range, t.first.get_range());
     return max_range;
 }
 
