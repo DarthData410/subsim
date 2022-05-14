@@ -8,6 +8,7 @@
 #include "test_objekte.hpp"
 #include "test_welt.hpp"
 #include "test_sonstiges.hpp"
+#include "test_bots.hpp"
 
 namespace test {
 

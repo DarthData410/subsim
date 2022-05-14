@@ -4,7 +4,7 @@
 
 #include <zufall.hpp>
 
-Sub_AI::Sub_AI(const Sub& sub) : Sub(sub), timer(0), timer_next_action(0) {
+Sub_AI::Sub_AI(const Sub& sub) : Sub(sub), timer(0), timer_next_action(AI_THINK_INTERVALL) {
 
 }
 
@@ -31,15 +31,12 @@ bool Sub_AI::tick(Welt* welt, float s) {
     std::vector<const Detektion*> detektionen(d_active); // AS + PS
     detektionen.insert(detektionen.end(), d_passive.begin(), d_passive.end());
 
-    // Evtl. Kontakt angreifen
-    if (!detektionen.empty()) maybe_attack(welt, detektionen, d_active, d_passive);
+    // Kontakte? - Evtl. Kontakt angreifen
+    if (detektionen.empty()) remove_status(HIDE);
+    else maybe_attack(welt, detektionen, d_active, d_passive);
 
     // Nichts zu tun -> Zone einnehmen / bewachen
     if (status == DONE) chose_new_job(welt);
-
-    // TODO
-    // if noContacts
-    //      clear combat statusses
 
     // Tiefe
     if (hat_status(HIDE)) set_target_depth(-500);
@@ -65,14 +62,21 @@ dist_t Sub_AI::get_zielentfernung() const {
 }
 
 void Sub_AI::update_ziele_torpedos(const Welt* welt) {
-    std::vector<oid_t> ziele_loeschen; // nicht mehr existierende Ziele sammeln
+    std::vector<oid_t> ziele_loeschen;    // <- nicht mehr existierende Ziele
+    std::vector<oid_t> torpedos_loeschen; // <- nicht mehr existierende Torpedos
     for (auto& [ziel_id, torpedo_ids] : ziele_torpedos) {
-        for (const auto& torpedo_id : torpedo_ids) if (const Objekt* o = welt->get_objekt_or_null(torpedo_id); !o) {
-                torpedo_ids.erase(torpedo_id);
-            }
+        for (auto torpedo_id : torpedo_ids) if (const Objekt* o = welt->get_objekt_or_null(torpedo_id); !o) torpedos_loeschen.push_back(torpedo_id);
         if (const Objekt* o = welt->get_objekt_or_null(ziel_id); !o) ziele_loeschen.push_back(ziel_id);
     }
+    // Gesammelte Objekte loeschen
     for (const oid_t ziel_id : ziele_loeschen) ziele_torpedos.erase(ziel_id);
+    for (const oid_t t_id : torpedos_loeschen) for (auto& [ziel_id, t_set] : ziele_torpedos) t_set.erase(t_id);
+
+    // Leere sets löschen
+    for (auto it = ziele_torpedos.begin(); it != ziele_torpedos.end();) {
+        if (it->second.empty()) it = ziele_torpedos.erase(it);
+        else ++it;
+    }
 }
 
 void Sub_AI::get_valide_ziele(const Welt* welt, std::vector<const Detektion*>& d_active, std::vector<const Detektion*>& d_passive) {
@@ -95,7 +99,7 @@ void Sub_AI::maybe_attack(Welt* welt, const std::vector<const Detektion*>& detek
 
     // Mit AS suchen?
     if (d_active.empty() && !sonars_active.empty() && !hat_status(HIDE) && hat_status(SEARCH)) {
-        Log::debug() << "Sub_AI::tick " << id << " trying single Ping" << Log::endl;
+        Log::debug() << "Sub_AI " << id << " trying single Ping" << Log::endl;
         auto& as = sonars_active[0];
         as.set_ping_intervall(300); // zu häufiges Pingen verhindern
         as.set_mode(Sonar_Aktiv::Mode::SINGLE);
@@ -139,7 +143,7 @@ void Sub_AI::maybe_attack(Welt* welt, const std::vector<const Detektion*>& detek
 }
 
 void Sub_AI::chose_new_job(const Welt* welt) {
-    Log::debug() << "Sub_AI::chose_new_job " << id << " looking for new job" << Log::endl;
+    Log::debug() << "Sub_AI " << id << " looking for new job" << Log::endl;
 
     // Zone finden und als Ziel setzen
     const auto it = std::find_if(welt->zonen.begin(), welt->zonen.end(), [this](const Zone& zone) {
@@ -151,5 +155,4 @@ void Sub_AI::chose_new_job(const Welt* welt) {
         ziel = Vektor(std::get<0>(zone.get_pos()),  std::get<1>(zone.get_pos()), DEPTH_TRAVEL);
     }
     add_status(TRAVEL);
-    timer_next_action = AI_THINK_INTERVALL;
 }

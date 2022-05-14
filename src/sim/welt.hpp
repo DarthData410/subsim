@@ -12,7 +12,7 @@ class Torpedo;
 /// Simluierte Welt, die alle Objekte enthält.
 class Welt final {
 
-    /// Welt hat privaten Zugriff auf folgende Klassen:
+    /// Folgende Klassen haben privaten Zugriff auf Welt:
     friend class Host;
     friend class Kommando;
     friend class Zone;
@@ -20,6 +20,7 @@ class Welt final {
     friend class Sonar_Passiv;
     friend class Torpedo;
     friend class Test_Welt;
+    friend class Test_Bots;
     friend class Test_Objekte;
 
 public:
@@ -35,6 +36,7 @@ public:
      * aufgerufen wurde und skaliert entsprechend alle physikalischen Bewegungen etc.
      * */
     void tick();
+
     /// Diese Version führt s Sekunden Simulation durch anstatt Echtzeit (mal timelapse).
     void tick(float s);
 
