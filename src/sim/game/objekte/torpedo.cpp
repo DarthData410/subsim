@@ -17,7 +17,9 @@ Torpedo::Torpedo(const Motor& motor_linear, const Motor& motor_rot, const Motor&
 }
 
 Torpedo::Torpedo(const Torpedo& torpedo_typ, const Sub* sub,
-                 float distance_to_activate, float target_bearing, float target_depth, float target_distance_to_explode)
+                 float distance_to_activate, float target_bearing,
+                 const std::optional<float>& target_depth,
+                 float distance_to_fuse)
     : Torpedo(torpedo_typ) // übernimmt alles aus torpedo_typ
 {
     pos    = sub->get_pos(); // TODO etwas Abstand nach vorn
@@ -26,9 +28,9 @@ Torpedo::Torpedo(const Torpedo& torpedo_typ, const Sub* sub,
     motor_linear.v = std::min(motor_linear.v_max, sub->get_speed() + 1.f);
     set_target_v(1.0f);
     set_target_bearing(target_bearing);
-    set_target_depth(target_depth);
+    set_target_depth(target_depth.value_or(sub->get_pos().z()));
     Torpedo::distance_to_activate = distance_to_activate;
-    Torpedo::distance_to_fuse = target_distance_to_explode;
+    Torpedo::distance_to_fuse     = distance_to_fuse;
     if (sonar_aktiv) sonar_aktiv->set_mode(Sonar_Aktiv::Mode::ON);
 }
 

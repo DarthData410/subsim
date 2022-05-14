@@ -18,6 +18,8 @@ class Torpedo final : public Objekt_Steuerbar {
 
 public:
 
+    static inline float DEFAULT_DISTANCE_TO_FUSE = 50.f;
+
     /// Ctor. Muss zum Serialisieren existieren.
     Torpedo() = default;
 
@@ -27,10 +29,16 @@ public:
             const std::optional<Sonar_Aktiv>& sonar_aktiv = std::nullopt,
             const std::optional<Sonar_Passiv>& sonar_passiv = std::nullopt);
 
-    /// Ctor für Torpedos, die abgeschossen werden.
+    /**
+     * Ctor für Torpedos, die abgeschossen werden.
+     * @param target_depth Default: Tiefe des abschießenden Subs.
+     * @param distance_to_fuse Default: vgl. `DEFAULT_DISTANCE_TO_FUSE`.
+     */
     Torpedo(const Torpedo& torpedo_typ, const Sub* sub,
-            float distance_to_activate, float target_bearing, float target_depth,
-            float target_distance_to_explode);
+            float distance_to_activate,
+            float target_bearing,
+            const std::optional<float>& target_depth = std::nullopt,
+            float distance_to_fuse = DEFAULT_DISTANCE_TO_FUSE);
 
     Objekt::Typ get_typ() const override { return Typ::TORPEDO; }
 

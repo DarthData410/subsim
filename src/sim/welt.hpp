@@ -55,7 +55,7 @@ public:
      * Lässt `sub` mit `eingestelltes_torpedo` schießen, welches Zielkoordinaten usw. konfiguriert haben muss.
      * @note Hat `sub` keine Torpedos mehr des gewünschten Typs, passiert nichts.
      */
-    bool add_torpedo(Sub* sub, const Torpedo* eingestelltes_torpedo);
+    std::optional<oid_t> add_torpedo(Sub* sub, const Torpedo* eingestelltes_torpedo);
 
     /**
      * Lässt `sub` mit `eingestellter_decoy` schießen, welches fertig konfiguriert sein sollte.
@@ -79,7 +79,7 @@ public:
     unsigned get_objektanzahl(Objekt::Typ typ) const;
 
     /// Liefert Objekt mit `id` oder `nullptr`.
-    const Objekt* get_objekt_or_null(oid_t id);
+    const Objekt* get_objekt_or_null(oid_t id) const;
 
     /// Liefert alle eroberbaren Zonen.
     const std::vector<Zone>& get_zonen() const { return zonen; }

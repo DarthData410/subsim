@@ -59,6 +59,21 @@ private:
     /// Weckt die KI und lässt sie sofort eine neue Aufgabe finden.
     void wake() { timer_next_action = 0; }
 
+    /// Aktualisiert `ziele_torpedos`.
+    void update_ziele_torpedos(const Welt* welt);
+
+    /// Liefert aus den Sonarerkennungen Gegner, die als Ziel für dieses AI-Sub dienen könnten.
+    void get_valide_ziele(const Welt* welt, std::vector<const Detektion*>& d_active, std::vector<const Detektion*>& d_passive);
+
+    /// Schritt für Schritt auf Gegner zubewegen, wenn in Reichweite auch Torpedo feuern.
+    void maybe_attack(Welt* welt,
+                      const std::vector<const Detektion*>& detektionen,
+                      const std::vector<const Detektion*>& d_active,
+                      const std::vector<const Detektion*>& d_passive);
+
+    /// Wählt je nach Situation neue Aufgaben aus für `status`.
+    void chose_new_job(const Welt* welt);
+
 private:
 
     /// Timer für neue Aufgaben.
@@ -72,6 +87,9 @@ private:
 
     /// Aktuelle Aufgabe.
     uint8_t status = DONE;
+
+    /// Speichert, welche Objekte (IDs) mit welchen Torpedos (IDs) aktuell unter Beschuss sind.
+    std::unordered_map<oid_t, std::unordered_set<oid_t>> ziele_torpedos;
 
 };
 CEREAL_REGISTER_TYPE(Sub_AI)
