@@ -56,13 +56,10 @@ bool Torpedo::tick(Welt* welt, float s) {
     if (sonar_aktiv)  sonar_aktiv->tick(this, welt, s);
     if (sonar_passiv) sonar_passiv->tick(this, welt, s);
 
-    // Nach gültigen Zielen suchen:
-    if (const auto& ziel = get_beste_detektion(); ziel) {
-        // Kurs auf Ziel stellen
-        set_target_bearing(ziel->bearing);
-    }
+    // Nach gültigen Zielen suchen. Ggf. Kurs auf Ziel stellen.
+    if (const auto& ziel = get_beste_detektion(); ziel) set_target_bearing(ziel->bearing);
 
-    // Hit detection
+    // Kollisionsdetektion
     for (auto& o_paar : welt->objekte) {
         if (o_paar.second.get() == this) continue;
 
@@ -78,8 +75,8 @@ bool Torpedo::tick(Welt* welt, float s) {
             letzte_zielnaehe = distanz;
             return true;
         } else { // entfernt sich -> BOOM!
-            Log::debug() << "Torpedo " << this->name << " trifft Objekt " << o->get_id()
-                         << " Typ=" << (int)o->get_typ() << ' ' << " Distanz: " << distanz << '\n';
+            Log::debug() << "Torpedo " << id << " hit Object " << o->get_id()
+                         << " Typ=" << (int)o->get_typ() << " Distance=" << distanz << '\n';
             Explosion* e = new Explosion(this);
             welt->add(e);
             return false;
@@ -120,7 +117,7 @@ bool Torpedo::apply_damage(const Explosion* explosion, float damage) {
     if (damage <= 0) return false;
     // Totalschaden
     if (schaeden.count(Schaden::ZERSTOERT)) return false; // war bereits zerstört
-    Log::debug() << "Torpedo " << this->get_id() << " durch Explosion zerstoert.\n";
+    if (explosion->quelle_torpedo != id) Log::debug() << "Torpedo " << id << " destroyed by explosion.\n";
     schaeden.insert(Schaden::ZERSTOERT);
     return true;
 }

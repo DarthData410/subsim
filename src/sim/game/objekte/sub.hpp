@@ -60,6 +60,9 @@ public:
     /// Liefert die Tiefe (z negativ), ab der geschnorchelt werden kann.
     float get_schnorcheltiefe() const { return -50.f; }
 
+    /// Feuert 1 Decoy gegebenen Typs ab in die Welt. Liefert die `oid` bei Erfolg.
+    std::optional<oid_t> deploy_decoy(Welt* welt, const std::string& decoy_key);
+
     /// Serialisierung via cereal.
     template <class Archive> void serialize(Archive& ar) {
         ar(cereal::base_class<Objekt_Steuerbar>(this),

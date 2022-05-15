@@ -75,15 +75,14 @@ std::optional<oid_t> Welt::add_torpedo(Sub* sub, const Torpedo* eingestelltes_to
     return std::nullopt;
 }
 
-bool Welt::add_decoy(Sub* sub, const Decoy* eingestellter_decoy) {
+std::optional<oid_t> Welt::add_decoy(Sub* sub, const Decoy* eingestellter_decoy) {
     if (sub->shoot(eingestellter_decoy->get_name(), Objekt::Typ::DECOY)) {
-        //this->add(new Decoy(*eingestellter_decoy, sub,
         Decoy* decoy = new Decoy(*eingestellter_decoy, sub);
-        this->add(decoy);
+        const auto oid = this->add(decoy);
         Log::debug() << "Welt::add_decoy() Decoy name=" << eingestellter_decoy->get_name() << " launched by Sub ID=" << sub->get_id() << '\n';
-        return true;
+        return oid;
     }
-    return false;
+    return std::nullopt;
 }
 
 void Welt::add_abschuss(Abschuss&& abschuss) {

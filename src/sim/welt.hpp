@@ -62,8 +62,9 @@ public:
     /**
      * Lässt `sub` mit `eingestellter_decoy` schießen, welches fertig konfiguriert sein sollte.
      * @note Hat `sub` keine Decoys mehr des gewünschten Typs, passiert nichts.
+     * @return Objekt-ID des gestarteten Decoys, falls erfolgreich.
      */
-    bool add_decoy(Sub* sub, const Decoy* eingestellter_decoy);
+    std::optional<oid_t> add_decoy(Sub* sub, const Decoy* eingestellter_decoy);
 
     /// Liefert den Zeitrafferfaktor. 1.0 bedeutet Echtzeit.
     float get_timelapse() const { return timelapse; }

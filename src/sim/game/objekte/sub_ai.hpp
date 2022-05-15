@@ -13,6 +13,7 @@ class Sub_AI final : public Sub {
     static constexpr float DEPTH_TRAVEL = -50;
     static constexpr float TARGET_DISTANCE = 1000;
     static constexpr float AI_THINK_INTERVALL = 10; // Sekunden
+    static constexpr float EVADE_DISTANCE = 500; // Torpedo < diese Entfernung: Ausweichmanöver
 
     enum Status : uint8_t { // nicht vergessen: größeren Typen bei wachsender Zahl Status
         DONE    = 0,        // Keine Aufgabe (mehr).
@@ -22,6 +23,7 @@ class Sub_AI final : public Sub {
         //EVADE   = 1 << 3,   // Torpedos / Waffen ausweichen. TODO
         //ATTACK  = 1 << 4,   // Feinde Angreifen.
         //WAIT    = 1 << 5,   // absolut nichts tun
+        //FLEE    = 1 << 6,   // Zur Basis zurück + rearm/repair
     };
 
 public:
@@ -93,5 +95,6 @@ private:
     /// Speichert, welche Objekte (IDs) mit welchen Torpedos (IDs) aktuell unter Beschuss sind.
     std::unordered_map<oid_t, std::unordered_set<oid_t>> ziele_torpedos;
 
+    void maybe_evade(Welt* p_welt);
 };
 CEREAL_REGISTER_TYPE(Sub_AI)

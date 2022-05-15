@@ -1,5 +1,7 @@
-#include <log.hpp>
 #include "sub.hpp"
+#include "../../welt.hpp"
+
+#include <log.hpp>
 
 Sub::Sub(const std::string& name, const Vektor& pos,
          const Motor& motor_linear,const Motor& motor_rot, const Motor& motor_tauch)
@@ -64,4 +66,15 @@ float Sub::get_best_aufloesung_sonar() const {
     for (const auto& as  : sonars_active)  if (as.get_aufloesung() < best) best = as.get_aufloesung();
     for (const auto& ps : sonars_passive) if (ps.get_aufloesung() < best) best = ps.get_aufloesung();
     return best;
+}
+
+std::optional<oid_t> Sub::deploy_decoy(Welt* welt, const std::string& decoy_key) {
+    for (auto& [decoy, anzahl] : decoys) {
+        if (decoy.get_name() == decoy_key) {
+            anzahl -= 1;
+            const auto oid = welt->add_decoy(this, &decoy);
+            return oid;
+        }
+    }
+    return std::nullopt;
 }

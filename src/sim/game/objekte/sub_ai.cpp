@@ -11,15 +11,15 @@ Sub_AI::Sub_AI(const Sub& sub) : Sub(sub), timer(0), timer_next_action(AI_THINK_
 bool Sub_AI::tick(Welt* welt, float s) {
     if (const bool alive = Sub::tick(welt, s); !alive) return false; // Lebt nicht mehr
 
-    // TODO: wenn unter Beschuss, sofort reagieren
-    // ...
-
     // Nicht jeden tick() nachdenken
     timer += s;
     if (timer < timer_next_action) return true;
-    timer = 0;
+    timer = 0; timer_next_action = AI_THINK_INTERVALL; // Timer zurücksetzen
 
     // TODO: Statuslogik/übergänge prüfen
+
+    // Wenn unter Beschuss, sofort reagieren
+    maybe_evade(welt);
 
     // Verschossene Torpedos aktualisieren
     update_ziele_torpedos(welt);
@@ -90,6 +90,31 @@ void Sub_AI::get_valide_ziele(const Welt* welt, std::vector<const Detektion*>& d
     for (const auto& ps: get_sonars_passive()) for (const auto& d: ps.get_detektionen()) if (is_angriffsziel(d)) d_passive.push_back(&d);
     std::vector<const Detektion*> detektionen(d_active); // AS + PS
     detektionen.insert(detektionen.end(), d_passive.begin(), d_passive.end());
+}
+
+void Sub_AI::maybe_evade(Welt* welt) {
+    for (const auto& [id, o] : welt->objekte) {
+        // Feindliches Torpedo?
+        if (o->get_typ() == Objekt::Typ::TORPEDO && o->get_team() != this->team) {
+            // TODO check ob Torpedo gesehen wird sonst ist das Botverhalten evtl. schummelig
+
+            // Ist es nah?
+            const auto d = Physik::distanz_xyz(o->get_pos(), this->pos);
+            if (d > EVADE_DISTANCE) continue;
+
+            // Ausweichmanöver
+            set_target_v(1.f);
+            set_target_depth(Zufall::f(-500.f, -150.f));
+            if (get_bearing() < 180.f) set_target_bearing(kurs + 160.f);
+            else set_target_bearing(kurs - 160.f);
+
+            // Decoy falls vorhanden
+            const auto decoy_it = std::find_if(decoys.begin(), decoys.end(), [](const auto& paar) { return paar.second > 0; });
+            if (decoy_it != decoys.end()) deploy_decoy(welt, decoy_it->first.get_name());
+            timer_next_action = 60.f;
+            return;
+        }
+    }
 }
 
 void Sub_AI::maybe_attack(Welt* welt, const std::vector<const Detektion*>& detektionen, const std::vector<const Detektion*>& d_active, const std::vector<const Detektion*>& d_passive) {

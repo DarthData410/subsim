@@ -21,16 +21,17 @@ TODO: Description
     + [ ] Decoys
 + [ ] (?) Zones spawn Ships; Have them reach home for Points
 + [ ] Mainmenu - game setup
-+ [ ] (?) Attack / Defend gameplay instead of 'Equal Encounter'
+  + [ ] (?) Attack / Defend gameplay instead of 'Equal Encounter'
+  + [ ] (?) Deathmatch (FFA / no Teams)
 + [ ] <font color='grey'>Surface Ships</font>
 + [ ] <font color='grey'>Aircraft</font>
 + [ ] Save/Load Game
 
 ## AI
-+ [ ] **Evade**
-    + [ ] Use Decoys
++ [x] **Evade**
+    + [x] Use Decoys
     + [ ] Hide
-+ [ ] **fire Torpedos**
++ [x] **fire Torpedos**
 
 ## Armament
 + [ ] **Multiple Launch Tubes**
@@ -49,7 +50,7 @@ TODO: Description
     + [X] Show scale px : km/~~sm~~
     + [x] Terrain Renderer (VertexArray based for now)
     + [ ] Clean up Map Settings Window
-    + [ ] Bug: Possible Map Depth discrepancy view/model
+    + [ ] (?) Bug: Possible Map Depth discrepancy view/model
 + [x] Passive Sonar: Bearing Markers
 + [x] Passive Sonar: Bug: vector::_M_range_check: __n (which is 432) >= this->size() (which is 432)
 + [x] Active Sonar: Bearing Markers
