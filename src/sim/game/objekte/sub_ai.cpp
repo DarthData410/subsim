@@ -43,22 +43,18 @@ bool Sub_AI::tick(Welt* welt, float s) {
     else set_target_depth(-50);
 
     // Zum Ziel bewegen
-    if (hat_status(TRAVEL)) {
+    if (hat_status(MOVE)) {
         // Ziel erreicht?
         if (Physik::distanz(pos.x(), pos.y(), ziel.x(), ziel.y()) <= TARGET_DISTANCE) {
             nada::Log::debug() << "Sub_AI " << id << " target reached" << nada::Log::endl;
-            remove_status(TRAVEL);
+            remove_status(MOVE);
             stop();
         }
         set_target_pos(ziel.x(), ziel.y());
         set_target_depth(DEPTH_TRAVEL);
         set_target_v(SPEED_TRAVEL);
-    }
+    } else set_target_v(0);
     return true;
-}
-
-dist_t Sub_AI::get_zielentfernung() const {
-    return Physik::distanz_xy(this->pos, this->ziel);
 }
 
 void Sub_AI::update_ziele_torpedos(const Welt* welt) {
@@ -142,7 +138,7 @@ void Sub_AI::maybe_attack(Welt* welt, const std::vector<const Detektion*>& detek
         const auto [ziel_x, ziel_y] = Physik::get_punkt(this->pos.x(), this->pos.y(), angriffsziel->bearing, 1'000);
         this->ziel.x(ziel_x); this->ziel.y(ziel_y);
         remove_status(SEARCH);
-        add_status(TRAVEL);
+        add_status(MOVE);
     }
     else { // Angriff!
         std::optional<Torpedo> torpedo_wahl; // Torpedo auswählen
@@ -174,10 +170,12 @@ void Sub_AI::chose_new_job(const Welt* welt) {
     const auto it = std::find_if(welt->zonen.begin(), welt->zonen.end(), [this](const Zone& zone) {
         return zone.get_team() != this->get_team();
     });
+    // Feindlicher Zone einnehmen
     if (it != welt->zonen.end()) ziel = Vektor(std::get<0>(it->get_pos()), std::get<1>(it->get_pos()), DEPTH_TRAVEL);
     else {
+        // Zu zufälliger Zone reisen
         const Zone& zone = welt->zonen[nada::random::ui(0, welt->zonen.size()-1)];
         ziel = Vektor(std::get<0>(zone.get_pos()),  std::get<1>(zone.get_pos()), DEPTH_TRAVEL);
     }
-    add_status(TRAVEL);
+    add_status(MOVE);
 }

@@ -57,6 +57,7 @@ bool Klient::connect() {
     if (retries < 5) {
         retries++;
         Log::out() << "Klient: Connection attempt failed. Retry " << retries << "..." << Log::endl;
+        std::this_thread::sleep_for(std::chrono::duration(std::chrono::seconds(3)));
         goto retry;
     }
     enet_peer_reset(server);

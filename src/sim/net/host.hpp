@@ -4,6 +4,7 @@
 #include "net.hpp"
 
 #include <enet/enet.h>
+#include <atomic>
 
 /// UDP Server für Multiplayer.
 class Host final {
@@ -34,7 +35,7 @@ private:
     ENetHost* server = nullptr;
 
     /// Simlations-Loop + Netzwerk-Listening aktiv?
-    bool loop = true;
+    std::atomic<bool> loop = true;
 
     /// Simulierte Welt.
     Welt welt;

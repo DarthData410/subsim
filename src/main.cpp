@@ -6,12 +6,11 @@
     #include "fenster/szene.hpp"
     #include "sim/net/host.hpp"
     #include "sim/net/net.hpp"
-    #include <log.hpp>
+    #include <nada/log.hpp>
     #include <thread>
 
-void start_server(Host*& host) {
-    Log::out() << "Server startet..." << Log::flush;
-    host = new Host(Net::PORT);
+void start_server(Host* host) {
+    nada::Log::out() << "Server startet..." << nada::Log::flush;
     host->start();
 }
 #endif
@@ -31,9 +30,8 @@ int main(int argc, char** argv) {
         return EXIT_FAILURE;
     } else atexit(enet_deinitialize);
 
-    Host* host = nullptr;
-    std::thread* host_thread = nullptr;
-    host_thread = new std::thread(start_server, std::ref(host));
+    std::unique_ptr<Host> host(new Host(Net::PORT));
+    std::unique_ptr<std::thread> host_thread(new std::thread(start_server, host.get()));
 
     try {
         Szene szene;
@@ -46,13 +44,10 @@ int main(int argc, char** argv) {
 
     // Host stoppen
     if (host && host_thread) {
-        Log::out() << "Stopping server... " << Log::endl;
+        nada::Log::out() << "Stopping server... " << nada::Log::endl;
         host->stop();
         host_thread->join();
-        delete host;
-        delete host_thread;
-        Log::out() << "Server stopped." << Log::endl;
+        nada::Log::out() << "Server stopped." << nada::Log::endl;
     }
-    return 0;
 }
 #endif

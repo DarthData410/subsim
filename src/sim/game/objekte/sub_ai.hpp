@@ -17,7 +17,7 @@ class Sub_AI final : public Sub {
 
     enum Status : uint8_t { // nicht vergessen: größeren Typen bei wachsender Zahl Status
         DONE    = 0,        // Keine Aufgabe (mehr).
-        TRAVEL  = 1 << 0,   // Reisen zu bestimmter Position.
+        MOVE  = 1 << 0,   // Reisen zu bestimmter Position.
         SEARCH  = 1 << 1,   // Nach Feinden suchen, auch mit AS.
         HIDE    = 1 << 2,   // Verstecken vor Feinden.
         //EVADE   = 1 << 3,   // Torpedos / Waffen ausweichen. TODO
@@ -56,9 +56,6 @@ private:
 
     /// Entfernt gg. Status. @note `DONE` darf so nicht entfernt werden, stattdessen: `clear_status()`.
     void remove_status(Status status) { this->status &= ~status; }
-
-    /// Liefert die Entfernung zum Ziel in m.
-    dist_t get_zielentfernung() const;
 
     /// Weckt die KI und lässt sie sofort eine neue Aufgabe finden.
     void wake() { timer_next_action = 0; }
