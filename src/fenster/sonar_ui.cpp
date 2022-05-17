@@ -5,8 +5,8 @@
 #include "gfx/ui.hpp"
 #include "../sim/net/klient.hpp"
 
+#include <nada/random.hpp>
 #include <selbaward/Ring.hpp>
-#include <zufall.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
@@ -135,7 +135,7 @@ void Sonar_UI::draw_ps(const Sub* sub, sf::RenderWindow* window) {
         // Rauschen eintragen
         std::vector<uint8_t> v(PS_SIZE_X);
         for (unsigned i = 0; i < v.size(); i += res) {
-            const uint8_t rnd = Zufall::ui(0, 0x10);
+            const uint8_t rnd = nada::random::ui(0, 0x10);
             for (unsigned k = 0; k < res && i+k < v.size(); ++k) v[i+k] = rnd;
         }
 
@@ -197,7 +197,7 @@ void Sonar_UI::draw_as(const Sub* sub, sf::RenderWindow* window) {
         std::vector<uint8_t> v_rauschen(AS_SIZE_X * AS_SIZE_Y * RGB_PX);
         for (unsigned i = 0; i < v_rauschen.size(); i += RGB_PX) {
             v_rauschen[i]   = 0x00; // R
-            v_rauschen[i+1] = Zufall::i(0, 0x20); // G
+            v_rauschen[i+1] = nada::random::i(0, 0x20); // G
             v_rauschen[i+2] = 0x00; // B
             v_rauschen[i+3] = 0xFF; // A
         }

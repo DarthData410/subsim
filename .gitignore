@@ -1,2 +1,8 @@
-/libs/*/
+/libs/cereal/
+/libs/cmake*/
+/libs/doctest/
+/libs/enet/
+/libs/imgui/
+/libs/imgui-sfml/
+/libs/implot/
 /cmake-build*/

@@ -26,7 +26,7 @@ include_directories(imgui)
 include_directories(implot)
 include_directories(imgui-sfml)
 include_directories(libnada/include)
-include_directories(selbaward)
+include_directories(thirdparty/selbaward)
 
 add_library(bibliotheken STATIC
         imgui/imgui.cpp
@@ -48,8 +48,8 @@ target_include_directories(bibliotheken SYSTEM PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}/doctest/doctest
         ${CMAKE_CURRENT_LIST_DIR}/cereal/include
         ${CMAKE_CURRENT_LIST_DIR}/libnada/include
-        ${CMAKE_CURRENT_LIST_DIR}/libnada/selbaward
-        ${CMAKE_CURRENT_LIST_DIR}/libnada/simplex_noise/include
+        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/selbaward
+        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/simplex_noise/include
         )
 
 # Ueber Build Modus informieren

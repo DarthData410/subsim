@@ -2,8 +2,9 @@
 
 #include <cmath>
 #include <algorithm>
-#include <zufall.hpp>
+#include <nada/random.hpp>
 #include <functional>
+#include <memory>
 #include <imgui.h>
 #include <imgui_internal.h>
 #include <SFML/Graphics/Font.hpp>
@@ -147,7 +148,7 @@ const sf::Font* ui::get_font() {
     static const std::unique_ptr<sf::Font> sfml_font(std::invoke([]() {
         sf::Font* font = new sf::Font;
         if (!font->loadFromFile(ui::FILE_FONT_SFML)) {
-            Log::err() << "Error: Unable to load font from file " << ui::FILE_FONT_SFML << '\n';
+            nada::Log::err() << "Error: Unable to load font from file " << ui::FILE_FONT_SFML << '\n';
             static sf::Font fallback_font;
             return &fallback_font;
         }

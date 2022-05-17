@@ -2,7 +2,7 @@
 #include "net.hpp"
 #include "kommando.hpp"
 
-#include <log.hpp>
+#include <nada/log.hpp>
 #include <cereal/types/vector.hpp>
 #include <cereal/types/unordered_map.hpp>
 #include <cereal/types/memory.hpp>
@@ -16,7 +16,7 @@ Host::Host(uint16_t port) {
     if (server = enet_host_create(&address, 32, // Max. Klienten
                                   2, // Kanäle; 0 = Request/Receive, 1 = Broadcast
                                   0, 0); !server) {
-        Log::err() << "An error occurred while trying to create an ENet server host.\n";
+        nada::Log::err() << "An error occurred while trying to create an ENet server host.\n";
         exit(EXIT_FAILURE);
     }
 }
@@ -109,7 +109,7 @@ void Host::handle_receive(ENetEvent& event) {
             const std::tuple<Karte> daten = {welt.karte};
             sende_antwort(event, Net::serialize(daten));
         } break;
-        default: Log::err() << "\tUnknown Request Net::" << (int)request << '\n'; break;
+        default: nada::Log::err() << "\tUnknown Request Net::" << (int)request << '\n'; break;
     }
 }
 

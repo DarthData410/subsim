@@ -1,7 +1,9 @@
-#include <log.hpp>
+#include <nada/log.hpp>
 #include "kommando.hpp"
 #include "../welt.hpp"
 #include "../game/objekte/sub.hpp"
+
+using nada::Log;
 
 void Kommando::apply(Welt* welt) {
     Sub* sub = nullptr;

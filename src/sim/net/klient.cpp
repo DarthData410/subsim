@@ -1,12 +1,14 @@
 #include "klient.hpp"
 #include "net.hpp"
 
-#include <log.hpp>
+#include <nada/log.hpp>
 #include <thread>
 #include <cereal/types/vector.hpp>
 #include <cereal/types/unordered_map.hpp>
 
 #define LOCK_MUTEX std::scoped_lock lock(connection_mutex)
+
+using nada::Log;
 
 Klient::Klient(const std::string& ip) : host_ip(ip) {
     klient = enet_host_create(NULL, // 0 = Klient

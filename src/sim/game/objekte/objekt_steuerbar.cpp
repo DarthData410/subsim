@@ -1,4 +1,4 @@
-#include <log.hpp>
+#include <nada/log.hpp>
 #include <valarray>
 #include "objekt_steuerbar.hpp"
 #include "../../physik.hpp"
@@ -107,7 +107,7 @@ bool Objekt_Steuerbar::apply_damage(const Explosion* explosion, float damage) {
     if (damage <= 0) return false;
     // Totalschaden
     if (schaeden.count(Schaden::ZERSTOERT)) return false; // war bereits zerstört
-    Log::debug() << "Objekt_Steuerbar " << this->get_id() << " Typ=" << (int)this->get_typ() << " zerstoert.\n";
+    nada::Log::debug() << "Objekt_Steuerbar " << this->get_id() << " Typ=" << (int)this->get_typ() << " zerstoert.\n";
     schaeden.insert(Schaden::ZERSTOERT);
     return true;
 }

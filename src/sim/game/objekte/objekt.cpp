@@ -1,9 +1,9 @@
 #include "objekt.hpp"
-#include <zufall.hpp>
 #include "torpedo.hpp"
 #include "sub_ai.hpp"
 #include "ping.hpp"
 #include "decoy.hpp"
+#include <nada/random.hpp>
 
 Objekt::Objekt(const Vektor& pos, const float& bearing) :
         pos(pos),
@@ -14,7 +14,7 @@ Objekt::Objekt(const Vektor& pos, const float& bearing) :
 }
 
 void Objekt::regenerate_id() {
-    id = Zufall::random_hash<decltype(id)>();
+    id = nada::random::random_hash<decltype(id)>();
 }
 
 Objekt* Objekt::copy(const Objekt* o) {
@@ -30,7 +30,7 @@ Objekt* Objekt::copy(const Objekt* o) {
         case Typ::OBJEKT:           return nullptr;
         case Typ::OBJEKT_STEUERBAR: return nullptr;
     }
-    Log::err() << "Objekt::copy Typ ist nicht kopierbar: " << (int)o->get_typ() << '\n';
+    nada::Log::err() << "Objekt::copy Typ ist nicht kopierbar: " << (int)o->get_typ() << '\n';
     return nullptr;
 }
 

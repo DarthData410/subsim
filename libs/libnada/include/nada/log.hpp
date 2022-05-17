@@ -13,6 +13,7 @@
  * @example
  * Log::info() << "Mein " << 2 << ". Wagen sind " << 10 << " U-Boote.\n" << Log::flush;
  */
+namespace nada {
 class Log final {
 
 public:
@@ -140,3 +141,4 @@ private:
     const Level level;
 
 };
+}

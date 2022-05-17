@@ -2,7 +2,7 @@
 #include "../../welt.hpp"
 #include "../../physik.hpp"
 
-#include <zufall.hpp>
+#include <nada/random.hpp>
 
 Sub_AI::Sub_AI(const Sub& sub) : Sub(sub), timer(0), timer_next_action(AI_THINK_INTERVALL) {
 
@@ -46,7 +46,7 @@ bool Sub_AI::tick(Welt* welt, float s) {
     if (hat_status(TRAVEL)) {
         // Ziel erreicht?
         if (Physik::distanz(pos.x(), pos.y(), ziel.x(), ziel.y()) <= TARGET_DISTANCE) {
-            Log::debug() << "Sub_AI " << id << " target reached" << Log::endl;
+            nada::Log::debug() << "Sub_AI " << id << " target reached" << nada::Log::endl;
             remove_status(TRAVEL);
             stop();
         }
@@ -104,7 +104,7 @@ void Sub_AI::maybe_evade(Welt* welt) {
 
             // Ausweichmanöver
             set_target_v(1.f);
-            set_target_depth(Zufall::f(-500.f, -150.f));
+            set_target_depth(nada::random::f(-500.f, -150.f));
             if (get_bearing() < 180.f) set_target_bearing(kurs + 160.f);
             else set_target_bearing(kurs - 160.f);
 
@@ -124,7 +124,7 @@ void Sub_AI::maybe_attack(Welt* welt, const std::vector<const Detektion*>& detek
 
     // Mit AS suchen?
     if (d_active.empty() && !sonars_active.empty() && !hat_status(HIDE) && hat_status(SEARCH)) {
-        Log::debug() << "Sub_AI " << id << " trying single Ping" << Log::endl;
+        nada::Log::debug() << "Sub_AI " << id << " trying single Ping" << nada::Log::endl;
         auto& as = sonars_active[0];
         as.set_ping_intervall(300); // zu häufiges Pingen verhindern
         as.set_mode(Sonar_Aktiv::Mode::SINGLE);
@@ -149,7 +149,7 @@ void Sub_AI::maybe_attack(Welt* welt, const std::vector<const Detektion*>& detek
         for (const auto& [torpedo, muni] : this->torpedos) {
             if (muni && torpedo.get_range() > angriffsziel->range.value()) {
                 // Zufälliges Torpedo mit genügend Reichweite
-                if (!torpedo_wahl.has_value() || Zufall::b(50)) torpedo_wahl = torpedo;
+                if (!torpedo_wahl.has_value() || nada::random::b(50)) torpedo_wahl = torpedo;
             }
         }
         // Torpedo einstellen ?
@@ -168,7 +168,7 @@ void Sub_AI::maybe_attack(Welt* welt, const std::vector<const Detektion*>& detek
 }
 
 void Sub_AI::chose_new_job(const Welt* welt) {
-    Log::debug() << "Sub_AI " << id << " looking for new job" << Log::endl;
+    nada::Log::debug() << "Sub_AI " << id << " looking for new job" << nada::Log::endl;
 
     // Zone finden und als Ziel setzen
     const auto it = std::find_if(welt->zonen.begin(), welt->zonen.end(), [this](const Zone& zone) {
@@ -176,7 +176,7 @@ void Sub_AI::chose_new_job(const Welt* welt) {
     });
     if (it != welt->zonen.end()) ziel = Vektor(std::get<0>(it->get_pos()), std::get<1>(it->get_pos()), DEPTH_TRAVEL);
     else {
-        const Zone& zone = welt->zonen[Zufall::ui(0, welt->zonen.size()-1)];
+        const Zone& zone = welt->zonen[nada::random::ui(0, welt->zonen.size()-1)];
         ziel = Vektor(std::get<0>(zone.get_pos()),  std::get<1>(zone.get_pos()), DEPTH_TRAVEL);
     }
     add_status(TRAVEL);

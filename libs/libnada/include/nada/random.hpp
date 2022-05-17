@@ -1,12 +1,13 @@
 #pragma once
 
 #include "log.hpp"
+
 #include <random>
 #include <chrono>
 #include <unordered_map>
 
 /// Methoden zum Liefern von Zufallszahlen.
-namespace Zufall {
+namespace nada { namespace random {
 
     /// Liefert eine Zufallszahl (ganzzahlig) im Bereich a <= N <= b (Template-Version).
     template<typename T, std::enable_if_t<std::is_integral<T>::value, int> = 0>
@@ -42,7 +43,8 @@ namespace Zufall {
      * @tparam T Datentyp des Zufallshashes, z.B. uint_32t.
      * @return
      */
-    template <typename T> T random_hash() {
+    template<typename T>
+    T random_hash() {
         thread_local std::random_device rd;
         thread_local std::mt19937 mt(rd());
         std::uniform_int_distribution<T> uid(0);
@@ -55,9 +57,9 @@ namespace Zufall {
      * @param liste Nicht-leere Liste mit Elementen, aus denen zufällig eines ausgewählt werden soll.
      * @warning Liste darf nicht leer sein!
      */
-    template <typename T>
+    template<typename T>
     const typename T::value_type& wahl(const T& liste) {
-        std::size_t n = Zufall::get<std::size_t>(0, liste.size() - 1);
+        std::size_t n = nada::random::get<std::size_t>(0, liste.size() - 1);
         auto iter = std::cbegin(liste);
         std::advance(iter, n);
         return *iter;
@@ -69,9 +71,9 @@ namespace Zufall {
      * @param liste Nicht-leere Liste mit Elementen, aus denen zufällig eines ausgewählt werden soll.
      * @warning Liste darf nicht leer sein!
      */
-    template <typename T>
+    template<typename T>
     typename T::value_type& wahl(T& liste) {
-        std::size_t n = Zufall::get<std::size_t>(0, liste.size() - 1);
+        std::size_t n = nada::random::get<std::size_t>(0, liste.size() - 1);
         auto iter = std::begin(liste);
         std::advance(iter, n);
         return *iter;
@@ -82,9 +84,9 @@ namespace Zufall {
      * @note Liste darf nicht leer sein.
      * @note Objekt wird via Zuweisung kopiert und zurückgegeben.
      */
-    template <typename T>
+    template<typename T>
     typename T::value_type wahl_erase(T& liste) {
-        std::size_t n = get<std::size_t>(0, liste.size() - 1);
+        std::size_t n = nada::random::get<std::size_t>(0, liste.size() - 1);
         auto iter = std::begin(liste);
         std::advance(iter, n);
         typename T::value_type objekt = *iter; // Kopie
@@ -101,12 +103,12 @@ namespace Zufall {
      * @param gewichtungen Zu verarbeitende Map von Gewichtungen.
      * @return Erzeugte Liste von A.
      */
-    template <typename A, typename B>
+    template<typename A, typename B>
     constexpr std::vector<A> get_gewichtungen(const std::unordered_map<A, B>& gewichtungen) {
         std::vector<A> v;
         v.reserve(gewichtungen.size() * 2);
-        for (const auto& paar : gewichtungen) for (unsigned int i = 0; i < paar.second; ++i) v.push_back(paar.first);
+        for (const auto& paar: gewichtungen) for (unsigned int i = 0; i < paar.second; ++i) v.push_back(paar.first);
         return v;
     }
 
-}
+}}

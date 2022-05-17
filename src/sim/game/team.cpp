@@ -1,6 +1,6 @@
 #include "team.hpp"
 
-#include <zufall.hpp>
+#include <nada/random.hpp>
 
 Team::Team(uint8_t id) : id(id), punkte(0) {
     // Stock Sub
@@ -48,5 +48,5 @@ Team::Team(uint8_t id) : id(id), punkte(0) {
 }
 
 const Sub& Team::get_new_sub() {
-    return Zufall::wahl(sub_designs);
+    return nada::random::wahl(sub_designs);
 }

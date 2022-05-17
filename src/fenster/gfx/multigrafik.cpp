@@ -3,7 +3,7 @@
 #include "grafik.hpp"
 
 #include <SFML/Graphics/RenderWindow.hpp>
-#include <log.hpp>
+#include <nada/log.hpp>
 
 gfx::Multigrafik::Multigrafik(const std::vector<std::string>& grafik_pfade, int x, int y) :
     size_x(0), size_y(0), alle_grafiken_valide(false)
@@ -13,7 +13,7 @@ gfx::Multigrafik::Multigrafik(const std::vector<std::string>& grafik_pfade, int 
         auto t = grafiken.emplace_back(new gfx::Grafik(pfad));
         if (t->good()) {
             if (size_x > 0 && size_y > 0 && (size_x != t->size().x || size_y != t->size().y)) {
-                Log::out() << "Warning: Wrong GFX size for: " << pfad << ": " << size_x << 'x' << size_y
+                nada::Log::out() << "Warning: Wrong GFX size for: " << pfad << ": " << size_x << 'x' << size_y
                            << " Expected: " << t->size().x << 'x' << t->size().y << " Graphic glitches probable.\n";
             }
             t->set_pos({static_cast<float>(x), static_cast<float>(y)});

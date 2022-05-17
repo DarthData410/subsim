@@ -5,13 +5,15 @@
 #include "../sim/game/karte.hpp"
 #include "../sim/physik.hpp"
 
-#include <log.hpp>
+#include <nada/log.hpp>
 #include <SimplexNoise.h>
 #include <SFML/System/Clock.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/Text.hpp>
+
+using nada::Log;
 
 Map_UI::Map_UI(Klient* klient) : Standard_UI(klient) {
     //

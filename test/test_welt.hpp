@@ -3,10 +3,10 @@
 #include "../src/sim/welt.hpp"
 #include "../src/sim/game/karte.hpp"
 #include <doctest.h>
-#include <log.hpp>
+#include <nada/log.hpp>
+#include <nada/random.hpp>
 #include <SFML/Graphics/Image.hpp>
 #include <SimplexNoise.h>
-#include <zufall.hpp>
 
 class Test_Welt {
 
@@ -198,7 +198,7 @@ TEST_CASE_CLASS("welt") {
             CHECK(war_explosion == true);
             CHECK(welt.get_objekte().size() == 1); // Übrig: 1 Sub
             CHECK(welt.abschuesse.size() == 1); // 1 Statistik vorhanden
-            if (!welt.abschuesse.empty()) Log::out() << welt.abschuesse.front().get_as_text() << '\n';
+            if (!welt.abschuesse.empty()) nada::Log::out() << welt.abschuesse.front().get_as_text() << '\n';
         }
     }
     SUBCASE("evasion durch decoy") {
@@ -268,8 +268,8 @@ TEST_CASE_CLASS("karte" * doctest::timeout(30)) {
         Karte karte;
         for (unsigned i = 0; i < 100; ++i) {
             // Zufällige Position
-            const float x = Zufall::f(-100000.f, 100000.f);
-            const float y = Zufall::f(-100000.f, 100000.f);
+            const float x = nada::random::f(-100000.f, 100000.f);
+            const float y = nada::random::f(-100000.f, 100000.f);
             {   // Mindestens
                 const auto [px, py] = karte.get_nearest_passable(x, y, -50.f, std::greater_equal<>());
                 const float height_at_xy = karte.get_height_at(px, py);

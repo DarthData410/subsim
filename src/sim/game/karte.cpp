@@ -3,14 +3,14 @@
 
 #include <SimplexNoise.h>
 #include <memory>
-#include <zufall.hpp>
+#include <nada/random.hpp>
 #include <SFML/Graphics/Image.hpp>
 
 Karte::Karte() {
     water_level = 0.55f; // (0,1)
     octaves = 3;
-    map_shift_x = Zufall::ui(0,1000000);
-    map_shift_y = Zufall::ui(0,1000000);
+    map_shift_x = nada::random::ui(0,1000000);
+    map_shift_y = nada::random::ui(0,1000000);
     const float frequency   = 0.00001f;
     const float amplitude   = 0.5f;
     const float lacunarity  = 1.99f;
@@ -58,7 +58,8 @@ Karte::get_nearest_passable(float x, float y, float height, const std::function<
         i++;
         const auto [px, py] = Physik::get_punkt(x, y, kurs, r);
         if (cmp(get_height_at(px, py), height)) {
-            Log::debug() << "Karte::get_nearest_passable " << i << " Iterationen, Distanz: " << (int)Physik::distanz(x,y, px,py) << '\n';
+            nada::Log::debug() << "Karte::get_nearest_passable " << i
+                               << " Iterationen, Distanz: " << (int)Physik::distanz(x,y, px,py) << '\n';
             return {px, py};
         }
     }

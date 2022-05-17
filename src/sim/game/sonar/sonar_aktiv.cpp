@@ -1,4 +1,4 @@
-#include <zufall.hpp>
+#include <nada/random.hpp>
 #include "sonar_aktiv.hpp"
 #include "../objekte/ping.hpp"
 #include "../../welt.hpp"
@@ -50,7 +50,7 @@ void Sonar_Aktiv::tick(Objekt* parent, Welt* welt, float s) {
                 o->get_noise(), // TODO gut so oder immer 1.0f einfach? Oder mal Physik::schallfaktor(entfernung) ?
                 Physik::round(kurs, this->resolution),
                 o->get_team(),
-                entfernung + Zufall::f(-0.5f * this->resolution_range, 0.5f * this->resolution_range),
+                entfernung + nada::random::f(-0.5f * this->resolution_range, 0.5f * this->resolution_range),
                 o->get_pos().z()
         ));
     }

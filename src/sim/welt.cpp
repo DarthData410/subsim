@@ -1,7 +1,9 @@
 #include "welt.hpp"
 #include "game/objekte/sub_ai.hpp"
 
-#include <zufall.hpp>
+#include <nada/random.hpp>
+
+using nada::Log;
 
 Welt::Welt(unsigned npcs_pro_team) {
     // Teams hinzufügen
@@ -44,8 +46,8 @@ const Sub* Welt::add_new_sub(uint8_t team, bool computer_controlled) {
     else sub_ptr = new Sub(teams.at(team).get_new_sub());
     add(sub_ptr);
     const auto& [start_x, start_y] = karte.get_nearest_passable(
-            teams[team].get_basis().x() + Zufall::f(-500.f, 500.f),
-            teams[team].get_basis().y() + Zufall::f(-500.f, 500.f),
+            teams[team].get_basis().x() + nada::random::f(-500.f, 500.f),
+            teams[team].get_basis().y() + nada::random::f(-500.f, 500.f),
             START_DEPTH_SUB, std::less<>());
     sub_ptr->pos = {start_x, start_y, START_DEPTH_SUB};
     const auto depth_at_start = karte.get_height_at(start_x, start_y);

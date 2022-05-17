@@ -1,4 +1,4 @@
-#include <log.hpp>
+#include <nada/log.hpp>
 #include "torpedo.hpp"
 #include "sub.hpp"
 #include "../../../sim/physik.hpp"
@@ -48,7 +48,7 @@ bool Torpedo::tick(Welt* welt, float s) {
     travelled += Physik::distanz(pos_alt.x(), pos_alt.y(), pos.x(), pos.y());
     if (travelled < distance_to_activate) return true; // noch nichts aktiv zu tun
     if (travelled > range) {
-        Log::debug() << "Torpedo " << id << " died out of range\n";
+        nada::Log::debug() << "Torpedo " << id << " died out of range\n";
         return false; // Treibstoff leer -> deaktiviert
     }
 
@@ -75,8 +75,8 @@ bool Torpedo::tick(Welt* welt, float s) {
             letzte_zielnaehe = distanz;
             return true;
         } else { // entfernt sich -> BOOM!
-            Log::debug() << "Torpedo " << id << " hit Object " << o->get_id()
-                         << " Typ=" << (int)o->get_typ() << " Distance=" << distanz << '\n';
+            nada::Log::debug() << "Torpedo " << id << " hit Object " << o->get_id()
+                               << " Typ=" << (int)o->get_typ() << " Distance=" << distanz << '\n';
             Explosion* e = new Explosion(this);
             welt->add(e);
             return false;
@@ -117,7 +117,7 @@ bool Torpedo::apply_damage(const Explosion* explosion, float damage) {
     if (damage <= 0) return false;
     // Totalschaden
     if (schaeden.count(Schaden::ZERSTOERT)) return false; // war bereits zerstört
-    if (explosion->quelle_torpedo != id) Log::debug() << "Torpedo " << id << " destroyed by explosion.\n";
+    if (explosion->quelle_torpedo != id) nada::Log::debug() << "Torpedo " << id << " destroyed by explosion.\n";
     schaeden.insert(Schaden::ZERSTOERT);
     return true;
 }

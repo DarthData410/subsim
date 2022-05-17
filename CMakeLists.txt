@@ -13,6 +13,7 @@ else () # Debug build
     set(CMAKE_CXX_FLAGS "-g -Werror -Wall -Wextra -Wpedantic")
 endif ()
 add_subdirectory(libs/libnada)
+add_subdirectory(libs/thirdparty)
 add_subdirectory(libs/enet)
 find_package(SFML 2 REQUIRED graphics window system) # audio network
 
@@ -22,7 +23,7 @@ elseif (WIN32)
     find_package(OpenGL REQUIRED)
     set(OS_BIBLIOTHEKEN ${OPENGL_LIBRARIES} stdc++fs ws2_32 winmm)
 endif()
-set(NADA_LINK_LIBRARIES nada bibliotheken sfml-graphics sfml-window sfml-system ${OS_BIBLIOTHEKEN} enet)
+set(NADA_LINK_LIBRARIES nada thirdparty bibliotheken sfml-graphics sfml-window sfml-system ${OS_BIBLIOTHEKEN} enet)
 
 message(STATUS "CMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}")
 

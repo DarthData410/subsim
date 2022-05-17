@@ -1,7 +1,7 @@
 #include "spielszene.hpp"
 #include "gfx/ui.hpp"
 
-#include <log.hpp>
+#include <nada/log.hpp>
 #include <imgui.h>
 #include <imgui-SFML.h>
 #include <SFML/Window/Event.hpp>
@@ -14,6 +14,8 @@
 #include "sonar_ui.hpp"
 #include "waffen_ui.hpp"
 #include "map_ui.hpp"
+
+using nada::Log;
 
 Spielszene::Spielszene(sf::RenderWindow* window, const std::string& ip) :
     klient(new Klient(ip)), window(window)

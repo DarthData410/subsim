@@ -13,9 +13,10 @@ struct Do_Once {
     explicit operator bool() { return std::exchange(b, false); }
     private: bool b = true;
 };
+#define NADA_DO_ONCE if (static Do_Once once_var; once_var)
 
 /// Helfermethoden, die sonst in keine Kategorie passen.
-namespace Etc {
+namespace nada { namespace misc {
 
     /// Löscht aus gegebenem String `str` alle chars `c`.
     void remove(std::string& str, const char c);
@@ -37,7 +38,9 @@ namespace Etc {
 
     /**
      * Liefert aus einer INI Datei (mit = als Trennzeichen) den Wert zu gegebenem Schlüssel (key).
-     * @note Liefert einen leeren String, bei Lesefehlern.
+     * @note Liefert einen leeren String, bei Lesefehlern und nicht vorhandenen Keys.
+     * @note Liefert bei mehrfach vorkommenden Keys den Wert des letzten.
+     * @note Verwendet einen Thread-sicheren Cache.
      * @param datei Pfad zur INI-Datei.
      * @param key Auszulesender Schlüssel.
      * @return Wert des Schlüssels.
@@ -57,30 +60,14 @@ namespace Etc {
     std::vector<std::string> vektor_aus_ini(const std::string& datei, const std::string& key, const char token, const std::string& append = "");
 
     /**
-     * Liefert einen Wert aus der Konfigurationsdatei.
-     * @param key Schlüssel für den herauszuparsenden Wert.
-     * @return Wert aus der Konfigurationsdatei.
+     * Liefert eine Farbe mit Grünstich bei positivem Verhältnis > 1, Rotstich bei < 1.
+     * 0 = maximal rot; 1 = maximal grün.
      */
-    template <typename T>
-    T get_cfg(const std::string& key, const T& standard = T{}) {
-        try {
-            const auto& s = get_aus_ini("config.ini", key);
-            std::stringstream ss(s);
-            T t;
-            ss >> t;
-            return t;
-        } catch (std::exception& e) {
-            std::cerr << key << " konnte nicht gelesen werden " << e.what() << '\n';
-            return standard;
-        }
-    }
-
-    /// Liefert eine Farbe mit Grünstich bei positivem Verhältnis > 1, Rotstich bei < 1.
     uint32_t get_farbe_nach_verhaeltnis(unsigned zaehler, unsigned nenner);
 
     /**
      * Liefert alle Dateipfade (relativ) aus gegebenem Ordner (relativ) mit gegebener Dateiendung (Case-Sensitiv).
-     * @param endung z.B. "png", "jpg", "dat" usw. (ohne '.' davor)
+     * @param endung z.B. "png", "jpg", "dat", "json" usw. (ohne '.' davor)
      * @note Dateiendung Case-sensitiv.
      */
     std::vector<std::string> alle_dateien(const std::string& ordner, std::string endung);
@@ -92,4 +79,4 @@ namespace Etc {
     template <typename T>
     bool ptr_compare(const T* o1, const T* o2) { return *o1 < *o2; }
 
-}
+}}

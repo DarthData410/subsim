@@ -1,7 +1,9 @@
 #include "sub.hpp"
 #include "../../welt.hpp"
 
-#include <log.hpp>
+#include <nada/log.hpp>
+
+using nada::Log;
 
 Sub::Sub(const std::string& name, const Vektor& pos,
          const Motor& motor_linear,const Motor& motor_rot, const Motor& motor_tauch)

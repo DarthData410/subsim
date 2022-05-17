@@ -7,7 +7,7 @@
 #include "gfx/multigrafik.hpp"
 
 #include <implot.h>
-#include <etc.hpp>
+#include <nada/misc.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/CircleShape.hpp>

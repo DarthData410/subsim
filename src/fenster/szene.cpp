@@ -10,7 +10,7 @@
 #include <imgui-SFML.h>
 #include <implot.h>
 #include <fstream>
-#include <log.hpp>
+#include <nada/log.hpp>
 
 Szene::Szene() :
         window(sf::VideoMode::getDesktopMode(), "<3", sf::Style::None)
@@ -36,7 +36,7 @@ void Szene::load_fonts() {
     ImGuiIO& io = ImGui::GetIO();
     bool font_found = true;
     if (std::ifstream font_file(ui::FILE_FONT_IMGUI); !font_file.good()) {
-        Log::err() << "Error: UI Font file missing: " << ui::FILE_FONT_IMGUI << '\n';
+        nada::Log::err() << "Error: UI Font file missing: " << ui::FILE_FONT_IMGUI << '\n';
         font_found = false;
     }
     io.Fonts->Clear();
