@@ -10,7 +10,7 @@ namespace nada {
 
         bool good() const { if (std::ifstream in(datei); in.good()) return true; return false; }
 
-        std::string get_or_default(const std::string& key, const std::string& fallback) {
+        std::string get(const std::string& key, const std::string& fallback = "") {
             const std::string val = misc::get_aus_ini(datei, key);
             if (val.empty()) return fallback;
             return val;
