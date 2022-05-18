@@ -19,7 +19,7 @@ build:
     - cd ..
     - mkdir -p build
     - cd build
-    - cmake -DCMAKE_BUILD_TYPE=Release --target nada_sub .. && cmake --build . --target nada_sub && make
+    - cmake -DCMAKE_BUILD_TYPE=Release --target nada_sub .. && cmake --build . --target nada_sub && make nada_sub
   artifacts:
     paths:
       - build/nada_sub
@@ -32,5 +32,5 @@ test:
     - cd ..
     - mkdir -p build
     - cd build
-    - cmake -DCMAKE_BUILD_TYPE=Debug --target nada_sub_test .. && cmake --build . --target nada_sub_test && make
+    - cmake -DCMAKE_BUILD_TYPE=Debug --target nada_sub_test .. && cmake --build . --target nada_sub_test && make nada_sub_test
     - ./nada_sub_test
