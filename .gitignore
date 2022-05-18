@@ -1,3 +1,4 @@
+/.vscode/
 /libs/cereal/
 /libs/cmake*/
 /libs/doctest/
@@ -5,4 +6,11 @@
 /libs/imgui/
 /libs/imgui-sfml/
 /libs/implot/
+/build/libs/
+/build/.cmake/
+/build/CMakeFiles/
+/build/cmake_install.cmake
+/build/CMakeCache.txt
+/build/compile_commands.json
+/build/Makefile
 /cmake-build*/
