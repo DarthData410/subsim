@@ -13,4 +13,7 @@
 /build/CMakeCache.txt
 /build/compile_commands.json
 /build/Makefile
+/build/nada_sub
+/build/nada_sub_test
+/build/temp_karte.png
 /cmake-build*/
