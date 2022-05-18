@@ -3,6 +3,7 @@
 
 #include <chrono>
 #include <filesystem>
+#include <unordered_map>
 
 template std::vector<std::string> nada::misc::tokenize(const std::string& text, const char token);
 template<typename T> std::vector<T> nada::misc::tokenize(const T& text, const char token) {
