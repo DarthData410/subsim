@@ -2,7 +2,7 @@
 
 [//]: # ([![coverage report]&#40;https://gitlab.com/chris_nada/subsim/badges/master/coverage.svg&#41;]&#40;https://gitlab.com/chris_nada/subsim/-/commits/master&#41; )
 
-# Submarine Simulation
+# Submarine Simulator
 + w/Singleplayer/Multiplayer (including computer controlled opponents)
 + Immersive simulation-like submarine handling 
     + Active + Passive Sonar
@@ -27,7 +27,7 @@ After above goals are implemented, future plans include:
 ## Gameplay / Meta / Strategy
 + [ ] Teambase: Repair/Resupply/Change sub
 + [ ] Replace Player's sub on death
-+ [ ] Spawn new AI subs (-timer? -points?)
++ [ ] Spawn new bot subs (-timer? -points?)
 + [ ] Research
     + [ ] Torpedo models
     + [ ] Passive Sonar models
@@ -48,6 +48,7 @@ After above goals are implemented, future plans include:
 + [x] **Evade**
     + [x] Use Decoys
     + [ ] Hide
+    + [ ] Use Air Vent
 + [x] **fire Torpedos**
 
 ## Armament
@@ -68,6 +69,8 @@ After above goals are implemented, future plans include:
     + [x] Terrain Renderer (VertexArray based for now)
     + [ ] Clean up Map Settings Window
     + [ ] (?) Bug: Possible Map Depth discrepancy view/model
+    + [ ] New Strategy Window
+        + [ ] Technology Overview
 + [x] Passive Sonar: Bearing Markers
 + [x] Passive Sonar: Bug: vector::_M_range_check: __n (which is 432) >= this->size() (which is 432)
 + [x] Active Sonar: Bearing Markers
@@ -87,12 +90,12 @@ After above goals are implemented, future plans include:
     + [X] Terrain from ~~Height Map~~ procedural Simplex Noise
     + [x] Synchronize with Host
     + [ ] Land: Collision
-      + [x] Adjust sub's start position if collision detected
-      + [ ] Adjust zone position to sea only
+        + [x] Adjust sub's start position if collision detected
+        + [ ] Adjust zone position to sea only
     + [ ] Land: AI Pathfinding around)
 + [x] Depth-rudder
     + [ ] **Depth influences stealth**
 
 ## Code
 + [ ] Convert all stdouts / error messages to english
-+ [ ] Read Subs from xml/yaml
++ [ ] Read Subs from xml/yaml/ini
