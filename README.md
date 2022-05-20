@@ -2,7 +2,22 @@
 
 [//]: # ([![coverage report]&#40;https://gitlab.com/chris_nada/subsim/badges/master/coverage.svg&#41;]&#40;https://gitlab.com/chris_nada/subsim/-/commits/master&#41; )
 
-TODO: Description
+# Submarine Simulation
++ w/Singleplayer/Multiplayer (including computer controlled opponents)
++ Immersive simulation-like submarine handling 
+    + Active + Passive Sonar
+    + Noise simulation model
+    + Manual Torpedo firing resolution
+    + no arcade-style HUD
++ combined with adapted Deatchmatch/TDM/Domination (as in UT) and Warzone (as in ARMA) - like gameplay modes.
+    + Team-play
+    + Capturing of zones for points
+    + Research & Upgrade your team's submarines + armaments
++ *no fixed theme (WWI/WWII/cold war/modern/sci-fi) yet, engine is kept flexible to support them all, but focus is on modern with fictional upgrade system*
++ *(unnamed as of now, ideas welcome)*
+
+After above goals are implemented, future plans include:
++ More Object types (Surface ships and aircraft)
 
 # TODOs
 **Bold** = High Priority<br/>
@@ -21,8 +36,10 @@ TODO: Description
     + [ ] Decoys
 + [ ] (?) Zones spawn Ships; Have them reach home for Points
 + [ ] Mainmenu - game setup
-  + [ ] (?) Attack / Defend gameplay instead of 'Equal Encounter'
-  + [ ] (?) Deathmatch (FFA / no Teams)
+    + [ ] Nicknames for players
+    + [ ] New Game / Team setup
+    + [ ] (?) Attack / Defend gameplay instead of 'Equal Encounter'
+    + [ ] (?) Deathmatch (FFA / no Teams)
 + [ ] <font color='grey'>Surface Ships</font>
 + [ ] <font color='grey'>Aircraft</font>
 + [ ] Save/Load Game
